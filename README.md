@@ -54,5 +54,4 @@ For example, the following environment
 import gymnasium
 env = gymnasium.make("Gym-Gridworlds/Full-5x5-v0", random_action_prob=0.1, reward_noise_std=0.05)
 ```
-- Performs a random action with 10% probability (regardless of what the agent wants to do),
-- Adds Gaussian noise with 0.05 standard deviation to the reward.
+performs a random action with 10% probability (regardless of what the agent wants to do) and adds Gaussian noise with 0.05 standard deviation to the reward.
