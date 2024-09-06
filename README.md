@@ -1,7 +1,9 @@
-Generic implementation of gridworld for reinforcement learning based on [gymnasium](https://github.com/Farama-Foundation/Gymnasium).  
-The class `Gridworld` describes a generic gridworld with five actions (left, right, up, down, stay) and some default rewards (small/large positive and negative rewards).  
-You can define your own gridworld by defining its map. See `gym_gridworlds/gridworld.py` for more details.  
-There are already some pre-implemented gridworlds. See `gym_gridworlds/gym.py` for more details.  
+## Description
+
+Generic implementation of a gridworld environment for reinforcement learning based on [gymnasium](https://github.com/Farama-Foundation/Gymnasium).  
+The default class `Gridworld` implements a "go-to goal" task where the agent has five actions (left, right, up, down, stay) and default transition function (e.g., doing "stay" in goal states ends the episode).  
+You can change actions and transition function by implementing more classes. For example, in `RiverSwim` there are only two actions and no state is terminal.  
+You can create your own gridworld with different grids and rewards by defining its map. See `gym_gridworlds/gridworld.py` and `gym_gridworlds/gym.py` for more details.  
 
 
 ## Install and Examples
@@ -14,23 +16,23 @@ pip install -e .
 Run `python` and then
 ```python
 import gymnasium
-env = gymnasium.make("Gym-Grid/Gridworld-Penalty-3x3-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 env.step(4) # STAY
 env.render()
 ```
 
-to render the `Gridworld-Penalty-3x3-v0` (left figure), and
+to render the `Penalty-3x3-v0` gridworld (left figure), and
 ```python
 import gymnasium
-env = gymnasium.make("Gym-Grid/Gridworld-Full-5x5-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Full-5x5-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 env.render()
 ```
 
-to render the `Gridworld-Full-5x5-v0` (right figure).
+to render the `Full-5x5-v0` gridworld (right figure).
 
 <p align="center">
   <img src="figures/gridworld_penalty_3x3.png" height=200 alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -50,7 +52,7 @@ It is also possible to add noise to the transition and the reward functions.
 For example, the following environment
 ```python
 import gymnasium
-env = gymnasium.make("Gym-Grid/Gridworld-Full-5x5-v0", random_action_prob=0.1, reward_noise_std=0.05)
+env = gymnasium.make("Gym-Gridworlds/Full-5x5-v0", random_action_prob=0.1, reward_noise_std=0.05)
 ```
 - Performs a random action with 10% probability (regardless of what the agent wants to do),
 - Adds Gaussian noise with 0.05 standard deviation to the reward.
