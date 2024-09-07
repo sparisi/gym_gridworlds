@@ -92,6 +92,46 @@ env.render()
 
 
 
+
+## Make Your Own Gridworld
+
+1. Define your grid in `gym_gridworlds/grids.py`, for example
+```python
+GRIDS["5x5_wall"] = [
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    [EMPTY, WALL, WALL, WALL, EMPTY],
+    [EMPTY, WALL, GOOD, EMPTY, EMPTY],
+    [EMPTY, WALL, WALL, WALL, EMPTY],
+    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+]
+```
+
+2. Register the environment in `gym_gridworlds/gym.py`, for example
+```python
+register(
+    id="Wall-5x5-v0",
+    entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
+    max_episode_steps=50,
+    kwargs={
+        "grid": "5x5_wall",
+    },
+)
+```
+
+3. Try it
+```python
+import gymnasium
+env = gymnasium.make("Gym-Gridworlds/Barrier-5x5-v0", grid="5x5_wall", render_mode="human")
+env.reset(seed=42)
+env.render()
+```
+
+<p align="center">
+  <img src="figures/gridworld_wall_5x5.png" height=200 alt="Gridworld Full">
+</p>
+
+
+
 ## Default MDP (`Gridworld` Class)
 
 #### <ins>Action Space</ins>
