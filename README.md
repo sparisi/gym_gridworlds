@@ -121,7 +121,7 @@ register(
 3. Try it
 ```python
 import gymnasium
-env = gymnasium.make("Gym-Gridworlds/Barrier-5x5-v0", grid="5x5_wall", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Wall-5x5-v0", grid="5x5_wall", render_mode="human")
 env.reset(seed=42)
 env.render()
 ```
@@ -158,12 +158,12 @@ different starting states. For example, in `GridworldMiddleStart` the agent star
 in the middle of the grid, while in `GridworldRandomStart` it starts in a random tile.
 
 #### <ins>Transition</ins>
-By default, the transition is deterministic. It can be made stochastic by
-passing `random_action_prob`. This is the probability that the action will
-be random. For example, if `random_action_prob=0.1` there is a 10% chance
-that the agent will do a random action instead of doing the one passed to
-`self.step(action)`.  
-If the agent is in a "quicksand" tile, any action will fail with 90% probability.
+By default, the transition is deterministic except in quicksand tiles, 
+where any action fails with 90% probability (the agent does not move).  
+Transition can be made stochastic everywhere by passing `random_action_prob`.
+This is the probability that the action will be random.
+For example, if `random_action_prob=0.1` there is a 10% chance that the agent
+will do a random action instead of doing the one passed to `self.step(action)`.  
 
 #### <ins>Rewards</ins>
 - Doing `STAY` at the goal: +1

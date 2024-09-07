@@ -187,11 +187,12 @@ class Gridworld(gym.Env):
     The episode starts with the agent at the top-left tile.
 
     ## Transition
-    By default, the transition is deterministic. It can be made stochastic by
-    passing 'random_action_prob'. This is the probability that the action will
-    be random. For example, if 'random_action_prob=0.1' there is a 10% chance
-    that the agent will do a random action instead of doing the one passed to
-    'self.step(action)'.
+    By default, the transition is deterministic except in quicksand tiles,
+    where any action fails with 90% probability (the agent does not move).
+    Transition can be made stochastic everywhere by passing 'random_action_prob'.
+    This is the probability that the action will be random.
+    For example, if 'random_action_prob=0.1' there is a 10% chance that the agent
+    will do a random action instead of doing the one passed to 'self.step(action)'.
 
     ## Rewards
     - Doing STAY at the goal: +1
@@ -201,8 +202,8 @@ class Gridworld(gym.Env):
     - Walking on a pit tile: -100
     - Otherwise: 0
 
-    White noise can be added to all rewards by passing 'reward_noise_std'.
-    White noise can be added to all NONZERO rewards by passing 'nonzero_reward_noise_std'.
+    White noise can be added to all rewards by passing 'reward_noise_std',
+    or only to nonzero rewards with 'nonzero_reward_noise_std'.
 
     ## Episode End
     By default, an episode ends if any of the following happens:
