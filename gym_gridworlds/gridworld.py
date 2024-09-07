@@ -133,7 +133,7 @@ class Gridworld(gym.Env):
     Harder versions include:
     - Quicksand cells, where the agent gets stuck with 90% probability,
     - Distracting rewards,
-    - One-direction cells, where the agent can only move in one direction
+    - One-directional cells, where the agent can only move in one direction
     (all other actions will fail).
 
     ## Grid
@@ -141,7 +141,7 @@ class Gridworld(gym.Env):
     custom grids.
 
     ## Action Space
-    The action shape is discrete in the range `{0, 3}`.
+    The action is discrete in the range `{0, 4}`.
 
     - 0: Move left
     - 1: Move down
@@ -150,15 +150,19 @@ class Gridworld(gym.Env):
     - 4: Stay (do not move)
 
     If the agent is in a "quicksand" cell, any action will fail with 90% probability.
-    The agent cannot move to "wall" cells.
 
     ## Observation Space
-    The action shape is discrete in the range `{0, n_rows * n_cols - 1}`.
+    The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
     Each integer denotes the current location of the agent. For a 3x3 grid:
 
      0 1 2
      3 4 5
      6 7 8
+
+    It is also possible to learn from pixel observations.
+    Pixel observations can be made partial by passing 'view_radius'. For example,
+    if 'view_radius=1' the rendering will show the content of only the cells
+    around the agent, while all other cells will be filled with white noise.
 
     ## Starting State
     The episode starts with the agent at the top-left cell.
@@ -166,9 +170,9 @@ class Gridworld(gym.Env):
     ## Transition
     By default, the transition is deterministic. It can be made stochastic by
     passing 'random_action_prob'. This is the probability that the action will
-    be random. For example, if random_action_prob=0.1, there is a 10% chance
-    that instead of doing LEFT / RIGHT / ... as passed in self.step(action)
-    the agent will do a random action.
+    be random. For example, if 'random_action_prob=0.1' there is a 10% chance
+    that the agent will do a random action instead of doing the one passed to
+    'self.step(action)'.
 
     ## Rewards
     - Doing STAY at the goal: +1
@@ -181,13 +185,9 @@ class Gridworld(gym.Env):
     White noise can be added to all NONZERO rewards by passing 'nonzero_reward_noise_std'.
 
     ## Episode End
-    The episode ends if the following happens:
-
-    - Termination:
-        1. A positive reward is collected.
-
-    - Truncation:
-        1. The length of the episode is max_episode_steps.
+    By default, an episode ends if the following happens:
+    - A positive reward is collected (termination),
+    - The length of the episode is max_episode_steps (truncation).
 
     ## Rendering
     Human mode renders the environment as a grid with colored cells.
@@ -218,6 +218,7 @@ class Gridworld(gym.Env):
         random_action_prob: Optional[float] = 0.0,
         reward_noise_std: Optional[float] = 0.0,
         nonzero_reward_noise_std: Optional[float] = 0.0,
+        view_radius: Optional[int] = 99999,
         **kwargs,
     ):
         self.grid_key = grid
@@ -232,6 +233,7 @@ class Gridworld(gym.Env):
         self.agent_pos = None
         self.last_action = None
 
+        self.view_radius = view_radius
         self.render_mode = render_mode
         self.window_surface = None
         self.clock = None
@@ -393,6 +395,29 @@ class Gridworld(gym.Env):
 
                 # draw background
                 pygame.draw.rect(self.window_surface, WHITE, border)
+
+                # mask unobservable cells with white noise
+                if not (
+                    y >= self.agent_pos[0] - self.view_radius and
+                    y <= self.agent_pos[0] + self.view_radius and
+                    x >= self.agent_pos[1] - self.view_radius and
+                    x <= self.agent_pos[1] + self.view_radius
+                ):
+                    grain = 5
+                    for i in range(grain):
+                        for j in range(grain):
+                            rect = pygame.Rect(
+                                (
+                                    pos[0] + i / grain * self.cell_size[0],
+                                    pos[1] + j / grain * self.cell_size[1],
+                                ),
+                                tuple(cs / grain for cs in self.cell_size)
+                            )
+                            random_color = self.np_random.random(3) * 255
+                            random_color = [(random_color * (0.2989, 0.5870, 0.1140)).sum()] * 3  # grayscale
+                            pygame.draw.rect(self.window_surface, random_color, rect)
+                    continue
+
                 if grid[y][x] == GOOD:
                     pygame.draw.rect(self.window_surface, GREEN, rect)
                 elif grid[y][x] == GOOD_SMALL:
