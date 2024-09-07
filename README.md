@@ -95,7 +95,7 @@ env.render()
 
 ## Make Your Own Gridworld
 
-1. Define your grid in `gym_gridworlds/grids.py`, for example
+1. Define your grid in `gym_gridworlds/gridworld.py`, for example
 ```python
 GRIDS["5x5_wall"] = [
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
