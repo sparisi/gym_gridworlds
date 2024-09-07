@@ -38,8 +38,12 @@ BLACK = (0, 0, 0)
 GRAY = (100, 100, 100)
 
 GRIDS = {
-    "river_swim_6": [[EMPTY for _ in range(6)]],
-    "20_straight": [[EMPTY for _ in range(20)]],
+    "river_swim_6": [
+        [GOOD_SMALL] + [EMPTY for _ in range(4)] + [GOOD],
+    ],
+    "20_straight": [
+        [EMPTY for _ in range(19)] + [GOOD],
+    ],
     "2x2_empty": [
         [EMPTY, EMPTY],
         [EMPTY, GOOD],
@@ -59,8 +63,14 @@ GRIDS = {
         [EMPTY, BAD, EMPTY],
         [EMPTY, EMPTY, EMPTY],
     ],
-    "10x10_empty": [[EMPTY for _ in range(10)] for _ in range(10)],
-    "6x6_distract": [[EMPTY for _ in range(6)] for _ in range(6)],
+    "10x10_empty":
+        [[EMPTY for _ in range(10)] for _ in range(9)] +
+        [[EMPTY for _ in range(9)] + [GOOD]]
+    ,
+    "6x6_distract":
+        [[EMPTY for _ in range(6)] for _ in range(5)] +
+        [[GOOD_SMALL] + [EMPTY for _ in range(4)] + [GOOD]]
+    ,
     "4x4_quicksand": [
         [EMPTY, EMPTY, BAD, GOOD],
         [EMPTY, EMPTY, BAD, EMPTY],
@@ -101,14 +111,6 @@ GRIDS = {
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
 }
-
-GRIDS["10x10_empty"][-1][-1] = GOOD
-GRIDS["20_straight"][-1][-1] = GOOD
-GRIDS["6x6_distract"][-1][-1] = GOOD
-GRIDS["6x6_distract"][-1][0] = GOOD_SMALL
-
-GRIDS["river_swim_6"][-1][-1] = GOOD
-GRIDS["river_swim_6"][0][0] = GOOD_SMALL
 
 
 def _move(row, col, a, nrow, ncol):
@@ -273,6 +275,11 @@ class Gridworld(gym.Env):
         self.last_pos = None
 
     def _step(self, action: int):
+        self.last_pos = self.agent_pos
+        if self.np_random.random() < self.random_action_prob:
+            action = self.action_space.sample()  # random action if transition is noisy
+        self.last_action = action
+
         terminated = False
         reward = REWARDS[self.grid[self.agent_pos]] * 1.0  # float
         if self.grid[self.agent_pos] in [GOOD, GOOD_SMALL]:
@@ -280,15 +287,12 @@ class Gridworld(gym.Env):
                 terminated = True
             else:
                 reward = 0
+
         if self.reward_noise_std > 0.0:
             reward += self.np_random.normal() * self.reward_noise_std
         if reward != 0.0 and self.nonzero_reward_noise_std > 0.0:
             reward += self.np_random.normal() * self.nonzero_reward_noise_std
 
-        self.last_pos = self.agent_pos
-        if self.np_random.random() < self.random_action_prob:
-            action = self.action_space.sample()
-        self.last_action = action
         if self.grid[self.agent_pos] == QCKSND and self.np_random.random() > 0.1:
             pass  # fail to move in quicksand
         else:
@@ -308,8 +312,8 @@ class Gridworld(gym.Env):
                     self.n_cols
                 )  # fmt: skip
 
-        if self.grid[self.agent_pos] == WALL:
-            self.agent_pos = self.last_pos
+            if self.grid[self.agent_pos] == WALL:
+                self.agent_pos = self.last_pos  # can't move on walls
 
         return self.get_state(), reward, terminated, False, {}
 
