@@ -4,14 +4,8 @@ from gymnasium.error import DependencyNotInstalled
 from typing import Optional
 from collections import defaultdict
 
-LEFT = 0
-DOWN = 1
-RIGHT = 2
-UP = 3
-STAY = 4
-
 # state IDs
-EMPTY = -1  # one-direction tile have ID corresponding to the allowed action (0, 1, 2, 3)
+EMPTY = -1
 QCKSND = -2
 GOOD_SMALL = 9
 GOOD = 10
@@ -20,6 +14,14 @@ BAD_SMALL = 12
 WALL = -3
 PIT = -4
 
+# action IDs (and for one-directional states)
+LEFT = 0
+DOWN = 1
+RIGHT = 2
+UP = 3
+STAY = 4
+
+# default rewards
 REWARDS = defaultdict(lambda: 0)
 REWARDS[GOOD] = 1
 REWARDS[BAD] = -10
@@ -40,6 +42,7 @@ BLACK = (0, 0, 0)
 GRAY = (100, 100, 100)
 PURPLE = (102, 51, 153)
 
+# fmt: off
 GRIDS = {
     "river_swim_6": [
         [GOOD_SMALL] + [EMPTY for _ in range(4)] + [GOOD],
@@ -127,6 +130,7 @@ GRIDS = {
         [EMPTY, EMPTY, EMPTY, PIT, PIT, GOOD],
     ],
 }
+# fmt: on
 
 
 def _move(row, col, a, nrow, ncol):
@@ -217,7 +221,7 @@ class Gridworld(gym.Env):
     - Black: empty tiles
     - White: pits
     - Purple: walls
-    - Black with gray arrow: empty one-direction tile
+    - Black with gray arrow: empty one-directional tile
     - Green: goal
     - Pale green: distracting goal
     - Red: penalty tiles
@@ -322,15 +326,15 @@ class Gridworld(gym.Env):
                 self.grid[self.agent_pos] == UP and action != UP or
                 self.grid[self.agent_pos] == DOWN and action != DOWN
             ):  # fmt: skip
-                pass  # fail to move in one-direction tile
+                pass  # fail to move in one-directional tile
             else:
                 self.agent_pos = _move(
                     self.agent_pos[0],
                     self.agent_pos[1],
                     action,
                     self.n_rows,
-                    self.n_cols
-                )  # fmt: skip
+                    self.n_cols,
+                )
 
             if self.grid[self.agent_pos] == PIT:
                 terminated = True  # agent dies
@@ -378,15 +382,10 @@ class Gridworld(gym.Env):
 
         assert (
             self.window_surface is not None
-        ), "Something went wrong with pygame. This should never happen."  # fmt: skip
+        ), "Something went wrong with pygame. This should never happen."
 
         if self.clock is None:
             self.clock = pygame.time.Clock()
-
-        grid = self.grid.tolist()
-        assert (
-            isinstance(grid, list)
-        ), f"grid should be a list or an array, got {grid}"  # fmt: skip
 
         def arrow_head(pos, size, dir):
             if dir == LEFT:
@@ -414,118 +413,120 @@ class Gridworld(gym.Env):
                     (end_pos[0], end_pos[1] - size[1]),
                 )
 
+        t_size = self.tile_size  # short notation
+
         # draw tiles
         for y in range(self.n_rows):
             for x in range(self.n_cols):
-                pos = (x * self.tile_size[0], y * self.tile_size[1])
-                border = pygame.Rect(pos, tuple(cs * 1.01 for cs in self.tile_size))
-                rect = pygame.Rect(pos, tuple(cs * 0.99 for cs in self.tile_size))
+                pos = (x * t_size[0], y * t_size[1])
+                border = pygame.Rect(pos, tuple(cs * 1.01 for cs in t_size))
+                rect = pygame.Rect(pos, tuple(cs * 0.99 for cs in t_size))
 
                 # draw background
                 pygame.draw.rect(self.window_surface, WHITE, border)
 
                 # mask unobservable tiles with white noise
                 if not (
-                    y >= self.agent_pos[0] - self.view_radius and
-                    y <= self.agent_pos[0] + self.view_radius and
-                    x >= self.agent_pos[1] - self.view_radius and
-                    x <= self.agent_pos[1] + self.view_radius
+                    y >= self.agent_pos[0] - self.view_radius
+                    and y <= self.agent_pos[0] + self.view_radius
+                    and x >= self.agent_pos[1] - self.view_radius
+                    and x <= self.agent_pos[1] + self.view_radius
                 ):
                     grain = 5
                     for i in range(grain):
                         for j in range(grain):
                             rect = pygame.Rect(
                                 (
-                                    pos[0] + i / grain * self.tile_size[0],
-                                    pos[1] + j / grain * self.tile_size[1],
+                                    pos[0] + i / grain * t_size[0],
+                                    pos[1] + j / grain * t_size[1],
                                 ),
-                                tuple(cs / grain for cs in self.tile_size)
+                                tuple(cs / grain for cs in t_size),
                             )
-                            random_color = self.np_random.random(3) * 255
-                            random_color = [(random_color * (0.2989, 0.5870, 0.1140)).sum()] * 3  # grayscale
-                            pygame.draw.rect(self.window_surface, random_color, rect)
+                            rnd_color = self.np_random.random(3) * 255
+                            rnd_color = [(rnd_color * (0.2989, 0.5870, 0.1140)).sum()] * 3  # grayscale
+                            pygame.draw.rect(self.window_surface, rnd_color, rect)
                     continue
 
-                if grid[y][x] == GOOD:
+                if self.grid[y][x] == GOOD:
                     pygame.draw.rect(self.window_surface, GREEN, rect)
-                elif grid[y][x] == GOOD_SMALL:
+                elif self.grid[y][x] == GOOD_SMALL:
                     pygame.draw.rect(self.window_surface, PALE_GREEN, rect)
-                elif grid[y][x] == BAD:
+                elif self.grid[y][x] == BAD:
                     pygame.draw.rect(self.window_surface, RED, rect)
-                elif grid[y][x] == BAD_SMALL:
+                elif self.grid[y][x] == BAD_SMALL:
                     pygame.draw.rect(self.window_surface, PALE_RED, rect)
-                elif grid[y][x] == QCKSND:
+                elif self.grid[y][x] == QCKSND:
                     pygame.draw.rect(self.window_surface, PALE_YELLOW, rect)
-                elif grid[y][x] == WALL:
+                elif self.grid[y][x] == WALL:
                     pygame.draw.rect(self.window_surface, PURPLE, rect)
-                elif grid[y][x] == PIT:
+                elif self.grid[y][x] == PIT:
                     pygame.draw.rect(self.window_surface, WHITE, rect)
-                elif grid[y][x] in [EMPTY, LEFT, RIGHT, UP, DOWN]:
+                elif self.grid[y][x] in [EMPTY, LEFT, RIGHT, UP, DOWN]:
                     pygame.draw.rect(self.window_surface, BLACK, rect)
 
                 # draw agent
                 if (y, x) == self.agent_pos:
                     pygame.draw.ellipse(self.window_surface, BLUE, rect)
 
-                # draw arrow for one-direction tile
-                if grid[y][x] in [LEFT, RIGHT, UP, DOWN]:
-                    if grid[y][x] == LEFT:
-                        start_pos = (pos[0] + self.tile_size[0], pos[1] + self.tile_size[1] / 2)
-                        end_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1] / 2)
-                        arr_width = -(-self.tile_size[1] // 3)
-                    elif grid[y][x] == DOWN:
-                        start_pos = (pos[0] + self.tile_size[0] / 2, pos[1])
-                        end_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1] / 2)
-                        arr_width = -(-self.tile_size[0] // 3)
-                    elif grid[y][x] == RIGHT:
-                        start_pos = (pos[0], pos[1] + self.tile_size[1] / 2)
-                        end_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1] / 2)
-                        arr_width = -(-self.tile_size[1] // 3)
-                    elif grid[y][x] == UP:
-                        start_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1])
-                        end_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1] / 2)
-                        arr_width = -(-self.tile_size[0] // 3)
+                # draw arrow for one-directional tiles
+                if self.grid[y][x] in [LEFT, RIGHT, UP, DOWN]:
+                    if self.grid[y][x] == LEFT:
+                        start_pos = (pos[0] + t_size[0], pos[1] + t_size[1] / 2)
+                        end_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1] / 2)
+                        arrow_width = -(-t_size[1] // 3)
+                    elif self.grid[y][x] == DOWN:
+                        start_pos = (pos[0] + t_size[0] / 2, pos[1])
+                        end_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1] / 2)
+                        arrow_width = -(-t_size[0] // 3)
+                    elif self.grid[y][x] == RIGHT:
+                        start_pos = (pos[0], pos[1] + t_size[1] / 2)
+                        end_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1] / 2)
+                        arrow_width = -(-t_size[1] // 3)
+                    elif self.grid[y][x] == UP:
+                        start_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1])
+                        end_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1] / 2)
+                        arrow_width = -(-t_size[0] // 3)
                     else:
                         pass
-                    pygame.draw.polygon(self.window_surface, GRAY, (start_pos, end_pos), arr_width)
-                    arr_pos = arrow_head(end_pos, [cs / 2 for cs in self.tile_size], grid[y][x])
+                    pygame.draw.polygon(
+                        self.window_surface, GRAY, (start_pos, end_pos), arrow_width
+                    )
+                    arr_pos = arrow_head(
+                        end_pos, [cs / 2 for cs in t_size], self.grid[y][x]
+                    )
                     pygame.draw.polygon(self.window_surface, GRAY, arr_pos, 0)
 
-            # draw action arrow
+            # draw last action
             if self.last_pos is not None:
                 x = self.last_pos[1]
                 y = self.last_pos[0]
 
-                if self.last_action == STAY:
-                    pos = (
-                        x * self.tile_size[0] + self.tile_size[0] / 4,
-                        y * self.tile_size[1] + self.tile_size[1] / 4,
-                    )
-                    rect = pygame.Rect(pos, tuple(cs * 0.5 for cs in self.tile_size))
+                if self.last_action == STAY:  # draw circle
+                    pos = (x * t_size[0] + t_size[0] / 4, y * t_size[1] + t_size[1] / 4)
+                    rect = pygame.Rect(pos, tuple(cs * 0.5 for cs in t_size))
                     pygame.draw.ellipse(self.window_surface, ORANGE, rect)
-                else:
-                    pos = (
-                        x * self.tile_size[0] + self.tile_size[0] / 2,
-                        y * self.tile_size[1] + self.tile_size[1] / 2,
-                    )
+                else:  # draw arrow
+                    pos = (x * t_size[0] + t_size[0] / 2, y * t_size[1] + t_size[1] / 2)
                     if self.last_action == LEFT:
-                        end_pos = (pos[0] - self.tile_size[0] / 4, pos[1])
-                        arr_width = -(-self.tile_size[1] // 6)
+                        end_pos = (pos[0] - t_size[0] / 4, pos[1])
+                        arrow_width = -(-t_size[1] // 6)
                     elif self.last_action == DOWN:
-                        end_pos = (pos[0], pos[1] + self.tile_size[1] / 4)
-                        arr_width = -(-self.tile_size[0] // 6)
+                        end_pos = (pos[0], pos[1] + t_size[1] / 4)
+                        arrow_width = -(-t_size[0] // 6)
                     elif self.last_action == RIGHT:
-                        end_pos = (pos[0] + self.tile_size[0] / 4, pos[1])
-                        arr_width = -(-self.tile_size[1] // 6)
+                        end_pos = (pos[0] + t_size[0] / 4, pos[1])
+                        arrow_width = -(-t_size[1] // 6)
                     elif self.last_action == UP:
-                        end_pos = (pos[0], pos[1] - self.tile_size[1] / 4)
-                        arr_width = -(-self.tile_size[0] // 6)
+                        end_pos = (pos[0], pos[1] - t_size[1] / 4)
+                        arrow_width = -(-t_size[0] // 6)
                     else:
                         raise ValueError("illegal action")
 
-                    pygame.draw.polygon(self.window_surface, ORANGE, (pos, end_pos), arr_width)
+                    pygame.draw.polygon(
+                        self.window_surface, ORANGE, (pos, end_pos), arrow_width
+                    )
                     arr_pos = arrow_head(
-                        end_pos, [cs / 5 for cs in self.tile_size], self.last_action
+                        end_pos, [cs / 5 for cs in t_size], self.last_action
                     )
                     pygame.draw.polygon(self.window_surface, ORANGE, arr_pos, 0)
 
@@ -600,7 +601,7 @@ class RiverSwim(Gridworld):
 
     def _reset(self, seed: int = None, **kwargs):
         Gridworld._reset(self, seed=seed, **kwargs)
-        self.agent_pos = (0, self.np_random.integers(1, 3))  # init either in 2nd or 3rd tile
+        self.agent_pos = (0, self.np_random.integers(1, 3))  # 2nd or 3rd tile
         return self.get_state(), {}
 
     def _step(self, action: int):
