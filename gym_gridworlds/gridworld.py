@@ -11,7 +11,7 @@ UP = 3
 STAY = 4
 
 # state IDs
-EMPTY = -1  # one-direction cell have ID corresponding to the allowed action (0, 1, 2, 3)
+EMPTY = -1  # one-direction tile have ID corresponding to the allowed action (0, 1, 2, 3)
 QCKSND = -2
 GOOD_SMALL = 9
 GOOD = 10
@@ -129,11 +129,11 @@ def _move(row, col, a, nrow, ncol):
 
 class Gridworld(gym.Env):
     """
-    Gridworld where the agent has to reach a goal while avoid penalty cells.
+    Gridworld where the agent has to reach a goal while avoid penalty tiles.
     Harder versions include:
-    - Quicksand cells, where the agent gets stuck with 90% probability,
+    - Quicksand tiles, where the agent gets stuck with 90% probability,
     - Distracting rewards,
-    - One-directional cells, where the agent can only move in one direction
+    - One-directional tiles, where the agent can only move in one direction
     (all other actions will fail).
 
     ## Grid
@@ -149,11 +149,12 @@ class Gridworld(gym.Env):
     - 3: Move up
     - 4: Stay (do not move)
 
-    If the agent is in a "quicksand" cell, any action will fail with 90% probability.
+    If the agent is in a "quicksand" tile, any action will fail with 90% probability.
 
     ## Observation Space
     The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
-    Each integer denotes the current location of the agent. For a 3x3 grid:
+    Each integer denotes the current location of the agent.
+    For example, in a 3x3 grid the states are
 
      0 1 2
      3 4 5
@@ -161,11 +162,11 @@ class Gridworld(gym.Env):
 
     It is also possible to learn from pixel observations.
     Pixel observations can be made partial by passing 'view_radius'. For example,
-    if 'view_radius=1' the rendering will show the content of only the cells
-    around the agent, while all other cells will be filled with white noise.
+    if 'view_radius=1' the rendering will show the content of only the tiles
+    around the agent, while all other tiles will be filled with white noise.
 
     ## Starting State
-    The episode starts with the agent at the top-left cell.
+    The episode starts with the agent at the top-left tile.
 
     ## Transition
     By default, the transition is deterministic. It can be made stochastic by
@@ -177,28 +178,28 @@ class Gridworld(gym.Env):
     ## Rewards
     - Doing STAY at the goal: +1
     - Doing STAY at a distracting goal: 0.1
-    - Any action in penalty cells: -10
-    - Any action in small penalty cells: -0.1
+    - Any action in penalty tiles: -10
+    - Any action in small penalty tiles: -0.1
     - Otherwise: 0
 
     White noise can be added to all rewards by passing 'reward_noise_std'.
     White noise can be added to all NONZERO rewards by passing 'nonzero_reward_noise_std'.
 
     ## Episode End
-    By default, an episode ends if the following happens:
+    By default, an episode ends if any of the following happens:
     - A positive reward is collected (termination),
     - The length of the episode is max_episode_steps (truncation).
 
     ## Rendering
-    Human mode renders the environment as a grid with colored cells.
+    Human mode renders the environment as a grid with colored tiles.
 
-    - Black: empty cells
+    - Black: empty tiles
     - White: walls
-    - Black with gray arrow: empty one-direction cell
+    - Black with gray arrow: empty one-direction tile
     - Green: goal
     - Pale green: distracting goal
-    - Red: penalty cells
-    - Pale red: penalty cells
+    - Red: penalty tiles
+    - Pale red: penalty tiles
     - Blue: agent
     - Pale yellow: quicksand
     - Orange arrow: last agent's action (LEFT, RIGHT, UP, DOWN)
@@ -213,8 +214,8 @@ class Gridworld(gym.Env):
 
     def __init__(
         self,
+        grid: str,
         render_mode: Optional[str] = None,
-        grid: Optional[str] = "3x3_empty",
         random_action_prob: Optional[float] = 0.0,
         reward_noise_std: Optional[float] = 0.0,
         nonzero_reward_noise_std: Optional[float] = 0.0,
@@ -241,7 +242,7 @@ class Gridworld(gym.Env):
             min(64 * self.n_cols, 512),
             min(64 * self.n_rows, 512)
         )  # fmt: skip
-        self.cell_size = (
+        self.tile_size = (
             self.window_size[0] // self.n_cols,
             self.window_size[1] // self.n_rows,
         )  # fmt: skip
@@ -297,7 +298,7 @@ class Gridworld(gym.Env):
                 self.grid[self.agent_pos] == UP and action != UP or
                 self.grid[self.agent_pos] == DOWN and action != DOWN
             ):  # fmt: skip
-                pass  # fail to move in one-direction cell
+                pass  # fail to move in one-direction tile
             else:
                 self.agent_pos = _move(
                     self.agent_pos[0],
@@ -389,14 +390,14 @@ class Gridworld(gym.Env):
         # draw tiles
         for y in range(self.n_rows):
             for x in range(self.n_cols):
-                pos = (x * self.cell_size[0], y * self.cell_size[1])
-                border = pygame.Rect(pos, tuple(cs * 1.01 for cs in self.cell_size))
-                rect = pygame.Rect(pos, tuple(cs * 0.99 for cs in self.cell_size))
+                pos = (x * self.tile_size[0], y * self.tile_size[1])
+                border = pygame.Rect(pos, tuple(cs * 1.01 for cs in self.tile_size))
+                rect = pygame.Rect(pos, tuple(cs * 0.99 for cs in self.tile_size))
 
                 # draw background
                 pygame.draw.rect(self.window_surface, WHITE, border)
 
-                # mask unobservable cells with white noise
+                # mask unobservable tiles with white noise
                 if not (
                     y >= self.agent_pos[0] - self.view_radius and
                     y <= self.agent_pos[0] + self.view_radius and
@@ -408,10 +409,10 @@ class Gridworld(gym.Env):
                         for j in range(grain):
                             rect = pygame.Rect(
                                 (
-                                    pos[0] + i / grain * self.cell_size[0],
-                                    pos[1] + j / grain * self.cell_size[1],
+                                    pos[0] + i / grain * self.tile_size[0],
+                                    pos[1] + j / grain * self.tile_size[1],
                                 ),
-                                tuple(cs / grain for cs in self.cell_size)
+                                tuple(cs / grain for cs in self.tile_size)
                             )
                             random_color = self.np_random.random(3) * 255
                             random_color = [(random_color * (0.2989, 0.5870, 0.1140)).sum()] * 3  # grayscale
@@ -437,28 +438,28 @@ class Gridworld(gym.Env):
                 if (y, x) == self.agent_pos:
                     pygame.draw.ellipse(self.window_surface, BLUE, rect)
 
-                # draw arrow for one-direction cell
+                # draw arrow for one-direction tile
                 if grid[y][x] in [LEFT, RIGHT, UP, DOWN]:
                     if grid[y][x] == LEFT:
-                        start_pos = (pos[0] + self.cell_size[0], pos[1] + self.cell_size[1] / 2)
-                        end_pos = (pos[0] + self.cell_size[0] / 2, pos[1] + self.cell_size[1] / 2)
-                        arr_width = -(-self.cell_size[1] // 3)
+                        start_pos = (pos[0] + self.tile_size[0], pos[1] + self.tile_size[1] / 2)
+                        end_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1] / 2)
+                        arr_width = -(-self.tile_size[1] // 3)
                     elif grid[y][x] == DOWN:
-                        start_pos = (pos[0] + self.cell_size[0] / 2, pos[1])
-                        end_pos = (pos[0] + self.cell_size[0] / 2, pos[1] + self.cell_size[1] / 2)
-                        arr_width = -(-self.cell_size[0] // 3)
+                        start_pos = (pos[0] + self.tile_size[0] / 2, pos[1])
+                        end_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1] / 2)
+                        arr_width = -(-self.tile_size[0] // 3)
                     elif grid[y][x] == RIGHT:
-                        start_pos = (pos[0], pos[1] + self.cell_size[1] / 2)
-                        end_pos = (pos[0] + self.cell_size[0] / 2, pos[1] + self.cell_size[1] / 2)
-                        arr_width = -(-self.cell_size[1] // 3)
+                        start_pos = (pos[0], pos[1] + self.tile_size[1] / 2)
+                        end_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1] / 2)
+                        arr_width = -(-self.tile_size[1] // 3)
                     elif grid[y][x] == UP:
-                        start_pos = (pos[0] + self.cell_size[0] / 2, pos[1] + self.cell_size[1])
-                        end_pos = (pos[0] + self.cell_size[0] / 2, pos[1] + self.cell_size[1] / 2)
-                        arr_width = -(-self.cell_size[0] // 3)
+                        start_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1])
+                        end_pos = (pos[0] + self.tile_size[0] / 2, pos[1] + self.tile_size[1] / 2)
+                        arr_width = -(-self.tile_size[0] // 3)
                     else:
                         pass
                     pygame.draw.polygon(self.window_surface, GRAY, (start_pos, end_pos), arr_width)
-                    arr_pos = arrow_head(end_pos, [cs / 2 for cs in self.cell_size], grid[y][x])
+                    arr_pos = arrow_head(end_pos, [cs / 2 for cs in self.tile_size], grid[y][x])
                     pygame.draw.polygon(self.window_surface, GRAY, arr_pos, 0)
 
             # draw action arrow
@@ -468,34 +469,34 @@ class Gridworld(gym.Env):
 
                 if self.last_action == STAY:
                     pos = (
-                        x * self.cell_size[0] + self.cell_size[0] / 4,
-                        y * self.cell_size[1] + self.cell_size[1] / 4,
+                        x * self.tile_size[0] + self.tile_size[0] / 4,
+                        y * self.tile_size[1] + self.tile_size[1] / 4,
                     )
-                    rect = pygame.Rect(pos, tuple(cs * 0.5 for cs in self.cell_size))
+                    rect = pygame.Rect(pos, tuple(cs * 0.5 for cs in self.tile_size))
                     pygame.draw.ellipse(self.window_surface, ORANGE, rect)
                 else:
                     pos = (
-                        x * self.cell_size[0] + self.cell_size[0] / 2,
-                        y * self.cell_size[1] + self.cell_size[1] / 2,
+                        x * self.tile_size[0] + self.tile_size[0] / 2,
+                        y * self.tile_size[1] + self.tile_size[1] / 2,
                     )
                     if self.last_action == LEFT:
-                        end_pos = (pos[0] - self.cell_size[0] / 4, pos[1])
-                        arr_width = -(-self.cell_size[1] // 6)
+                        end_pos = (pos[0] - self.tile_size[0] / 4, pos[1])
+                        arr_width = -(-self.tile_size[1] // 6)
                     elif self.last_action == DOWN:
-                        end_pos = (pos[0], pos[1] + self.cell_size[1] / 4)
-                        arr_width = -(-self.cell_size[0] // 6)
+                        end_pos = (pos[0], pos[1] + self.tile_size[1] / 4)
+                        arr_width = -(-self.tile_size[0] // 6)
                     elif self.last_action == RIGHT:
-                        end_pos = (pos[0] + self.cell_size[0] / 4, pos[1])
-                        arr_width = -(-self.cell_size[1] // 6)
+                        end_pos = (pos[0] + self.tile_size[0] / 4, pos[1])
+                        arr_width = -(-self.tile_size[1] // 6)
                     elif self.last_action == UP:
-                        end_pos = (pos[0], pos[1] - self.cell_size[1] / 4)
-                        arr_width = -(-self.cell_size[0] // 6)
+                        end_pos = (pos[0], pos[1] - self.tile_size[1] / 4)
+                        arr_width = -(-self.tile_size[0] // 6)
                     else:
                         raise ValueError("illegal action")
 
                     pygame.draw.polygon(self.window_surface, ORANGE, (pos, end_pos), arr_width)
                     arr_pos = arrow_head(
-                        end_pos, [cs / 5 for cs in self.cell_size], self.last_action
+                        end_pos, [cs / 5 for cs in self.tile_size], self.last_action
                     )
                     pygame.draw.polygon(self.window_surface, ORANGE, arr_pos, 0)
 
@@ -533,15 +534,18 @@ class GridworldMiddleStart(Gridworld):
 
 class GridworldRandomStart(Gridworld):
     """
-    Like Gridworld, but the agent can start anywhere.
+    Like Gridworld, but the agent can start anywhere (except in wall tiles).
     """
 
     def _reset(self, seed: int = None, **kwargs):
         Gridworld._reset(self, seed=seed, **kwargs)
-        self.agent_pos = (
-            self.np_random.integers(0, self.n_rows),
-            self.np_random.integers(0, self.n_cols),
-        )
+        while True:
+            self.agent_pos = (
+                self.np_random.integers(0, self.n_rows),
+                self.np_random.integers(0, self.n_cols),
+            )
+            if self.grid[self.agent_pos] != WALL:
+                break
         return self.get_state(), {}
 
 
@@ -551,8 +555,8 @@ class RiverSwim(Gridworld):
     Implementation according to https://rlgammazero.github.io/docs/2020_AAAI_tut_part1.pdf
 
     One-dimensional grid with positive rewards at its ends, 0.01 in the leftmost
-    cell and 1 in the rightmost.
-    The agent starts either in the 2nd or 3rd leftmost cell, the only actions are
+    tile and 1 in the rightmost.
+    The agent starts either in the 2nd or 3rd leftmost tile, the only actions are
     LEFT and RIGHT, and the transition is stochastic.
 
     This is an infinite horizon MDP, there is no terminal state.
@@ -567,7 +571,7 @@ class RiverSwim(Gridworld):
 
     def _reset(self, seed: int = None, **kwargs):
         Gridworld._reset(self, seed=seed, **kwargs)
-        self.agent_pos = (0, self.np_random.integers(1, 3))  # init either in 2nd or 3rd cell
+        self.agent_pos = (0, self.np_random.integers(1, 3))  # init either in 2nd or 3rd tile
         return self.get_state(), {}
 
     def _step(self, action: int):
@@ -589,7 +593,7 @@ class RiverSwim(Gridworld):
         if action == RIGHT:
             if state == first:
                 if r < 0.4:
-                    action = LEFT  # or stay, is equivalent
+                    action = LEFT  # or stay, it's equivalent
             elif state == last:
                 if r < 0.4:
                     action = LEFT
