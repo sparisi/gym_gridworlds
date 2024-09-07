@@ -45,11 +45,11 @@ env.reset()
 env.step(1) # DOWN
 env.render()
 ```
-to render the `DangerMaze-6x6-v0` gridworld (left figure).
+to render the `DangerMaze-6x6-v0` gridworld (right figure).
 
 <p align="center">
   <img src="figures/gridworld_penalty_3x3.png" height=200 alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="figures/gridworld_full_5x5.png" height=200 alt="Gridworld Full">
+  <img src="figures/gridworld_full_5x5.png" height=200 alt="Gridworld Full"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="figures/gridworld_danger_maze_6x6.png" height=200 alt="Gridworld Full">
 </p>
 
@@ -94,10 +94,10 @@ env.render()
 
 ## Default MDP (`Gridworld` Class)
 
-#### Action Space
+#### <ins>Action Space</ins>
 The action is discrete in the range `{0, 4}` for `{LEFT, DOWN, RIGHT, UP, STAY}`.
 
-#### Observation Space
+#### <ins>Observation Space</ins>
 The observation is discrete in the range `{0, size - 1}`.
 Each integer denotes the current location of the agent.
 For example, in a 3x3 grid the states are
@@ -112,13 +112,12 @@ To use pixel observations, make the environment with the `render_mode=rgb_array`
 To have partially-observable pixels, pass `view_radius=1` (or any positive integer).
 
 
-#### Starting State
+#### <ins>Starting State</ins>
 The episode starts with the agent at the top-left tile. Make new classes for
 different starting states. For example, in `GridworldMiddleStart` the agent starts
 in the middle of the grid, while in `GridworldRandomStart` it starts in a random tile.
 
-#### Transition
-Walls cannot be stepped on.  
+#### <ins>Transition</ins>
 By default, the transition is deterministic. It can be made stochastic by
 passing `random_action_prob`. This is the probability that the action will
 be random. For example, if `random_action_prob=0.1` there is a 10% chance
@@ -126,19 +125,19 @@ that the agent will do a random action instead of doing the one passed to
 `self.step(action)`.  
 If the agent is in a "quicksand" tile, any action will fail with 90% probability.
 
-#### Rewards
+#### <ins>Rewards</ins>
 - Doing `STAY` at the goal: +1
 - Doing `STAY` at a distracting goal: 0.1
 - Any action in penalty tiles: -10
 - Any action in small penalty tiles: -0.1
-- Walking on a `PIT` tile: -100
+- Walking on a pit tile: -100
 - Otherwise: 0
 
-White noise can be added to all rewards by passing `reward_noise_std`.
-White noise can be added to all NONZERO rewards by passing `nonzero_reward_noise_std`.
+White noise can be added to all rewards by passing `reward_noise_std`,
+or only to nonzero rewards with `nonzero_reward_noise_std`.
 
-#### Episode End
+#### <ins>Episode End</ins>
 By default, an episode ends if any of the following happens:
 - A positive reward is collected (termination),
-- Moving to a PIT tile (termination),
+- Walking on a pit tile (termination),
 - The length of the episode is `max_episode_steps` (truncation).

@@ -198,7 +198,7 @@ class Gridworld(gym.Env):
     - Doing STAY at a distracting goal: 0.1
     - Any action in penalty tiles: -10
     - Any action in small penalty tiles: -0.1
-    - Walking on a PIT tile: -100
+    - Walking on a pit tile: -100
     - Otherwise: 0
 
     White noise can be added to all rewards by passing 'reward_noise_std'.
@@ -207,7 +207,7 @@ class Gridworld(gym.Env):
     ## Episode End
     By default, an episode ends if any of the following happens:
     - A positive reward is collected (termination),
-    - Moving to a PIT tile (termination),
+    - Walking on a pit tile (termination),
     - The length of the episode is max_episode_steps (truncation).
 
     ## Rendering
