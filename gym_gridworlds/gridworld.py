@@ -18,12 +18,14 @@ GOOD = 10
 BAD = 11
 BAD_SMALL = 12
 WALL = -3
+PIT = -4
 
 REWARDS = defaultdict(lambda: 0)
 REWARDS[GOOD] = 1
 REWARDS[BAD] = -10
 REWARDS[GOOD_SMALL] = 0.1
 REWARDS[BAD_SMALL] = -0.1
+REWARDS[PIT] = -100
 
 # rendering colors
 RED = (255, 0, 0)
@@ -36,6 +38,7 @@ PALE_YELLOW = (255, 255, 155)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (100, 100, 100)
+PURPLE = (102, 51, 153)
 
 GRIDS = {
     "river_swim_6": [
@@ -110,6 +113,19 @@ GRIDS = {
         [EMPTY, LEFT, DOWN, RIGHT, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
+    "4x12_cliffwalk": [
+        [EMPTY, PIT, PIT, PIT, PIT, PIT, PIT, PIT, PIT, PIT, PIT, GOOD],
+        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+    ],
+    "6x6_danger_maze": [
+        [EMPTY, PIT, PIT, PIT, EMPTY, EMPTY],
+        [EMPTY, EMPTY, BAD, BAD, EMPTY, WALL],
+        [EMPTY, PIT, EMPTY, WALL, EMPTY, WALL],
+        [EMPTY, BAD, EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, EMPTY, PIT, PIT, GOOD],
+    ],
 }
 
 
@@ -182,6 +198,7 @@ class Gridworld(gym.Env):
     - Doing STAY at a distracting goal: 0.1
     - Any action in penalty tiles: -10
     - Any action in small penalty tiles: -0.1
+    - Walking on a PIT tile: -100
     - Otherwise: 0
 
     White noise can be added to all rewards by passing 'reward_noise_std'.
@@ -190,13 +207,15 @@ class Gridworld(gym.Env):
     ## Episode End
     By default, an episode ends if any of the following happens:
     - A positive reward is collected (termination),
+    - Moving to a PIT tile (termination),
     - The length of the episode is max_episode_steps (truncation).
 
     ## Rendering
     Human mode renders the environment as a grid with colored tiles.
 
     - Black: empty tiles
-    - White: walls
+    - White: pits
+    - Purple: walls
     - Black with gray arrow: empty one-direction tile
     - Green: goal
     - Pale green: distracting goal
@@ -312,8 +331,11 @@ class Gridworld(gym.Env):
                     self.n_cols
                 )  # fmt: skip
 
-            if self.grid[self.agent_pos] == WALL:
-                self.agent_pos = self.last_pos  # can't move on walls
+            if self.grid[self.agent_pos] == PIT:
+                terminated = True  # agent dies
+                reward = REWARDS[PIT]
+            elif self.grid[self.agent_pos] == WALL:
+                self.agent_pos = self.last_pos  # can't walk on walls
 
         return self.get_state(), reward, terminated, False, {}
 
@@ -434,6 +456,8 @@ class Gridworld(gym.Env):
                 elif grid[y][x] == QCKSND:
                     pygame.draw.rect(self.window_surface, PALE_YELLOW, rect)
                 elif grid[y][x] == WALL:
+                    pygame.draw.rect(self.window_surface, PURPLE, rect)
+                elif grid[y][x] == PIT:
                     pygame.draw.rect(self.window_surface, WHITE, rect)
                 elif grid[y][x] in [EMPTY, LEFT, RIGHT, UP, DOWN]:
                     pygame.draw.rect(self.window_surface, BLACK, rect)
@@ -538,7 +562,7 @@ class GridworldMiddleStart(Gridworld):
 
 class GridworldRandomStart(Gridworld):
     """
-    Like Gridworld, but the agent can start anywhere (except in wall tiles).
+    Like Gridworld, but the agent can start anywhere (except in wall and pit tiles).
     """
 
     def _reset(self, seed: int = None, **kwargs):
@@ -548,7 +572,7 @@ class GridworldRandomStart(Gridworld):
                 self.np_random.integers(0, self.n_rows),
                 self.np_random.integers(0, self.n_cols),
             )
-            if self.grid[self.agent_pos] != WALL:
+            if self.grid[self.agent_pos] not in [WALL, PIT]:
                 break
         return self.get_state(), {}
 

@@ -1,8 +1,13 @@
 ## Overview
 
-Generic implementation of a gridworld environment for reinforcement learning based on [gymnasium](https://github.com/Farama-Foundation/Gymnasium).  
-The default class `Gridworld` implements a "go-to goal" task where the agent has five actions (left, right, up, down, stay) and default transition function (e.g., doing "stay" in goal states ends the episode).  
-You can change actions and transition function by implementing more classes. For example, in `RiverSwim` there are only two actions and no terminal state.  
+Generic implementation of a gridworld environment for reinforcement learning
+based on [gymnasium](https://github.com/Farama-Foundation/Gymnasium).  
+The default class `Gridworld` implements a "go-to goal" task where the agent has
+five actions (left, right, up, down, stay) and default transition function
+(e.g., doing "stay" in goal states ends the episode).  
+You can change actions and transition function by implementing more classes.
+For example, in `RiverSwim` there are only two actions and no terminal state.
+
 
 
 ## Install and Examples
@@ -13,6 +18,7 @@ pip install -e .
 ```
 
 Run `python` and then
+
 ```python
 import gymnasium
 env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
@@ -21,8 +27,8 @@ env.step(1) # DOWN
 env.step(4) # STAY
 env.render()
 ```
+to render the `Penalty-3x3-v0` gridworld (left figure),
 
-to render the `Penalty-3x3-v0` gridworld (left figure), and
 ```python
 import gymnasium
 env = gymnasium.make("Gym-Gridworlds/Full-5x5-v0", render_mode="human")
@@ -30,16 +36,26 @@ env.reset()
 env.step(1) # DOWN
 env.render()
 ```
+to render the `Full-5x5-v0` gridworld (middle figure), and
 
-to render the `Full-5x5-v0` gridworld (right figure).
+```python
+import gymnasium
+env = gymnasium.make("Gym-Gridworlds/DangerMaze-6x6-v0", render_mode="human")
+env.reset()
+env.step(1) # DOWN
+env.render()
+```
+to render the `DangerMaze-6x6-v0` gridworld (left figure).
 
 <p align="center">
   <img src="figures/gridworld_penalty_3x3.png" height=200 alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="figures/gridworld_full_5x5.png" height=200 alt="Gridworld Full">
+  <img src="figures/gridworld_danger_maze_6x6.png" height=200 alt="Gridworld Full">
 </p>
 
 - Black tiles are empty,
-- White tiles are walls (the agent cannot step on them),
+- White tiles are pits (walking on them yields a large negative reward and the episode ends),
+- Purple tiles are walls (the agent cannot step on them),
 - Black tiles with gray arrows are tiles where the agent can move only in one direction (other actions will fail),
 - Red tiles give negative rewards,
 - Green tiles give positive rewards (the brighter, the higher),
@@ -115,6 +131,7 @@ If the agent is in a "quicksand" tile, any action will fail with 90% probability
 - Doing `STAY` at a distracting goal: 0.1
 - Any action in penalty tiles: -10
 - Any action in small penalty tiles: -0.1
+- Walking on a `PIT` tile: -100
 - Otherwise: 0
 
 White noise can be added to all rewards by passing `reward_noise_std`.
@@ -123,4 +140,5 @@ White noise can be added to all NONZERO rewards by passing `nonzero_reward_noise
 #### Episode End
 By default, an episode ends if any of the following happens:
 - A positive reward is collected (termination),
+- Moving to a PIT tile (termination),
 - The length of the episode is `max_episode_steps` (truncation).

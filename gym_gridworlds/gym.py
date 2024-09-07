@@ -135,3 +135,21 @@ def register_envs():
             "grid": "river_swim_6",
         },
     )
+
+    register(
+        id="CliffWalk-4x12-v0",
+        entry_point="gym_gridworlds.gridworld:Gridworld",
+        max_episode_steps=200,
+        kwargs={
+            "grid": "4x12_cliffwalk",
+        },
+    )
+
+    register(
+        id="DangerMaze-6x6-v0",
+        entry_point="gym_gridworlds.gridworld:Gridworld",
+        max_episode_steps=200,
+        kwargs={
+            "grid": "6x6_danger_maze",
+        },
+    )
