@@ -148,8 +148,18 @@ For example, in a 3x3 grid the states are
  6 7 8
 ```
 
-To use pixel observations, make the environment with the `render_mode=rgb_array` argument.  
-To have partially-observable pixels, pass `view_radius=1` (or any positive integer).
+If you prefer to observe the `(row, col)` index of the current position of the
+agent, make the environment with the `coordinate_observation=True` argument.
+
+To use classic RGB pixel observations, make the environment with the
+`render_mode=rgb_array`.
+Pixel observations can be made partial by passing `view_radius`. For example,
+if `view_radius=1` the rendering will show the content of only the tiles
+around the agent, while all other tiles will be filled with white noise.
+
+Finally, you can also use binary observations by making the environment with
+the `render_mode=binary` argument. Observations will be a matrix of 0s
+and one 1 corresponding to the position of the agent.
 
 
 #### <ins>Starting State</ins>
@@ -158,7 +168,7 @@ different starting states. For example, in `GridworldMiddleStart` the agent star
 in the middle of the grid, while in `GridworldRandomStart` it starts in a random tile.
 
 #### <ins>Transition</ins>
-By default, the transition is deterministic except in quicksand tiles, 
+By default, the transition is deterministic except in quicksand tiles,
 where any action fails with 90% probability (the agent does not move).  
 Transition can be made stochastic everywhere by passing `random_action_prob`.
 This is the probability that the action will be random.
