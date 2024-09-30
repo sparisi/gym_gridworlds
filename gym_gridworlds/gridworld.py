@@ -265,7 +265,15 @@ class Gridworld(gym.Env):
         self.nonzero_reward_noise_std = nonzero_reward_noise_std
 
         self.n_rows, self.n_cols = self.grid.shape
-        self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
+        if self.coordinate_observation:
+            self.observation_space = gym.spaces.Box(
+                low=np.array([0.0, 0.0]),
+                high=np.array([self.n_cols, self.n_rows]),
+                dtype=np.float32,
+            )
+        else:
+            self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
+
         self.action_space = gym.spaces.Discrete(5)
         self.agent_pos = None
         self.last_action = None
@@ -288,7 +296,7 @@ class Gridworld(gym.Env):
 
     def get_state(self):
         if self.coordinate_observation:
-            return np.asarray(self.agent_pos)
+            return np.array(self.agent_pos, dtype=np.float32)
         else:
             return np.ravel_multi_index(self.agent_pos, (self.n_rows, self.n_cols))
 
