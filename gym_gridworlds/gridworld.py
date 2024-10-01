@@ -268,7 +268,7 @@ class Gridworld(gym.Env):
         if self.coordinate_observation:
             self.observation_space = gym.spaces.Box(
                 low=np.array([0.0, 0.0]),
-                high=np.array([self.n_cols, self.n_rows]),
+                high=np.array([self.n_rows, self.n_cols]),
                 dtype=np.float32,
             )
         else:
