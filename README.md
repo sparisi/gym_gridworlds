@@ -31,12 +31,12 @@ to render the `Penalty-3x3-v0` gridworld (left figure),
 
 ```python
 import gymnasium
-env = gymnasium.make("Gym-Gridworlds/Full-5x5-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 env.render()
 ```
-to render the `Full-5x5-v0` gridworld (middle figure), and
+to render the `Full-4x5-v0` gridworld (middle figure), and
 
 ```python
 import gymnasium
@@ -49,7 +49,7 @@ to render the `DangerMaze-6x6-v0` gridworld (right figure).
 
 <p align="center">
   <img src="figures/gridworld_penalty_3x3.png" height=200 alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="figures/gridworld_full_5x5.png" height=200 alt="Gridworld Full"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="figures/gridworld_full_4x5.png" height=200 alt="Gridworld Full"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="figures/gridworld_danger_maze_6x6.png" height=200 alt="Gridworld Full">
 </p>
 
@@ -68,7 +68,7 @@ It is also possible to add noise to the transition and the reward functions.
 For example, in the following environment
 ```python
 import gymnasium
-env = gymnasium.make("Gym-Gridworlds/Full-5x5-v0", random_action_prob=0.1, reward_noise_std=0.05)
+env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", random_action_prob=0.1, reward_noise_std=0.05)
 ```
 the agent's action will fail with 10% probability and a random one will be performed instead,
 and Gaussian noise with 0.05 standard deviation is added to the reward.
@@ -76,18 +76,18 @@ and Gaussian noise with 0.05 standard deviation is added to the reward.
 You can also turn the MDP into a POMDP and learn from partially-observable pixels
 by passing the `view_radius` argument. This way, only the tiles close to the agent
 will be visible while far away tiles will be masked by white noise. For example,
-this is the partially-observable version of the `Full-5x5-v0` gridworld above.
+this is the partially-observable version of the `Full-4x5-v0` gridworld above.
 
 ```python
 import gymnasium
-env = gymnasium.make("Gym-Gridworlds/Full-5x5-v0", render_mode="human", view_radius=1)
+env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human", view_radius=1)
 env.reset()
 env.step(1) # DOWN
 env.render()
 ```
 
 <p align="center">
-  <img src="figures/gridworld_full_5x5_partial.png" height=200 alt="Gridworld Full">
+  <img src="figures/gridworld_full_4x5_partial.png" height=200 alt="Gridworld Full">
 </p>
 
 

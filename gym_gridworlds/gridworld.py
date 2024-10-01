@@ -89,7 +89,7 @@ GRIDS = {
         [EMPTY, QCKSND, GOOD_SMALL, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY],
     ],
-    "5x5_full": [
+    "4x5_full": [
         [EMPTY, EMPTY, GOOD_SMALL, BAD, GOOD],
         [EMPTY, EMPTY, BAD, EMPTY, EMPTY],
         [RIGHT, EMPTY, QCKSND, GOOD_SMALL, EMPTY],
