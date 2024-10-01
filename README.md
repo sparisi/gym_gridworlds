@@ -1,12 +1,14 @@
 ## Overview
 
-Generic implementation of a gridworld environment for reinforcement learning
-based on [gymnasium](https://github.com/Farama-Foundation/Gymnasium).  
+Minimalistic implementation of gridworlds based on
+[gymnasium](https://github.com/Farama-Foundation/Gymnasium), useful for quickly
+testing and prototyping reinforcement learning algorithms (both tabular and with
+function approximation).  
 The default class `Gridworld` implements a "go-to goal" task where the agent has
 five actions (left, right, up, down, stay) and default transition function
 (e.g., doing "stay" in goal states ends the episode).  
 You can change actions and transition function by implementing more classes.
-For example, in `RiverSwim` there are only two actions and no terminal state.
+For example, in `RiverSwim` there are only two actions and no terminal state.  
 
 
 
