@@ -292,7 +292,10 @@ class Gridworld(gym.Env):
         )  # fmt: skip
 
     def set_state(self, state):
-        self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
+        if self.coordinate_observation:
+            self.agent_pos = tuple(np.array(state).ravel())
+        else:
+            self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
 
     def get_state(self):
         if self.coordinate_observation:
@@ -626,9 +629,9 @@ class RiverSwim(Gridworld):
         return self.get_state(), {}
 
     def _step(self, action: int):
-        state = self.get_state()
+        state = np.ravel_multi_index(self.agent_pos, (self.n_rows, self.n_cols))
         first = 0
-        last = self.observation_space.n - 1
+        last = self.n_rows * self.n_cols - 1
 
         # Map action to match Gridworld notation
         if action == 0:
