@@ -13,7 +13,7 @@ def register_envs():
 
     register(
         id="Empty-2x2-v0",
-        entry_point="gym_gridworlds.gridworld:Gridworld",
+        entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
         max_episode_steps=10,
         kwargs={
             "grid": "2x2_empty",
@@ -22,7 +22,7 @@ def register_envs():
 
     register(
         id="Empty-3x3-v0",
-        entry_point="gym_gridworlds.gridworld:Gridworld",
+        entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
         max_episode_steps=50,
         kwargs={
             "grid": "3x3_empty",
