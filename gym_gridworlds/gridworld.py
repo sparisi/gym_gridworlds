@@ -217,6 +217,10 @@ class Gridworld(gym.Env):
     White noise can be added to all rewards by passing `reward_noise_std`,
     or only to nonzero rewards with `nonzero_reward_noise_std`.
 
+    An auxiliary negative reward based on the Manhattan distance to the closest
+    goal can be added by passing `distance_reward=True`. The distance is scaled
+    according to the size of the grid.
+
     ## Episode End
     By default, an episode ends if any of the following happens:
     - A positive reward is collected (termination),
@@ -249,6 +253,7 @@ class Gridworld(gym.Env):
     def __init__(
         self,
         grid: str,
+        distance_reward: Optional[bool] = False,
         coordinate_observation: Optional[bool] = False,
         render_mode: Optional[str] = None,
         random_action_prob: Optional[float] = 0.0,
@@ -263,6 +268,7 @@ class Gridworld(gym.Env):
         self.random_action_prob = random_action_prob
         self.reward_noise_std = reward_noise_std
         self.nonzero_reward_noise_std = nonzero_reward_noise_std
+        self.distance_reward = distance_reward
 
         self.n_rows, self.n_cols = self.grid.shape
         if self.coordinate_observation:
@@ -340,6 +346,12 @@ class Gridworld(gym.Env):
             reward += self.np_random.normal() * self.reward_noise_std
         if reward != 0.0 and self.nonzero_reward_noise_std > 0.0:
             reward += self.np_random.normal() * self.nonzero_reward_noise_std
+
+        if self.distance_reward:
+            closest_goal = np.abs(
+                np.argwhere(self.grid == GOOD) - self.agent_pos
+            ).sum(1).min()
+            reward -= closest_goal / (self.n_rows * self.n_cols)
 
         if self.grid[self.agent_pos] == QCKSND and self.np_random.random() > 0.1:
             pass  # fail to move in quicksand

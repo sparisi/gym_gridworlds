@@ -194,6 +194,10 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 White noise can be added to all rewards by passing `reward_noise_std`,
 or only to nonzero rewards with `nonzero_reward_noise_std`.
 
+An auxiliary negative reward based on the Manhattan distance to the closest goal
+can be added by passing `distance_reward=True`. The distance is scaled
+according to the size of the grid.
+
 #### <ins>Episode End</ins>
 By default, an episode ends if any of the following happens:
 - A positive reward is collected (termination),
