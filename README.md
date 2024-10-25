@@ -113,7 +113,7 @@ GRIDS["5x5_wall"] = [
 ]
 ```
 
-2. Register the environment in `gym_gridworlds/gym.py`, for example
+2. Register the environment in `gym_gridworlds/__init__.py`, for example
 ```python
 register(
     id="Wall-5x5-v0",
