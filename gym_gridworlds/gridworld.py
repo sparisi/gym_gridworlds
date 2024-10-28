@@ -206,7 +206,7 @@ class Gridworld(gym.Env):
     All types of observations can be made noisy by making the environment with
     `observation_noise=0.2` (or any other float in `[0, 1)`).
     For default, coordinate, and binary observations: the float represents the
-    probability that the position observed by the agent will be random.
+    probability that the position observed by the agent will be random.  
     For RGB observations: the float represents the probability that a pixel will
     be white noise.
 

@@ -98,8 +98,8 @@ env.render()
 </p>
 
 Finally, you can have noisy observations by passing `observation_noise=0.2`.  
-For default, coordinate, and binary observations: the float represents the
-probability that the position observed by the agent will be random.
+For default observations: the float represents the probability that the position
+observed by the agent will be random.  
 For RGB observations: the float represents the probability that a pixel will
 be white noise, as shown below.
 
@@ -163,7 +163,7 @@ env.render()
 The action is discrete in the range `{0, 4}` for `{LEFT, DOWN, RIGHT, UP, STAY}`.
 
 #### <ins>Observation Space</ins>
-#### Default
+<strong>Default</strong>  
 The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
 Each integer denotes the current location of the agent.
 For example, in a 3x3 grid the states are
@@ -172,25 +172,25 @@ For example, in a 3x3 grid the states are
  3 4 5
  6 7 8
 
-#### Coordinate
+<strong>Coordinate</strong>  
 If you prefer to observe the `(row, col)` index of the current position of the
 agent, make the environment with the `coordinate_observation=True` argument.
 
-#### RGB
+<strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with
 `render_mode=rgb_array`.
 
-#### Partial RGB
+<strong>Partial RGB</strong>  
 Pixel observations can be made partial by passing `view_radius`. For example,
 if `view_radius=1` the rendering will show the content of only the tiles
 around the agent, while all other tiles will be filled with white noise.
 
-#### Binary
+<strong>Binary</strong>  
 Finally, you can also use binary observations by making the environment with
 the `render_mode=binary` argument. Observations will be a matrix of 0s
 and one 1 corresponding to the position of the agent.
 
-#### Noisy Observations
+<strong>Noisy Observations</strong>  
 All types of observations can be made noisy by making the environment with
 `observation_noise=0.2` (or any other float in `[0, 1)`).
 For default, coordinate, and binary observations: the float represents the
@@ -220,11 +220,11 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 - Walking on a pit tile: -100
 - Otherwise: 0
 
-#### Noisy Rewards
+<strong>Noisy Rewards</strong>  
 White noise can be added to all rewards by passing `reward_noise_std`,
 or only to nonzero rewards with `nonzero_reward_noise_std`.
 
-#### Auxiliary Rewards
+<strong>Auxiliary Rewards</strong>  
 An auxiliary negative reward based on the Manhattan distance to the closest
 goal can be added by passing `distance_reward=True`. The distance is scaled
 according to the size of the grid.
