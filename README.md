@@ -94,10 +94,27 @@ env.render()
 ```
 
 <p align="center">
-  <img src="figures/gridworld_full_4x5_partial.png" height=200 alt="Gridworld Full">
+  <img src="figures/gridworld_full_4x5_partial.png" height=200 alt="Gridworld Full Partial">
 </p>
 
+Finally, you can have noisy observations by passing `observation_noise=0.2`.  
+For default, coordinate, and binary observations: the float represents the
+probability that the position observed by the agent will be random.
+For RGB observations: the float represents the probability that a pixel will
+be white noise, as shown below.
 
+```python
+import gymnasium
+import gym_gridworlds
+env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human", observation_noise=0.2)
+env.reset()
+env.step(1) # DOWN
+env.render()
+```
+
+<p align="center">
+  <img src="figures/gridworld_full_4x5_noisy.png" height=200 alt="Gridworld Full Noisy">
+</p>
 
 
 ## Make Your Own Gridworld
@@ -146,28 +163,40 @@ env.render()
 The action is discrete in the range `{0, 4}` for `{LEFT, DOWN, RIGHT, UP, STAY}`.
 
 #### <ins>Observation Space</ins>
-The observation is discrete in the range `{0, size - 1}`.
+#### Default
+The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
 Each integer denotes the current location of the agent.
 For example, in a 3x3 grid the states are
 
-```
  0 1 2
  3 4 5
  6 7 8
-```
 
+#### Coordinate
 If you prefer to observe the `(row, col)` index of the current position of the
 agent, make the environment with the `coordinate_observation=True` argument.
 
-To use classic RGB pixel observations, make the environment with the
+#### RGB
+To use classic RGB pixel observations, make the environment with
 `render_mode=rgb_array`.
+
+#### Partial RGB
 Pixel observations can be made partial by passing `view_radius`. For example,
 if `view_radius=1` the rendering will show the content of only the tiles
 around the agent, while all other tiles will be filled with white noise.
 
+#### Binary
 Finally, you can also use binary observations by making the environment with
 the `render_mode=binary` argument. Observations will be a matrix of 0s
 and one 1 corresponding to the position of the agent.
+
+#### Noisy Observations
+All types of observations can be made noisy by making the environment with
+`observation_noise=0.2` (or any other float in `[0, 1)`).
+For default, coordinate, and binary observations: the float represents the
+probability that the position observed by the agent will be random.
+For RGB observations: the float represents the probability that a pixel will
+be white noise.
 
 
 #### <ins>Starting State</ins>
@@ -191,11 +220,13 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 - Walking on a pit tile: -100
 - Otherwise: 0
 
+#### Noisy Rewards
 White noise can be added to all rewards by passing `reward_noise_std`,
 or only to nonzero rewards with `nonzero_reward_noise_std`.
 
-An auxiliary negative reward based on the Manhattan distance to the closest goal
-can be added by passing `distance_reward=True`. The distance is scaled
+#### Auxiliary Rewards
+An auxiliary negative reward based on the Manhattan distance to the closest
+goal can be added by passing `distance_reward=True`. The distance is scaled
 according to the size of the grid.
 
 #### <ins>Episode End</ins>
