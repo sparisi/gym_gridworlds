@@ -159,38 +159,39 @@ env.render()
 
 ## Default MDP (`Gridworld` Class)
 
-#### <ins>Action Space</ins>
+### <ins>Action Space</ins>
 The action is discrete in the range `{0, 4}` for `{LEFT, DOWN, RIGHT, UP, STAY}`.
 
-#### <ins>Observation Space</ins>
-<strong>Default</strong>  
+### <ins>Observation Space</ins>
+&#10148; <strong>Default</strong>  
 The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
 Each integer denotes the current location of the agent.
 For example, in a 3x3 grid the states are
-
+```
  0 1 2
  3 4 5
  6 7 8
+```
 
-<strong>Coordinate</strong>  
+&#10148; <strong>Coordinate</strong>  
 If you prefer to observe the `(row, col)` index of the current position of the
 agent, make the environment with the `coordinate_observation=True` argument.
 
-<strong>RGB</strong>  
+&#10148; <strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with
 `render_mode=rgb_array`.
 
-<strong>Partial RGB</strong>  
+&#10148; <strong>Partial RGB</strong>  
 Pixel observations can be made partial by passing `view_radius`. For example,
 if `view_radius=1` the rendering will show the content of only the tiles
 around the agent, while all other tiles will be filled with white noise.
 
-<strong>Binary</strong>  
+&#10148; <strong>Binary</strong>  
 Finally, you can also use binary observations by making the environment with
 the `render_mode=binary` argument. Observations will be a matrix of 0s
 and one 1 corresponding to the position of the agent.
 
-<strong>Noisy Observations</strong>  
+&#10148; <strong>Noisy Observations</strong>  
 All types of observations can be made noisy by making the environment with
 `observation_noise=0.2` (or any other float in `[0, 1)`).
 For default, coordinate, and binary observations: the float represents the
@@ -198,13 +199,12 @@ probability that the position observed by the agent will be random.
 For RGB observations: the float represents the probability that a pixel will
 be white noise.
 
-
-#### <ins>Starting State</ins>
+### <ins>Starting State</ins>
 The episode starts with the agent at the top-left tile. Make new classes for
 different starting states. For example, in `GridworldMiddleStart` the agent starts
 in the middle of the grid, while in `GridworldRandomStart` it starts in a random tile.
 
-#### <ins>Transition</ins>
+### <ins>Transition</ins>
 By default, the transition is deterministic except in quicksand tiles,
 where any action fails with 90% probability (the agent does not move).  
 Transition can be made stochastic everywhere by passing `random_action_prob`.
@@ -212,7 +212,7 @@ This is the probability that the action will be random.
 For example, if `random_action_prob=0.1` there is a 10% chance that the agent
 will do a random action instead of doing the one passed to `self.step(action)`.  
 
-#### <ins>Rewards</ins>
+### <ins>Rewards</ins>
 - Doing `STAY` at the goal: +1
 - Doing `STAY` at a distracting goal: 0.1
 - Any action in penalty tiles: -10
@@ -220,16 +220,16 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 - Walking on a pit tile: -100
 - Otherwise: 0
 
-<strong>Noisy Rewards</strong>  
+&#10148; <strong>Noisy Rewards</strong>  
 White noise can be added to all rewards by passing `reward_noise_std`,
 or only to nonzero rewards with `nonzero_reward_noise_std`.
 
-<strong>Auxiliary Rewards</strong>  
+&#10148; <strong>Auxiliary Rewards</strong>  
 An auxiliary negative reward based on the Manhattan distance to the closest
 goal can be added by passing `distance_reward=True`. The distance is scaled
 according to the size of the grid.
 
-#### <ins>Episode End</ins>
+### <ins>Episode End</ins>
 By default, an episode ends if any of the following happens:
 - A positive reward is collected (termination),
 - Walking on a pit tile (termination),
