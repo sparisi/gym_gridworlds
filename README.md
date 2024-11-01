@@ -97,9 +97,9 @@ env.render()
   <img src="figures/gridworld_full_4x5_partial.png" height=200 alt="Gridworld Full Partial">
 </p>
 
-Finally, you can have noisy observations by passing `observation_noise=0.2`.  
+Finally, you can have noisy observations by passing `observation_noise=0.2` (or any float between 0 and 1).  
 For default observations: the float represents the probability that the position
-observed by the agent will be random.  
+observed by the agent (i.e., the one returned by `env.step(action)`) will be random.  
 For RGB observations: the float represents the probability that a pixel will
 be white noise, as shown below.
 
@@ -179,7 +179,7 @@ agent, make the environment with the `coordinate_observation=True` argument.
 
 &#10148; <strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with
-`render_mode=rgb_array`.
+`render_mode="rgb_array"`.
 
 &#10148; <strong>Partial RGB</strong>  
 Pixel observations can be made partial by passing `view_radius`. For example,
@@ -188,7 +188,7 @@ around the agent, while all other tiles will be filled with white noise.
 
 &#10148; <strong>Binary</strong>  
 Finally, you can also use binary observations by making the environment with
-the `render_mode=binary` argument. Observations will be a matrix of 0s
+the `render_mode="binary"` argument. Observations will be a matrix of 0s
 and one 1 corresponding to the position of the agent.
 
 &#10148; <strong>Noisy Observations</strong>  
