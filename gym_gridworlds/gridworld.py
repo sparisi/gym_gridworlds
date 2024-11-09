@@ -190,7 +190,7 @@ class Gridworld(gym.Env):
 
     #### RGB
     To use classic RGB pixel observations, make the environment with
-    `render_mode=rgb_array`.
+    `render_mode="rgb_array"`.
 
     #### Partial RGB
     Pixel observations can be made partial by passing `view_radius`. For example,
@@ -199,14 +199,14 @@ class Gridworld(gym.Env):
 
     #### Binary
     Finally, you can also use binary observations by making the environment with
-    the `render_mode=binary` argument. Observations will be a matrix of 0s
+    the `render_mode="binary"` argument. Observations will be a matrix of 0s
     and one 1 corresponding to the position of the agent.
 
     #### Noisy Observations
     All types of observations can be made noisy by making the environment with
     `observation_noise=0.2` (or any other float in `[0, 1)`).
     For default, coordinate, and binary observations: the float represents the
-    probability that the position observed by the agent will be random.  
+    probability that the position observed by the agent will be random.
     For RGB observations: the float represents the probability that a pixel will
     be white noise.
 
