@@ -156,7 +156,7 @@ register(
 #### HARD ENVIRONMENTS ####
 
 register(
-    id="Gym-Gridworlds/DirtCleaning-6x6-v0",
+    id="Gym-Gridworlds/DirtCleaning-10x10-v0",
     entry_point="gym_gridworlds.gridworld_hard:DirtCleaning",
     max_episode_steps=500,
     kwargs={
