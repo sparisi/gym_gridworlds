@@ -202,14 +202,6 @@ class Gridworld(gym.Env):
     the `render_mode="binary"` argument. Observations will be a matrix of 0s
     and one 1 corresponding to the position of the agent.
 
-    #### Noisy Observations
-    All types of observations can be made noisy by making the environment with
-    `observation_noise=0.2` (or any other float in `[0, 1)`).
-    For default, coordinate, and binary observations: the float represents the
-    probability that the position observed by the agent will be random.
-    For RGB observations: the float represents the probability that a pixel will
-    be white noise.
-
     ## Starting State
     The episode starts with the agent at the top-left tile.
 
@@ -276,7 +268,6 @@ class Gridworld(gym.Env):
         random_action_prob: Optional[float] = 0.0,
         reward_noise_std: Optional[float] = 0.0,
         nonzero_reward_noise_std: Optional[float] = 0.0,
-        observation_noise: Optional[float] = 0.0,
         view_radius: Optional[int] = 99999,
         **kwargs,
     ):
@@ -286,10 +277,6 @@ class Gridworld(gym.Env):
         self.random_action_prob = random_action_prob
         self.reward_noise_std = reward_noise_std
         self.nonzero_reward_noise_std = nonzero_reward_noise_std
-        assert (
-            observation_noise < 1.0 and observation_noise >= 0.0
-        ), "observation_noise must be in [0.0, 1.0)"
-        self.observation_noise = observation_noise
         self.distance_reward = distance_reward
 
         self.n_rows, self.n_cols = self.grid.shape
@@ -326,17 +313,10 @@ class Gridworld(gym.Env):
             self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
 
     def get_state(self):
-        pos = self.agent_pos
-        if self.observation_noise > 0.0:
-            if self.np_random.random() < self.observation_noise:
-                pos = (
-                    self.np_random.integers(0, self.n_rows),
-                    self.np_random.integers(0, self.n_cols),
-                )  # note that the random position can be also a wall or a pit
         if self.coordinate_observation:
-            return np.array(pos, dtype=np.float32)
+            return np.array(self.agent_pos, dtype=np.float32)
         else:
-            return np.ravel_multi_index(pos, (self.n_rows, self.n_cols))
+            return np.ravel_multi_index(self.agent_pos, (self.n_rows, self.n_cols))
 
     def reset(self, seed: int = None, **kwargs):
         super().reset(seed=seed, **kwargs)
@@ -560,23 +540,6 @@ class Gridworld(gym.Env):
                         end_pos, [cs / 2 for cs in t_size], self.grid[y][x]
                     )
                     pygame.draw.polygon(self.window_surface, GRAY, arr_pos, 0)
-
-                # some pixels are white noise
-                if self.observation_noise > 0.0:
-                    grain = 5
-                    for i in range(grain):
-                        for j in range(grain):
-                            if self.np_random.random() < self.observation_noise:
-                                rect = pygame.Rect(
-                                    (
-                                        pos[0] + i / grain * t_size[0],
-                                        pos[1] + j / grain * t_size[1],
-                                    ),
-                                    tuple(cs / grain for cs in t_size),
-                                )
-                                rnd_color = self.np_random.random(3) * 255
-                                rnd_color = [(rnd_color * (0.2989, 0.5870, 0.1140)).sum()] * 3  # grayscale
-                                pygame.draw.rect(self.window_surface, rnd_color, rect)
 
             # draw last action
             if self.last_pos is not None:

@@ -97,25 +97,6 @@ env.render()
   <img src="figures/gridworld_full_4x5_partial.png" height=200 alt="Gridworld Full Partial">
 </p>
 
-Finally, you can have noisy observations by passing `observation_noise=0.2` (or any float between 0 and 1).  
-For default observations: the float represents the probability that the position
-observed by the agent (i.e., the one returned by `env.step(action)`) will be random.  
-For RGB observations: the float represents the probability that a pixel will
-be white noise, as shown below.
-
-```python
-import gymnasium
-import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human", observation_noise=0.2)
-env.reset()
-env.step(1) # DOWN
-env.render()
-```
-
-<p align="center">
-  <img src="figures/gridworld_full_4x5_noisy.png" height=200 alt="Gridworld Full Noisy">
-</p>
-
 
 ## Make Your Own Gridworld
 
@@ -190,14 +171,6 @@ around the agent, while all other tiles will be filled with white noise.
 Finally, you can also use binary observations by making the environment with
 the `render_mode="binary"` argument. Observations will be a matrix of 0s
 and one 1 corresponding to the position of the agent.
-
-&#10148; <strong>Noisy Observations</strong>  
-All types of observations can be made noisy by making the environment with
-`observation_noise=0.2` (or any other float in `[0, 1)`).
-For default, coordinate, and binary observations: the float represents the
-probability that the position observed by the agent will be random.
-For RGB observations: the float represents the probability that a pixel will
-be white noise.
 
 ### <ins>Starting State</ins>
 The episode starts with the agent at the top-left tile. Make new classes for
