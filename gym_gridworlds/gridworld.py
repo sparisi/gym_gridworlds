@@ -614,13 +614,12 @@ class GridworldRandomStart(Gridworld):
 
     def _reset(self, seed: int = None, **kwargs):
         Gridworld._reset(self, seed=seed, **kwargs)
-        while True:
-            self.agent_pos = (
-                self.np_random.integers(0, self.n_rows),
-                self.np_random.integers(0, self.n_cols),
-            )
-            if self.grid[self.agent_pos] not in [WALL, PIT]:
-                break
+        allowed_tiles = np.argwhere(
+            np.logical_and(self.grid != WALL, self.grid != PIT),
+        )
+        n_allowed = allowed_tiles.shape[0]
+        assert n_allowed != 0, "there is no tile where the agent can spawn"
+        self.agent_pos = tuple(allowed_tiles[self.np_random.integers(n_allowed)])
         return self.get_state(), {}
 
 
