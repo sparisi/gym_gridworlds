@@ -312,7 +312,7 @@ class Gridworld(gym.Env):
         self.clock = None
         self.window_size = (
             min(64 * self.n_cols, 512),
-            min(64 * self.n_rows, 512)
+            min(64 * self.n_rows, 512),
         )  # fmt: skip
         self.padding = (
             max(self.window_size[0] // 20, 1),
@@ -672,12 +672,10 @@ class Gridworld(gym.Env):
             pygame.event.pump()
             pygame.display.update()
             self.clock.tick(self.metadata["render_fps"])
-
         elif mode == "rgb_array":
             return np.transpose(
                 np.array(pygame.surfarray.pixels3d(self.window_surface)), axes=(1, 0, 2)
             )
-
         else:
             raise NotImplementedError
 
