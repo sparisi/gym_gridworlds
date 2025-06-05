@@ -314,9 +314,13 @@ class Gridworld(gym.Env):
             min(64 * self.n_cols, 512),
             min(64 * self.n_rows, 512)
         )  # fmt: skip
+        self.padding = (
+            max(self.window_size[0] // 20, 1),
+            max(self.window_size[1] // 20, 1),
+        )  # fmt: skip
         self.tile_size = (
-            self.window_size[0] // self.n_cols,
-            self.window_size[1] // self.n_rows,
+            (self.window_size[0] - self.padding[0] * 2) // self.n_cols,
+            (self.window_size[1] - self.padding[1] * 2) // self.n_rows,
         )  # fmt: skip
 
     def set_state(self, state):
@@ -478,17 +482,32 @@ class Gridworld(gym.Env):
                     (end_pos[0], end_pos[1] - size[1]),
                 )
 
-        t_size = self.tile_size  # short notation
+        t_size = self.tile_size  # abbrev
+        border_pixels = 1
+
+        # draw background (shift according to padding)
+        background_init = (
+            self.padding[0] - border_pixels,
+            self.padding[1] - border_pixels,
+        )
+        background_end = (
+            t_size[0] * self.n_cols + border_pixels * 2,
+            t_size[1] * self.n_rows + border_pixels * 2,
+        )
+        background = pygame.Rect(background_init, background_end)
+        pygame.draw.rect(self.window_surface, WHITE, background)
 
         # draw tiles
         for y in range(self.n_rows):
             for x in range(self.n_cols):
-                pos = (x * t_size[0], y * t_size[1])
-                border = pygame.Rect(pos, tuple(cs * 1.01 for cs in t_size))
-                rect = pygame.Rect(pos, tuple(cs * 0.99 for cs in t_size))
-
-                # draw background
-                pygame.draw.rect(self.window_surface, WHITE, border)
+                pos = (
+                    x * t_size[0] + self.padding[0],
+                    y * t_size[1] + self.padding[1],
+                )  # shift according to padding
+                rect = pygame.Rect(
+                    tuple(p + border_pixels for p in pos),
+                    tuple(ts - border_pixels * 2 for ts in t_size),
+                )  # shift according to white edge
 
                 # mask unobservable tiles with white noise
                 if not (
@@ -536,28 +555,54 @@ class Gridworld(gym.Env):
                 # draw arrow for one-directional tiles
                 if self.grid[y][x] in [LEFT, RIGHT, UP, DOWN]:
                     if self.grid[y][x] == LEFT:
-                        start_pos = (pos[0] + t_size[0], pos[1] + t_size[1] / 2)
-                        end_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1] / 2)
-                        arrow_width = -(-t_size[1] // 3)
+                        start_pos = (
+                            pos[0] + t_size[0] - border_pixels - 1,
+                            pos[1] + t_size[1] / 2,
+                        )
+                        end_pos = (
+                            pos[0] + t_size[0] / 2,
+                            pos[1] + t_size[1] / 2,
+                        )
+                        arrow_width = t_size[1] // 3
                     elif self.grid[y][x] == DOWN:
-                        start_pos = (pos[0] + t_size[0] / 2, pos[1])
-                        end_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1] / 2)
-                        arrow_width = -(-t_size[0] // 3)
+                        start_pos = (
+                            pos[0] + t_size[0] / 2,
+                            pos[1] + border_pixels,
+                        )
+                        end_pos = (
+                            pos[0] + t_size[0] / 2,
+                            pos[1] + t_size[1] / 2,
+                        )
+                        arrow_width = t_size[0] // 3
                     elif self.grid[y][x] == RIGHT:
-                        start_pos = (pos[0], pos[1] + t_size[1] / 2)
-                        end_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1] / 2)
-                        arrow_width = -(-t_size[1] // 3)
+                        start_pos = (
+                            pos[0] + border_pixels,
+                            pos[1] + t_size[1] / 2
+                        )
+                        end_pos = (
+                            pos[0] + t_size[0] / 2,
+                            pos[1] + t_size[1] / 2,
+                        )
+                        arrow_width = t_size[1] // 3
                     elif self.grid[y][x] == UP:
-                        start_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1])
-                        end_pos = (pos[0] + t_size[0] / 2, pos[1] + t_size[1] / 2)
-                        arrow_width = -(-t_size[0] // 3)
+                        start_pos = (
+                            pos[0] + t_size[0] / 2,
+                            pos[1] + t_size[1] - border_pixels - 1,
+                        )
+                        end_pos = (
+                            pos[0] + t_size[0] / 2,
+                            pos[1] + t_size[1] / 2,
+                        )
+                        arrow_width = t_size[0] // 3
                     else:
                         pass
                     pygame.draw.polygon(
                         self.window_surface, GRAY, (start_pos, end_pos), arrow_width
                     )
                     arr_pos = arrow_head(
-                        end_pos, [cs / 2 for cs in t_size], self.grid[y][x]
+                        end_pos,
+                        [cs / 2 - border_pixels - 1 for cs in t_size],
+                        self.grid[y][x],
                     )
                     pygame.draw.polygon(self.window_surface, GRAY, arr_pos, 0)
 
@@ -584,31 +629,42 @@ class Gridworld(gym.Env):
                 y = self.last_pos[0]
 
                 if self.last_action == STAY:  # draw circle
-                    pos = (x * t_size[0] + t_size[0] / 4, y * t_size[1] + t_size[1] / 4)
+                    pos = (
+                        x * t_size[0] + t_size[0] / 4 + self.padding[0] + border_pixels,
+                        y * t_size[1] + t_size[1] / 4 + self.padding[1] + border_pixels,
+                    )
                     rect = pygame.Rect(pos, tuple(cs * 0.5 for cs in t_size))
                     pygame.draw.ellipse(self.window_surface, ORANGE, rect)
                 else:  # draw arrow
-                    pos = (x * t_size[0] + t_size[0] / 2, y * t_size[1] + t_size[1] / 2)
+                    pos = (
+                        x * t_size[0] + t_size[0] / 2 + self.padding[0] + border_pixels,
+                        y * t_size[1] + t_size[1] / 2 + self.padding[1] + border_pixels,
+                    )
                     if self.last_action == LEFT:
                         end_pos = (pos[0] - t_size[0] / 4, pos[1])
-                        arrow_width = -(-t_size[1] // 6)
+                        arrow_width = t_size[1] // 6
                     elif self.last_action == DOWN:
                         end_pos = (pos[0], pos[1] + t_size[1] / 4)
-                        arrow_width = -(-t_size[0] // 6)
+                        arrow_width = t_size[0] // 6
                     elif self.last_action == RIGHT:
                         end_pos = (pos[0] + t_size[0] / 4, pos[1])
-                        arrow_width = -(-t_size[1] // 6)
+                        arrow_width = t_size[1] // 6
                     elif self.last_action == UP:
                         end_pos = (pos[0], pos[1] - t_size[1] / 4)
-                        arrow_width = -(-t_size[0] // 6)
+                        arrow_width = t_size[0] // 6
                     else:
                         raise ValueError("illegal action")
 
                     pygame.draw.polygon(
-                        self.window_surface, ORANGE, (pos, end_pos), arrow_width
+                        self.window_surface,
+                        ORANGE,
+                        (pos, end_pos),
+                        arrow_width - border_pixels * 2,
                     )
                     arr_pos = arrow_head(
-                        end_pos, [cs / 5 for cs in t_size], self.last_action
+                        end_pos,
+                        [cs / 5 - border_pixels for cs in t_size],
+                        self.last_action,
                     )
                     pygame.draw.polygon(self.window_surface, ORANGE, arr_pos, 0)
 

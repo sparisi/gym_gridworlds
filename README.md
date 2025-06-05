@@ -133,7 +133,7 @@ GRIDS["5x5_wall"] = [
 2. Register the environment in `gym_gridworlds/__init__.py`, for example
 ```python
 register(
-    id="Wall-5x5-v0",
+    id="Gym-Gridworlds/Wall-5x5-v0",
     entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
     max_episode_steps=50,
     kwargs={
