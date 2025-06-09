@@ -33,7 +33,7 @@ REWARDS[PIT] = -100
 RED = (255, 0, 0)
 PALE_RED = (155, 0, 0)
 GREEN = (0, 255, 0)
-PALE_GREEN = (0, 155, 0)
+DARK_GREEN = (0, 155, 0)
 BLUE = (0, 0, 255)
 ORANGE = (255, 175, 0)
 PALE_YELLOW = (255, 255, 155)
@@ -534,7 +534,7 @@ class Gridworld(gym.Env):
                 if self.grid[y][x] == GOOD:
                     pygame.draw.rect(self.window_surface, GREEN, rect)
                 elif self.grid[y][x] == GOOD_SMALL:
-                    pygame.draw.rect(self.window_surface, PALE_GREEN, rect)
+                    pygame.draw.rect(self.window_surface, DARK_GREEN, rect)
                 elif self.grid[y][x] == BAD:
                     pygame.draw.rect(self.window_surface, RED, rect)
                 elif self.grid[y][x] == BAD_SMALL:
