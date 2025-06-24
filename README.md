@@ -28,7 +28,6 @@ env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 env.step(4) # STAY
-env.render()
 ```
 to render the `Penalty-3x3-v0` gridworld (left figure),
 
@@ -38,7 +37,6 @@ import gym_gridworlds
 env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
-env.render()
 ```
 to render the `Full-4x5-v0` gridworld (middle figure), and
 
@@ -48,7 +46,6 @@ import gym_gridworlds
 env = gymnasium.make("Gym-Gridworlds/DangerMaze-6x6-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
-env.render()
 ```
 to render the `DangerMaze-6x6-v0` gridworld (right figure).
 
@@ -90,7 +87,6 @@ import gym_gridworlds
 env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human", view_radius=1)
 env.reset()
 env.step(1) # DOWN
-env.render()
 ```
 
 <p align="center">
@@ -109,7 +105,6 @@ import gym_gridworlds
 env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human", observation_noise=0.2)
 env.reset()
 env.step(1) # DOWN
-env.render()
 ```
 
 <p align="center">
@@ -148,7 +143,6 @@ import gymnasium
 import gym_gridworlds
 env = gymnasium.make("Gym-Gridworlds/Wall-5x5-v0", grid="5x5_wall", render_mode="human")
 env.reset(seed=42)
-env.render()
 ```
 
 <p align="center">
