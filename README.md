@@ -1,7 +1,7 @@
 ## Overview
 
 Minimalistic implementation of gridworlds based on
-[gymnasium](https://github.com/Farama-Foundation/Gymnasium), useful for quickly
+[Gymnasium](https://github.com/Farama-Foundation/Gymnasium), useful for quickly
 testing and prototyping reinforcement learning algorithms (both tabular and with
 function approximation).  
 The default class `Gridworld` implements a "go-to-goal" task where the agent has
