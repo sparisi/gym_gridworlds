@@ -73,7 +73,7 @@ to render the `DangerMaze-6x6-v0` gridworld (right figure).
     </td>
     <td>
       <p>
-        The smaller pre-built environment is <code>Gym-Gridworlds/Empty-2x2-v0</code> (on the left):
+        The smallest pre-built environment is <code>Gym-Gridworlds/Empty-2x2-v0</code> (on the left):
         there are only 4 states, 5 actions, and the initial position is random.
         It is the simplest environment you can use to debug your algorithm.
       </p>
@@ -108,7 +108,7 @@ env.step(1) # DOWN
 ```
 
 <p align="center">
-  <img src="figures/gridworld_full_4x5_partial.png" height=200 alt="Gridworld Full Partial">
+  <img src="figures/gridworld_full_4x5_partial.png" width="200" alt="Gridworld Full Partial">
 </p>
 
 Finally, you can have noisy observations by passing `observation_noise=0.2` (or any float between 0 and 1).  
@@ -126,7 +126,7 @@ env.step(1) # DOWN
 ```
 
 <p align="center">
-  <img src="figures/gridworld_full_4x5_noisy.png" height=200 alt="Gridworld Full Noisy">
+  <img src="figures/gridworld_full_4x5_noisy.png" width="200" alt="Gridworld Full Noisy">
 </p>
 
 
@@ -164,7 +164,7 @@ env.reset(seed=42)
 ```
 
 <p align="center">
-  <img src="figures/gridworld_wall_5x5.png" height=200 alt="Gridworld Full">
+  <img src="figures/gridworld_wall_5x5.png" width="200" alt="Gridworld Full">
 </p>
 
 
