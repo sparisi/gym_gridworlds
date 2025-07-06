@@ -66,7 +66,21 @@ to render the `DangerMaze-6x6-v0` gridworld (right figure).
 - The orange arrow denotes the agent's last action,
 - The orange dot denotes that the agent did not try to move with its last action.
 
-It is also possible to add noise to the transition and the reward functions.
+<table>
+  <tr>
+    <td><img src="figures/gridworld_empty_2x2.png" width="20"></td>
+    <td>
+      The simplest environment is `Gym-Gridworlds/Empty-2x2-v0` (on the left):
+      there are only 4 states, 5 actions, and the initial position is random.
+      It is the simplest environment you can use to debug your algorithm.
+    </td>
+  </tr>
+</table>
+
+
+## Optional Features
+
+It is possible to add noise to the transition and the reward functions.
 For example, in the following environment
 ```python
 import gymnasium
