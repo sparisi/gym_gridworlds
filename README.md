@@ -50,9 +50,9 @@ env.step(1) # DOWN
 to render the `DangerMaze-6x6-v0` gridworld (right figure).
 
 <p align="center">
-  <img src="figures/gridworld_penalty_3x3.png" height=200 alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="figures/gridworld_full_4x5.png" height=200 alt="Gridworld Full"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="figures/gridworld_danger_maze_6x6.png" height=200 alt="Gridworld Full">
+  <img src="figures/gridworld_penalty_3x3.png" width="170" alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="figures/gridworld_full_4x5.png" width="220" alt="Gridworld Full"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="figures/gridworld_danger_maze_6x6.png" width="215" alt="Gridworld Full">
 </p>
 
 - Black tiles are empty,
@@ -68,11 +68,15 @@ to render the `DangerMaze-6x6-v0` gridworld (right figure).
 
 <table>
   <tr>
-    <td><img src="figures/gridworld_empty_2x2.png" width="20"></td>
+    <td align="center">
+      <img src="figures/gridworld_empty_2x2.png" width="120">
+    </td>
     <td>
-      The simplest environment is `Gym-Gridworlds/Empty-2x2-v0` (on the left):
-      there are only 4 states, 5 actions, and the initial position is random.
-      It is the simplest environment you can use to debug your algorithm.
+      <p>
+        The smaller pre-built environment is <code>Gym-Gridworlds/Empty-2x2-v0</code> (on the left):
+        there are only 4 states, 5 actions, and the initial position is random.
+        It is the simplest environment you can use to debug your algorithm.
+      </p>
     </td>
   </tr>
 </table>
