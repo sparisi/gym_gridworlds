@@ -173,6 +173,7 @@ env.reset(seed=42)
 
 ### <ins>Action Space</ins>
 The action is discrete in the range `{0, 4}` for `{LEFT, DOWN, RIGHT, UP, STAY}`.
+It is possible to remove the `STAY` action by making the environment with `no_stay=True`.
 
 ### <ins>Observation Space</ins>
 &#10148; <strong>Default</strong>  
@@ -231,6 +232,10 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 - Any action in small penalty tiles: -0.1
 - Walking on a pit tile: -100
 - Otherwise: 0
+
+If the environment is made with `no_stay=True`, then the agent receives positive
+rewards for any action done in a goal state. Note that the reward still depends
+on the current state and not on the next state.
 
 &#10148; <strong>Noisy Rewards</strong>  
 White noise can be added to all rewards by passing `reward_noise_std`,

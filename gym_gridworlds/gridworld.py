@@ -171,6 +171,8 @@ class Gridworld(gym.Env):
     - 3: Move up
     - 4: Stay (do not move)
 
+    It is possible to remove the `STAY` action by making the environment with `no_stay=True`.
+
     If the agent is in a "quicksand" tile, any action will fail with 90% probability.
 
     ## Observation Space
@@ -229,6 +231,10 @@ class Gridworld(gym.Env):
     - Walking on a pit tile: -100
     - Otherwise: 0
 
+    If the environment is made with `no_stay=True`, then the agent receives positive
+    rewards for any action done in a goal state. Note that the reward still depends
+    on the current state and not on the next state.
+
     #### Noisy Rewards
     White noise can be added to all rewards by passing `reward_noise_std`,
     or only to nonzero rewards with `nonzero_reward_noise_std`.
@@ -270,6 +276,7 @@ class Gridworld(gym.Env):
     def __init__(
         self,
         grid: str,
+        no_stay: Optional[bool] = False,
         distance_reward: Optional[bool] = False,
         coordinate_observation: Optional[bool] = False,
         render_mode: Optional[str] = None,
@@ -282,6 +289,7 @@ class Gridworld(gym.Env):
     ):
         self.grid_key = grid
         self.grid = np.asarray(GRIDS[self.grid_key])
+        self.no_stay = no_stay
         self.coordinate_observation = coordinate_observation
         self.random_action_prob = random_action_prob
         self.reward_noise_std = reward_noise_std
@@ -302,7 +310,7 @@ class Gridworld(gym.Env):
         else:
             self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
-        self.action_space = gym.spaces.Discrete(5)
+        self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
         self.agent_pos = None
         self.last_action = None
 
@@ -370,7 +378,7 @@ class Gridworld(gym.Env):
         terminated = False
         reward = REWARDS[self.grid[self.agent_pos]] * 1.0  # float
         if self.grid[self.agent_pos] in [GOOD, GOOD_SMALL]:
-            if action == STAY:  # positive rewards are collected only with STAY
+            if action == STAY or self.no_stay:  # positive rewards are collected only with STAY
                 terminated = True
             else:
                 reward = 0
@@ -397,6 +405,8 @@ class Gridworld(gym.Env):
             ):  # fmt: skip
                 pass  # fail to move in one-directional tile
             else:
+                if self.no_stay and action == STAY:
+                    raise ValueError("illegal action")
                 self.agent_pos = _move(
                     self.agent_pos[0],
                     self.agent_pos[1],
