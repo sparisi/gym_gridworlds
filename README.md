@@ -34,7 +34,7 @@ to render the `Penalty-3x3-v0` gridworld (left figure),
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 ```
