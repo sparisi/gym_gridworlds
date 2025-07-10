@@ -34,7 +34,7 @@ to render the `Penalty-3x3-v0` gridworld (left figure),
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 ```
@@ -50,9 +50,9 @@ env.step(1) # DOWN
 to render the `DangerMaze-6x6-v0` gridworld (right figure).
 
 <p align="center">
-  <img src="figures/gridworld_penalty_3x3.png" height=200 alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="figures/gridworld_full_4x5.png" height=200 alt="Gridworld Full"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="figures/gridworld_danger_maze_6x6.png" height=200 alt="Gridworld Full">
+  <img src="figures/gridworld_penalty_3x3.png" width="170" alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="figures/gridworld_full_4x5.png" width="220" alt="Gridworld Full"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="figures/gridworld_danger_maze_6x6.png" width="215" alt="Gridworld Full">
 </p>
 
 - Black tiles are empty,
@@ -66,7 +66,25 @@ to render the `DangerMaze-6x6-v0` gridworld (right figure).
 - The orange arrow denotes the agent's last action,
 - The orange dot denotes that the agent did not try to move with its last action.
 
-It is also possible to add noise to the transition and the reward functions.
+<table>
+  <tr>
+    <td align="center">
+      <img src="figures/gridworld_empty_2x2.png" width="120">
+    </td>
+    <td>
+      <p>
+        The smallest pre-built environment is <code>Gym-Gridworlds/Empty-RandomStart-2x2-v0</code> (on the left):
+        there are only 4 states, 5 actions, and the initial position is random.
+        It is the simplest environment you can use to debug your algorithm.
+      </p>
+    </td>
+  </tr>
+</table>
+
+
+## Optional Features
+
+It is possible to add noise to the transition and the reward functions.
 For example, in the following environment
 ```python
 import gymnasium
@@ -90,7 +108,7 @@ env.step(1) # DOWN
 ```
 
 <p align="center">
-  <img src="figures/gridworld_full_4x5_partial.png" height=200 alt="Gridworld Full Partial">
+  <img src="figures/gridworld_full_4x5_partial.png" width="200" alt="Gridworld Full Partial">
 </p>
 
 
@@ -110,11 +128,12 @@ GRIDS["5x5_wall"] = [
 2. Register the environment in `gym_gridworlds/__init__.py`, for example
 ```python
 register(
-    id="Gym-Gridworlds/Wall-5x5-v0",
-    entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
+    id="Gym-Gridworlds/Wall-RandomStart-5x5-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=50,
     kwargs={
         "grid": "5x5_wall",
+        "start_pos": "random",
     },
 )
 ```
@@ -123,12 +142,12 @@ register(
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/Wall-5x5-v0", grid="5x5_wall", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Wall-RandomStart-5x5-v0", grid="5x5_wall", render_mode="human")
 env.reset(seed=42)
 ```
 
 <p align="center">
-  <img src="figures/gridworld_wall_5x5.png" height=200 alt="Gridworld Full">
+  <img src="figures/gridworld_wall_5x5.png" width="200" alt="Gridworld Full">
 </p>
 
 
@@ -137,6 +156,7 @@ env.reset(seed=42)
 
 ### <ins>Action Space</ins>
 The action is discrete in the range `{0, 4}` for `{LEFT, DOWN, RIGHT, UP, STAY}`.
+It is possible to remove the `STAY` action by making the environment with `no_stay=True`.
 
 ### <ins>Observation Space</ins>
 &#10148; <strong>Default</strong>  
@@ -168,9 +188,10 @@ the `render_mode="binary"` argument. Observations will be a matrix of 0s
 and one 1 corresponding to the position of the agent.
 
 ### <ins>Starting State</ins>
-The episode starts with the agent at the top-left tile. Make new classes for
-different starting states. For example, in `GridworldMiddleStart` the agent starts
-in the middle of the grid, while in `GridworldRandomStart` it starts in a random tile.
+By default, the episode starts with the agent at the top-left tile.
+If you want the starting position to be random (any empty tile), make the environment
+with `start_pos="random"`. If you want the agent to start in the middle of the grid,
+make it with `start_pos="middle"`.
 
 ### <ins>Transition</ins>
 By default, the transition is deterministic except in quicksand tiles,
@@ -187,6 +208,13 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 - Any action in small penalty tiles: -0.1
 - Walking on a pit tile: -100
 - Otherwise: 0
+
+If the environment is made with `no_stay=True`, then the agent receives positive
+rewards for any action done in a goal state. Note that the reward still depends
+on the current state and not on the next state.
+
+Positive rewards position can be randomized at every reset by making the
+environment with `random_goals=True`.
 
 &#10148; <strong>Noisy Rewards</strong>  
 White noise can be added to all rewards by passing `reward_noise_std`,

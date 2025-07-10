@@ -129,6 +129,34 @@ GRIDS = {
         [EMPTY, BAD, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, PIT, PIT, GOOD],
     ],
+    "11x11_four_rooms_symmetrical" : [
+        [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, WALL, WALL, EMPTY, WALL, WALL, WALL, EMPTY, WALL, WALL, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, GOOD, WALL],
+        [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
+    ],
+    "13x13_four_rooms_original": [
+        [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, WALL, EMPTY, WALL, WALL, WALL, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, WALL, WALL, EMPTY, WALL, WALL, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, GOOD, WALL],
+        [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
+    ],
 }
 # fmt: on
 
@@ -171,6 +199,8 @@ class Gridworld(gym.Env):
     - 3: Move up
     - 4: Stay (do not move)
 
+    It is possible to remove the `STAY` action by making the environment with `no_stay=True`.
+
     If the agent is in a "quicksand" tile, any action will fail with 90% probability.
 
     ## Observation Space
@@ -203,7 +233,10 @@ class Gridworld(gym.Env):
     and one 1 corresponding to the position of the agent.
 
     ## Starting State
-    The episode starts with the agent at the top-left tile.
+    By default, the episode starts with the agent at the top-left tile.
+    If you want the starting position to be random (any empty tile), make the environment
+    with `start_pos="random"`. If you want the agent to start in the middle of the grid,
+    make it with `start_pos="middle"`.
 
     ## Transition
     By default, the transition is deterministic except in quicksand tiles,
@@ -220,6 +253,13 @@ class Gridworld(gym.Env):
     - Any action in small penalty tiles: -0.1
     - Walking on a pit tile: -100
     - Otherwise: 0
+
+    If the environment is made with `no_stay=True`, then the agent receives positive
+    rewards for any action done in a goal state. Note that the reward still depends
+    on the current state and not on the next state.
+
+    Positive rewards position can be randomized at every reset by making the
+    environment with `random_goals=True`.
 
     #### Noisy Rewards
     White noise can be added to all rewards by passing `reward_noise_std`,
@@ -262,6 +302,9 @@ class Gridworld(gym.Env):
     def __init__(
         self,
         grid: str,
+        start_pos: Optional[str] = "default",
+        random_goals: Optional[bool] = False,
+        no_stay: Optional[bool] = False,
         distance_reward: Optional[bool] = False,
         coordinate_observation: Optional[bool] = False,
         render_mode: Optional[str] = None,
@@ -271,8 +314,11 @@ class Gridworld(gym.Env):
         view_radius: Optional[int] = 99999,
         **kwargs,
     ):
+        self.random_goals = random_goals
+        self.start_pos = start_pos
         self.grid_key = grid
         self.grid = np.asarray(GRIDS[self.grid_key])
+        self.no_stay = no_stay
         self.coordinate_observation = coordinate_observation
         self.random_action_prob = random_action_prob
         self.reward_noise_std = reward_noise_std
@@ -289,7 +335,7 @@ class Gridworld(gym.Env):
         else:
             self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
-        self.action_space = gym.spaces.Discrete(5)
+        self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
         self.agent_pos = None
         self.last_action = None
 
@@ -335,9 +381,39 @@ class Gridworld(gym.Env):
             self.render()
         return obs, reward, terminated, truncated, info
 
+    def _randomize_agent_pos(self):
+        allowed_tiles = np.argwhere(
+            np.logical_and(self.grid != WALL, self.grid != PIT),
+        )
+        n_allowed = allowed_tiles.shape[0]
+        assert n_allowed != 0, "there is no tile where the agent can spawn"
+        self.agent_pos = tuple(allowed_tiles[self.np_random.integers(n_allowed)])
+
+    def _randomize_goals(self):
+        original_grid = self.grid.copy()
+        goals_bool = np.logical_or(self.grid == GOOD, self.grid == GOOD_SMALL)
+        goals = np.argwhere(goals_bool)
+        self.grid[goals_bool] = EMPTY
+        for goal in goals:
+            allowed_tiles = np.argwhere(self.grid == EMPTY)
+            n_allowed = allowed_tiles.shape[0]
+            assert n_allowed != 0, "there is no tile where the agent can spawn"
+            new_goal = allowed_tiles[self.np_random.integers(n_allowed)]
+            self.grid[tuple(new_goal)] = original_grid[tuple(goal)]
+
     def _reset(self, seed: int = None, **kwargs):
         self.grid = np.asarray(GRIDS[self.grid_key])
-        self.agent_pos = (0, 0)
+        if self.random_goals:
+            self._randomize_goals()
+        if self.start_pos == "default":
+            self.agent_pos = (0, 0)
+            assert (
+                self.grid(agent_pos) != WALL and self.grid(agent_pos) != PIT
+            ), "the agent cannot start in a pit or a wall tile"   # fmt: skip
+        elif self.start_pos == "middle":
+            self.agent_pos == (self.n_rows // 2, self.n_cols // 2)
+        elif self.start_pos == "random":
+            self._randomize_agent_pos()
         self.last_action = None
         self.last_pos = None
 
@@ -350,7 +426,7 @@ class Gridworld(gym.Env):
         terminated = False
         reward = REWARDS[self.grid[self.agent_pos]] * 1.0  # float
         if self.grid[self.agent_pos] in [GOOD, GOOD_SMALL]:
-            if action == STAY:  # positive rewards are collected only with STAY
+            if action == STAY or self.no_stay:  # positive rewards are collected only with STAY
                 terminated = True
             else:
                 reward = 0
@@ -377,6 +453,8 @@ class Gridworld(gym.Env):
             ):  # fmt: skip
                 pass  # fail to move in one-directional tile
             else:
+                if self.no_stay and action == STAY:
+                    raise ValueError("illegal action")
                 self.agent_pos = _move(
                     self.agent_pos[0],
                     self.agent_pos[1],
@@ -408,9 +486,9 @@ class Gridworld(gym.Env):
             return self._render_gui(self.render_mode)
 
     def _render_binary(self):
-        obs = np.zeros(self.grid.shape, dtype=np.uint8)
-        obs[self.agent_pos] = 1
-        return obs
+        map_agent = np.zeros(self.grid.shape, dtype=np.uint8)
+        map_agent[self.agent_pos] = 1
+        return map_agent
 
     def _render_gui(self, mode):
         try:
@@ -648,33 +726,6 @@ class Gridworld(gym.Env):
 
             pygame.display.quit()
             pygame.quit()
-
-
-class GridworldMiddleStart(Gridworld):
-    """
-    Like Gridworld, but the agent starts at the center of the grid.
-    """
-
-    def _reset(self, seed: int = None, **kwargs):
-        Gridworld._reset(self, seed=seed, **kwargs)
-        self.agent_pos = (self.n_rows // 2, self.n_cols // 2)
-        return self.get_state(), {}
-
-
-class GridworldRandomStart(Gridworld):
-    """
-    Like Gridworld, but the agent can start anywhere (except in wall and pit tiles).
-    """
-
-    def _reset(self, seed: int = None, **kwargs):
-        Gridworld._reset(self, seed=seed, **kwargs)
-        allowed_tiles = np.argwhere(
-            np.logical_and(self.grid != WALL, self.grid != PIT),
-        )
-        n_allowed = allowed_tiles.shape[0]
-        assert n_allowed != 0, "there is no tile where the agent can spawn"
-        self.agent_pos = tuple(allowed_tiles[self.np_random.integers(n_allowed)])
-        return self.get_state(), {}
 
 
 class RiverSwim(Gridworld):
