@@ -506,9 +506,9 @@ class Gridworld(gym.Env):
             return self._render_gui(self.render_mode)
 
     def _render_binary(self):
-        obs = np.zeros(self.grid.shape, dtype=np.uint8)
-        obs[self.agent_pos] = 1
-        return obs
+        map_agent = np.zeros(self.grid.shape, dtype=np.uint8)
+        map_agent[self.agent_pos] = 1
+        return map_agent
 
     def _render_gui(self, mode):
         try:
