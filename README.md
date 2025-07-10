@@ -34,7 +34,7 @@ to render the `Penalty-3x3-v0` gridworld (left figure),
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/FourRooms-Symmetrical-11x11-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 ```
@@ -73,7 +73,7 @@ to render the `DangerMaze-6x6-v0` gridworld (right figure).
     </td>
     <td>
       <p>
-        The smallest pre-built environment is <code>Gym-Gridworlds/Empty-2x2-v0</code> (on the left):
+        The smallest pre-built environment is <code>Gym-Gridworlds/Empty-RandomStart-2x2-v0</code> (on the left):
         there are only 4 states, 5 actions, and the initial position is random.
         It is the simplest environment you can use to debug your algorithm.
       </p>
@@ -160,7 +160,7 @@ register(
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/Wall-5x5-v0", grid="5x5_wall", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Wall-RandomStart-5x5-v0", grid="5x5_wall", render_mode="human")
 env.reset(seed=42)
 ```
 
