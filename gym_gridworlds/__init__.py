@@ -177,22 +177,26 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/FourRooms-11x11-v0",
-    entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
+    id="Gym-Gridworlds/FourRooms-Symmetrical-11x11-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
         "grid": "11x11_four_rooms_symmetrical",
         "no_stay": True,
+        "start_pos": "random",
+        "random_goals": True,
     },
 )
 
 register(
-    id="Gym-Gridworlds/FourRooms-13x13-v0",
-    entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
+    id="Gym-Gridworlds/FourRooms-Original-13x13-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
         "grid": "13x13_four_rooms_original",
         "no_stay": True,
+        "start_pos": "random",
+        "random_goals": True,
     },
 )
 
