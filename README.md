@@ -34,7 +34,7 @@ to render the `Penalty-3x3-v0` gridworld (left figure),
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 ```
@@ -188,10 +188,11 @@ the `render_mode="binary"` argument. Observations will be a matrix of 0s
 and one 1 corresponding to the position of the agent.
 
 ### <ins>Starting State</ins>
-By default, the episode starts with the agent at the top-left tile.
-If you want the starting position to be random (any empty tile), make the environment
-with `start_pos="random"`. If you want the agent to start in the middle of the grid,
-make it with `start_pos="middle"`.
+By default, the episode starts with the agent at the top-left tile `(0, 0)`.
+You can change it by making the environment with `start_pos=(3, 4)` (or any position you want).
+If you make the environment with `start_pos=None`, the starting position will be random.
+In both cases (fixed and random), the starting position cannot be a tile with
+a wall or a pit.
 
 ### <ins>Transition</ins>
 By default, the transition is deterministic except in quicksand tiles,

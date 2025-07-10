@@ -233,10 +233,11 @@ class Gridworld(gym.Env):
     and one 1 corresponding to the position of the agent.
 
     ## Starting State
-    By default, the episode starts with the agent at the top-left tile.
-    If you want the starting position to be random (any empty tile), make the environment
-    with `start_pos="random"`. If you want the agent to start in the middle of the grid,
-    make it with `start_pos="middle"`.
+    By default, the episode starts with the agent at the top-left tile `(0, 0)`.
+    You can change it by making the environment with `start_pos=(3, 4)` (or any position you want).
+    If you make the environment with `start_pos=None`, the starting position will be random.
+    In both cases (fixed and random), the starting position cannot be a tile with
+    a wall or a pit.
 
     ## Transition
     By default, the transition is deterministic except in quicksand tiles,
@@ -302,7 +303,7 @@ class Gridworld(gym.Env):
     def __init__(
         self,
         grid: str,
-        start_pos: Optional[str] = "default",
+        start_pos: Optional[tuple] = (0, 0),
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
         distance_reward: Optional[bool] = False,
@@ -318,6 +319,17 @@ class Gridworld(gym.Env):
         self.start_pos = start_pos
         self.grid_key = grid
         self.grid = np.asarray(GRIDS[self.grid_key])
+        self.n_rows, self.n_cols = self.grid.shape
+
+        if start_pos is not None:
+            assert (
+                0 <= self.start_pos[0] < self.n_rows and
+                0 <= self.start_pos[1] < self.n_cols
+            ), f"received {self.start_pos} starting position, but bounds are {(self.n_rows, self.n_cols)})"   # fmt: skip
+            assert (
+                self.grid[self.start_pos] not in [WALL, PIT]
+            ), "the agent cannot start in a pit or a wall tile"   # fmt: skip
+
         self.no_stay = no_stay
         self.coordinate_observation = coordinate_observation
         self.random_action_prob = random_action_prob
@@ -325,7 +337,6 @@ class Gridworld(gym.Env):
         self.nonzero_reward_noise_std = nonzero_reward_noise_std
         self.distance_reward = distance_reward
 
-        self.n_rows, self.n_cols = self.grid.shape
         if self.coordinate_observation:
             self.observation_space = gym.spaces.Box(
                 low=np.array([0.0, 0.0]),
@@ -405,15 +416,10 @@ class Gridworld(gym.Env):
         self.grid = np.asarray(GRIDS[self.grid_key])
         if self.random_goals:
             self._randomize_goals()
-        if self.start_pos == "default":
-            self.agent_pos = (0, 0)
-            assert (
-                self.grid(agent_pos) != WALL and self.grid(agent_pos) != PIT
-            ), "the agent cannot start in a pit or a wall tile"   # fmt: skip
-        elif self.start_pos == "middle":
-            self.agent_pos == (self.n_rows // 2, self.n_cols // 2)
-        elif self.start_pos == "random":
+        if self.start_pos is None:
             self._randomize_agent_pos()
+        else:
+            self.agent_pos = self.start_pos
         self.last_action = None
         self.last_pos = None
 
