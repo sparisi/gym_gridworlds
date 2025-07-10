@@ -214,10 +214,11 @@ For RGB observations: the float represents the probability that a pixel will
 be white noise.
 
 ### <ins>Starting State</ins>
-By default, the episode starts with the agent at the top-left tile.
-If you want the starting position to be random (any empty tile), make the environment
-with `start_pos="random"`. If you want the agent to start in the middle of the grid,
-make it with `start_pos="middle"`.
+By default, the episode starts with the agent at the top-left tile `(0, 0)`.
+You can change it by making the environment with `start_pos=(3, 4)` (or any position you want).
+If you make the environment with `start_pos=None`, the starting position will be random.
+In both cases (fixed and random), the starting position cannot be a tile with
+a wall or a pit.
 
 ### <ins>Transition</ins>
 By default, the transition is deterministic except in quicksand tiles,

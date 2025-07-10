@@ -15,7 +15,7 @@ register(
     max_episode_steps=10,
     kwargs={
         "grid": "2x2_empty",
-        "start_pos": "random",
+        "start_pos": None,  # random
     },
 )
 
@@ -25,7 +25,7 @@ register(
     max_episode_steps=50,
     kwargs={
         "grid": "3x3_empty",
-        "start_pos": "random",
+        "start_pos": None,  # random
     },
 )
 
@@ -126,7 +126,7 @@ register(
     kwargs={
         "grid": "4x5_full",
         "random_goals": True,
-        "start_pos": "random",
+        "start_pos": None,  # random
     },
 )
 
@@ -136,7 +136,7 @@ register(
     max_episode_steps=200,
     kwargs={
         "grid": "2x11_two_room_distract",
-        "start_pos": "middle",
+        "start_pos": (1, 5),
     },
 )
 
@@ -183,7 +183,7 @@ register(
     kwargs={
         "grid": "11x11_four_rooms_symmetrical",
         "no_stay": True,
-        "start_pos": "random",
+        "start_pos": None,  # random
         "random_goals": True,
     },
 )
@@ -195,7 +195,7 @@ register(
     kwargs={
         "grid": "13x13_four_rooms_original",
         "no_stay": True,
-        "start_pos": "random",
+        "start_pos": None,  # random
         "random_goals": True,
     },
 )
