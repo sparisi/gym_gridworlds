@@ -303,7 +303,7 @@ class Gridworld(gym.Env):
     """
 
     metadata = {
-        "render_modes": ["human", "rgb_array", "binary", "map"],
+        "render_modes": ["human", "rgb_array", "binary"],
         "render_fps": 30,
     }
 
@@ -410,15 +410,16 @@ class Gridworld(gym.Env):
         self.agent_pos = tuple(allowed_tiles[self.np_random.integers(n_allowed)])
 
     def _randomize_goals(self):
-        goals = np.logical_or(self.grid == GOOD, self.grid == GOOD_SMALL)
-        n_goals = goals.sum()
-        self.grid[goals] = EMPTY
-        for i in range(n_goals):
+        original_grid = self.grid.copy()
+        goals_bool = np.logical_or(self.grid == GOOD, self.grid == GOOD_SMALL)
+        goals = np.argwhere(goals_bool)
+        self.grid[goals_bool] = EMPTY
+        for goal in goals:
             allowed_tiles = np.argwhere(self.grid == EMPTY)
             n_allowed = allowed_tiles.shape[0]
             assert n_allowed != 0, "there is no tile where the agent can spawn"
-            new_goal_pos = tuple(allowed_tiles[self.np_random.integers(n_allowed)])
-            self.grid[new_goal_pos] = GOOD if i == 0 else GOOD_SMALL
+            new_goal = allowed_tiles[self.np_random.integers(n_allowed)]
+            self.grid[tuple(new_goal)] = original_grid[tuple(goal)]
 
     def _reset(self, seed: int = None, **kwargs):
         self.grid = np.asarray(GRIDS[self.grid_key])
@@ -501,20 +502,10 @@ class Gridworld(gym.Env):
             return
         elif self.render_mode == "binary":
             return self._render_binary()
-        elif self.render_mode == "map":
-            return self._render_map()
         else:  # self.render_mode in {"human", "rgb_array"}:
             return self._render_gui(self.render_mode)
 
     def _render_binary(self):
-        obs = np.zeros(self.grid.shape, dtype=np.uint8)
-        obs[self.agent_pos] = 1
-        return obs
-
-    def _render_map(self):
-        map_grid = self.grid.copy()
-        map_agent = np.zeros_like(map_grid)
-
         obs = np.zeros(self.grid.shape, dtype=np.uint8)
         obs[self.agent_pos] = 1
         return obs
