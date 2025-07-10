@@ -10,20 +10,32 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/Empty-2x2-v0",
-    entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
+    id="Gym-Gridworlds/Empty-RandomStart-2x2-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=10,
     kwargs={
         "grid": "2x2_empty",
+        "start_pos": "random",
     },
 )
 
 register(
-    id="Gym-Gridworlds/Empty-3x3-v0",
-    entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
+    id="Gym-Gridworlds/Empty-RandomStart-3x3-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=50,
     kwargs={
         "grid": "3x3_empty",
+        "start_pos": "random",
+    },
+)
+
+register(
+    id="Gym-Gridworlds/Empty-RandomGoal-3x3-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=50,
+    kwargs={
+        "grid": "3x3_empty",
+        "random_goals": True,
     },
 )
 
@@ -108,11 +120,23 @@ register(
 )
 
 register(
+    id="Gym-Gridworlds/Full-RandomGoalAndStart-4x5-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=50,
+    kwargs={
+        "grid": "4x5_full",
+        "random_goals": True,
+        "start_pos": "random",
+    },
+)
+
+register(
     id="Gym-Gridworlds/TwoRoom-Distract-Middle-2x11-v0",
-    entry_point="gym_gridworlds.gridworld:GridworldMiddleStart",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
         "grid": "2x11_two_room_distract",
+        "start_pos": "middle",
     },
 )
 

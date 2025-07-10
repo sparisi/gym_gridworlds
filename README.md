@@ -146,11 +146,12 @@ GRIDS["5x5_wall"] = [
 2. Register the environment in `gym_gridworlds/__init__.py`, for example
 ```python
 register(
-    id="Gym-Gridworlds/Wall-5x5-v0",
-    entry_point="gym_gridworlds.gridworld:GridworldRandomStart",
+    id="Gym-Gridworlds/Wall-RandomStart-5x5-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=50,
     kwargs={
         "grid": "5x5_wall",
+        "start_pos": "random",
     },
 )
 ```
@@ -213,9 +214,10 @@ For RGB observations: the float represents the probability that a pixel will
 be white noise.
 
 ### <ins>Starting State</ins>
-The episode starts with the agent at the top-left tile. Make new classes for
-different starting states. For example, in `GridworldMiddleStart` the agent starts
-in the middle of the grid, while in `GridworldRandomStart` it starts in a random tile.
+By default, the episode starts with the agent at the top-left tile.
+If you want the starting position to be random (any empty tile), make the environment
+with `start_pos="random"`. If you want the agent to start in the middle of the grid,
+make it with `start_pos="middle"`.
 
 ### <ins>Transition</ins>
 By default, the transition is deterministic except in quicksand tiles,
@@ -236,6 +238,9 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 If the environment is made with `no_stay=True`, then the agent receives positive
 rewards for any action done in a goal state. Note that the reward still depends
 on the current state and not on the next state.
+
+Positive rewards position can be randomized at every reset by making the
+environment with `random_goals=True`.
 
 &#10148; <strong>Noisy Rewards</strong>  
 White noise can be added to all rewards by passing `reward_noise_std`,
