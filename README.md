@@ -11,7 +11,6 @@ You can change actions and transition function by implementing more classes.
 For example, in `RiverSwim` there are only two actions and no terminal state.  
 
 
-
 ## Install and Examples
 
 To install the environments run
@@ -83,6 +82,7 @@ to render the `DangerMaze-6x6-v0` gridworld (right figure).
 
 
 ## Optional Features
+
 &#10148; <strong>Noisy Transition and Reward Functions</strong>  
 ```python
 import gymnasium

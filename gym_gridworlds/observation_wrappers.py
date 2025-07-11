@@ -5,8 +5,8 @@ from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL
 
 
 class AddGoalWrapper(gymnasium.ObservationWrapper):
-    """See README.
-    It assumes there is only one goal!
+    """Also returns the position (ravel index) of the agent's goal.
+    The grid must have only one goal.
 
     Example:
 
@@ -14,39 +14,36 @@ class AddGoalWrapper(gymnasium.ObservationWrapper):
     >>> import gym_gridworlds
     >>> from gym_gridworlds.observation_wrappers import AddGoalWrapper
     >>> env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human", random_goals=True)
-    >>> obs, _ = env.reset()
+    >>> obs, _ = env.reset(seed=42)
     >>> print(obs)
     0
     >>> env = AddGoalWrapper(env)
-    >>> obs, _ = env.reset()
+    >>> obs, _ = env.reset(seed=42)
     >>> print(obs)
-    (0, 0)
+    [0, 0]
+    >>> obs, _ = env.reset(seed=24)
+    >>> print(obs)
+    [0, 3]
     """
 
     def __init__(self, env):
         super().__init__(env)
-        self._rows = env.unwrapped.n_rows
-        self._cols = env.unwrapped.n_cols
-        size = self._rows * self._cols
+        assert (
+            (env.unwrapped.grid == GOOD).sum() == 1 and
+            (env.unwrapped.grid == GOOD_SMALL).sum() == 0
+        ), "AddGoalWrapper supports only grids with one goal"  # fmt: skip
+        self._n_rows = env.unwrapped.n_rows
+        self._n_cols = env.unwrapped.n_cols
+        size = self._n_rows * self._n_cols
         self.observation_space = gymnasium.spaces.MultiDiscrete([size, size])
-        self.goal_pos = None
-
-
-    def reset(self, **kwargs):
-        obs, info = self.env.reset(**kwargs)
-        goal_location = np.argwhere(self.env.unwrapped.grid == GOOD)
-        if goal_location.shape[0] > 1:
-            raise NotImplementedError("Only one goal at a time is supported!")
-        self.goal_pos = np.ravel_multi_index(goal_location[0], (self._rows,  self._cols))
-        return [obs, self.goal_pos], info
-
 
     def observation(self, obs):
-        return [obs, self.goal_pos]
+        goal = np.argwhere(self.env.unwrapped.grid == GOOD)[0]
+        return [obs, np.ravel_multi_index(goal, (self._n_rows, self._n_cols))]
 
 
 class CoordinateWrapper(gymnasium.ObservationWrapper):
-    """See README.
+    """Unravels matrix indices into coordinates.
 
     Example:
 
@@ -65,21 +62,20 @@ class CoordinateWrapper(gymnasium.ObservationWrapper):
 
     def __init__(self, env):
         super().__init__(env)
+        self._n_rows = env.unwrapped.n_rows
+        self._n_cols = env.unwrapped.n_cols
         self.observation_space = gymnasium.spaces.Box(
             low=np.array([0, 0]),
-            high=np.array([env.unwrapped.n_rows - 1, env.unwrapped.n_cols - 1]),
+            high=np.array([self._n_rows - 1, self._n_cols - 1]),
             dtype=np.uint8,
         )
 
     def observation(self, obs):
-        return np.unravel_index(
-            obs,
-            (self.env.unwrapped.n_rows, self.env.unwrapped.n_cols),
-        )
+        return np.unravel_index(obs, (self._n_rows, self._n_cols))
 
 
 class MatrixWrapper(gymnasium.ObservationWrapper):
-    """See README.
+    """Binary map of the agent's position.
 
     Example:
 
@@ -100,25 +96,25 @@ class MatrixWrapper(gymnasium.ObservationWrapper):
 
     def __init__(self, env):
         super().__init__(env)
+        self._n_rows = env.unwrapped.n_rows
+        self._n_cols = env.unwrapped.n_cols
         self.observation_space = gymnasium.spaces.Box(
-            shape=env.unwrapped.grid.shape,
+            shape=(self._n_rows, self._n_cols),
             low=0,
             high=1,
             dtype=np.uint8,
         )
 
     def observation(self, obs):
-        position = np.unravel_index(
-            obs,
-            (self.env.unwrapped.n_rows, self.env.unwrapped.n_cols),
-        )
-        map = np.zeros(self.env.unwrapped.grid.shape, dtype=np.uint8)
+        position = np.unravel_index(obs, (self._n_rows, self._n_cols))
+        map = np.zeros((self._n_rows, self._n_cols), dtype=np.uint8)
         map[position] = 1
         return map
 
 
 class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
-    """See README.
+    """Map of the agent's position (first channel) and positive rewards'
+    positions (second channel).
 
     Example:
 
@@ -153,22 +149,20 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
 
     def __init__(self, env):
         super().__init__(env)
-        shp = env.unwrapped.grid.shape + (2,)  # Two channels
+        self._n_rows = env.unwrapped.n_rows
+        self._n_cols = env.unwrapped.n_cols
         self.observation_space = gymnasium.spaces.Box(
-            shape=shp,
+            shape=(self._n_rows, self._n_cols, 2),
             low=0,
             high=1,  # Positive rewards are either 0.1 or 1
             dtype=np.float32,
         )
 
     def observation(self, obs):
-        position = np.unravel_index(
-            obs,
-            (self.env.unwrapped.n_rows, self.env.unwrapped.n_cols),
-        )
-        map = np.zeros(self.env.unwrapped.grid.shape)
+        position = np.unravel_index(obs, (self._n_rows, self._n_cols))
+        map = np.zeros((self._n_rows, self._n_cols))
         map[position] = 1
-        map_rewards = np.zeros(self.env.unwrapped.grid.shape)
+        map_rewards = np.zeros((self._n_rows, self._n_cols))
         map_rewards[self.env.unwrapped.grid == GOOD] = REWARDS[GOOD]
         map_rewards[self.env.unwrapped.grid == GOOD_SMALL] = REWARDS[GOOD_SMALL]
         return np.stack((map, map_rewards), axis=2)
