@@ -208,37 +208,41 @@ class Gridworld(gym.Env):
     #### Default
     The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
     Each integer denotes the current location of the agent.
-    For example, in a 3x3 grid the states are
+    For example, in a 3x3 grid the observations are
 
      0 1 2
      3 4 5
      6 7 8
 
-    #### Coordinate
-    If you prefer to observe the `(row, col)` index of the current position of the
-    agent, make the environment with the `coordinate_observation=True` argument.
+    #### Coordinate Wrapper
+    `gym_gridworlds.observation_wrappers.MatrixCoordinateWrapper(env)` returns
+    matrix coordinates `(row, col)`. In the above example, `obs = 3` becomes `obs = (1, 0)`.
+
+    #### Binary Wrapper
+    `gym_gridworlds.observation_wrappers.MatrixBinaryWrapper(env)` returns a map
+    of the environment with one 1 in the agent's position. In the above example,
+    `obs = 3` becomes
+
+     0 0 0
+     1 0 0
+     0 0 0
 
     #### RGB
     To use classic RGB pixel observations, make the environment with
-    `render_mode="rgb_array"`.
+    `render_mode="rgb_array"` and then wrap it with `gymnasium.wrappers.AddRenderObservation`.
 
     #### Partial RGB
     Pixel observations can be made partial by passing `view_radius`. For example,
     if `view_radius=1` the rendering will show the content of only the tiles
     around the agent, while all other tiles will be filled with white noise.
 
-    #### Binary
-    Finally, you can also use binary observations by making the environment with
-    the `render_mode="binary"` argument. Observations will be a matrix of 0s
-    and one 1 corresponding to the position of the agent.
-
     #### Noisy Observations
     All types of observations can be made noisy by making the environment with
     `observation_noise=0.2` (or any other float in `[0, 1)`).
-    For default, coordinate, and binary observations: the float represents the
-    probability that the position observed by the agent will be random.
-    For RGB observations: the float represents the probability that a pixel will
-    be white noise.
+    For non-pixels observations, the float represents the probability that the
+    position observed by the agent is random.
+    For pixels (RGB) observations: the float represents the probability that a
+    pixel will be white noise.
 
     ## Starting State
     By default, the episode starts with the agent at the top-left tile `(0, 0)`.
@@ -304,7 +308,7 @@ class Gridworld(gym.Env):
     """
 
     metadata = {
-        "render_modes": ["human", "rgb_array", "binary"],
+        "render_modes": ["human", "rgb_array"],
         "render_fps": 30,
     }
 
@@ -315,7 +319,6 @@ class Gridworld(gym.Env):
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
         distance_reward: Optional[bool] = False,
-        coordinate_observation: Optional[bool] = False,
         render_mode: Optional[str] = None,
         random_action_prob: Optional[float] = 0.0,
         reward_noise_std: Optional[float] = 0.0,
@@ -340,22 +343,13 @@ class Gridworld(gym.Env):
             ), "the agent cannot start in a pit or a wall tile"   # fmt: skip
 
         self.no_stay = no_stay
-        self.coordinate_observation = coordinate_observation
         self.random_action_prob = random_action_prob
         self.reward_noise_std = reward_noise_std
         self.nonzero_reward_noise_std = nonzero_reward_noise_std
         assert 0.0 <= observation_noise < 1.0, "observation_noise must be in [0.0, 1.0)"
         self.observation_noise = observation_noise
         self.distance_reward = distance_reward
-
-        if self.coordinate_observation:
-            self.observation_space = gym.spaces.Box(
-                low=np.array([0.0, 0.0]),
-                high=np.array([self.n_rows - 1, self.n_cols - 1]),
-                dtype=np.float32,
-            )
-        else:
-            self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
+        self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
         self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
         self.agent_pos = None
@@ -379,10 +373,7 @@ class Gridworld(gym.Env):
         )  # fmt: skip
 
     def set_state(self, state):
-        if self.coordinate_observation:
-            self.agent_pos = tuple(np.array(state).ravel())
-        else:
-            self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
+        self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
 
     def get_state(self):
         pos = self.agent_pos
@@ -392,10 +383,7 @@ class Gridworld(gym.Env):
                     self.np_random.integers(0, self.n_rows),
                     self.np_random.integers(0, self.n_cols),
                 )  # note that the random position can be also a wall or a pit
-        if self.coordinate_observation:
-            return np.array(pos, dtype=np.float32)
-        else:
-            return np.ravel_multi_index(pos, (self.n_rows, self.n_cols))
+        return np.ravel_multi_index(pos, (self.n_rows, self.n_cols))
 
     def reset(self, seed: int = None, **kwargs):
         super().reset(seed=seed, **kwargs)
@@ -504,15 +492,8 @@ class Gridworld(gym.Env):
                 f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
             )
             return
-        elif self.render_mode == "binary":
-            return self._render_binary()
         else:  # self.render_mode in {"human", "rgb_array"}:
             return self._render_gui(self.render_mode)
-
-    def _render_binary(self):
-        map_agent = np.zeros(self.grid.shape, dtype=np.uint8)
-        map_agent[self.agent_pos] = 1
-        return map_agent
 
     def _render_gui(self, mode):
         try:

@@ -180,20 +180,30 @@ It is possible to remove the `STAY` action by making the environment with `no_st
 &#10148; <strong>Default</strong>  
 The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
 Each integer denotes the current location of the agent.
-For example, in a 3x3 grid the states are
+For example, in a 3x3 grid the observations are
 ```
  0 1 2
  3 4 5
  6 7 8
 ```
 
-&#10148; <strong>Coordinate</strong>  
-If you prefer to observe the `(row, col)` index of the current position of the
-agent, make the environment with the `coordinate_observation=True` argument.
+ &#10148; <strong>Coordinate Wrapper</strong>  
+`gym_gridworlds.observation_wrappers.MatrixCoordinateWrapper(env)` returns
+matrix coordinates `(row, col)`. In the above example, `obs = 3` becomes `obs = (1, 0)`.
+
+&#10148; <strong>Binary Wrapper</strong>  
+`gym_gridworlds.observation_wrappers.MatrixBinaryWrapper(env)` returns a map
+of the environment with one 1 in the agent's position. In the above example,
+`obs = 3` becomes
+```
+ 0 0 0
+ 1 0 0
+ 0 0 0
+ ```
 
 &#10148; <strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with
-`render_mode="rgb_array"`.
+`render_mode="rgb_array"` and then wrap it with `gymnasium.wrappers.AddRenderObservation`.
 
 &#10148; <strong>Partial RGB</strong>  
 Pixel observations can be made partial by passing `view_radius`. For example,
