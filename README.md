@@ -89,12 +89,13 @@ import gymnasium
 import gym_gridworlds
 env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", random_action_prob=0.1, reward_noise_std=0.05)
 ```
-the agent's action will fail with 10% probability and a random one will be performed instead,
-and Gaussian noise with 0.05 standard deviation is added to the reward.
+This makes the environment take a random action (instead of the action passed by
+the agent) with 10% probability, and Gaussian noise with 0.05 standard deviation
+is added to the reward.
 
 &#10148; <strong>POMDP</strong>  
 To turn the MDP into a POMDP and learn from partially-observable pixels, make
-the environment with `view_radius=1` (or any integer) argument. This way, only
+the environment with `view_radius=1` (or any integer). This way, only
 the tiles close to the agent (within the view radius) will be visible, while
 far away tiles will be masked by white noise. For example,
 this is the partially-observable version of the `Full-4x5-v0` gridworld above.
@@ -112,11 +113,10 @@ env.step(1) # DOWN
 </p>
 
 &#10148; <strong>Noisy Observations</strong>  
-Make the environment with `observation_noise=0.2` (or any float between 0 and 1).  
-For default observations: the float represents the probability that the position
-observed by the agent is random.  
-For RGB observations: the float represents the probability that a pixel will
-be white noise, as shown below.
+Make the environment with `observation_noise=0.2` (or any float between 0 and 1).
+With default observations, the float represents the probability that the position
+observed by the agent is random. With RGB observations, it represents the
+probability that a pixel is white noise, as shown below.
 
 ```python
 import gymnasium
@@ -133,8 +133,7 @@ env.step(1) # DOWN
 &#10148; <strong>Random Goals</strong>  
 Make the environment with `random_goals=True` to randomize the position of positive
 rewards (positive only!) at every reset. To learn in this setting, you need to add
-the rewards position to the observation. The `MatrixWithGoalWrapper` does that, but
-only for matrix-map observations (see below).
+the rewards position to the observation (`MatrixWithGoalWrapper`), or to learn from pixels.
 
 
 ## Make Your Own Gridworld
@@ -194,36 +193,32 @@ For example, in a 3x3 grid the observations are
  6 7 8
 ```
 
- &#10148; <strong>Coordinate Wrapper</strong>  
-`gym_gridworlds.observation_wrappers.CoordinateWrapper` returns matrix coordinates
+The observation can be transformed to better fit function approximation.
+- `gym_gridworlds.observation_wrappers.CoordinateWrapper` returns matrix coordinates
 `(row, col)`. In the above example, `obs = 3` becomes `obs = (1, 0)`.
-
-&#10148; <strong>Map Wrapper</strong>  
-`gym_gridworlds.observation_wrappers.MatrixWrapper` returns a map of the environment
-with one 1 in the agent's position. In the above example, `obs = 3` becomes
+- `gym_gridworlds.observation_wrappers.MatrixWrapper` returns a map of the environment
+with one 1 at the agent's position. In the above example, `obs = 3` becomes
 ```
  0 0 0
  1 0 0
  0 0 0
  ```
-`gym_gridworlds.observation_wrappers.MatrixWithGoalWrapper` adds a second channel
-with positive rewards (positive only!). Useful when goals are randomized.
+ - See `gym_gridworlds.observation_wrappers` for more wrappers and examples.
 
 &#10148; <strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with
 `render_mode="rgb_array"` and then wrap it with `gymnasium.wrappers.AddRenderObservation`.
 
 &#10148; <strong>Partial RGB</strong>  
-Pixel observations can be made partial by passing `view_radius`. For example,
-if `view_radius=1` the rendering will show the content of only the tiles
+Pixel observations can be made partial by making the environment with `view_radius`.
+For example, if `view_radius=1` the rendering will show the content of only the tiles
 around the agent, while all other tiles will be filled with white noise.
 
 &#10148; <strong>Noisy Observations</strong>  
-Make the environment with `observation_noise=0.2` (or any float between 0 and 1).  
-For default observations: the float represents the probability that the position
-observed by the agent is random.  
-For RGB observations: the float represents the probability that a pixel will
-be white noise
+Make the environment with `observation_noise=0.2` (or any float between 0 and 1).
+With default observations, the float represents the probability that the position
+observed by the agent is random. With RGB observations, it represents the
+probability that a pixel is white noise.
 
 ### <ins>Starting State</ins>
 By default, the episode starts with the agent at the top-left tile `(0, 0)`.
