@@ -1,7 +1,5 @@
 import numpy as np
 import gymnasium
-from gymnasium.spaces import Discrete
-from numpy.f2py.auxfuncs import throw_error
 
 from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL
 
