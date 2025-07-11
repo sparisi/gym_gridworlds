@@ -3,6 +3,34 @@ import gymnasium
 from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL
 
 
+class AddGoalWrapper(gymnasium.ObservationWrapper):
+    """See README.
+    It assumes there is only one goal!
+
+    Example:
+
+    >>> import gymnasium
+    >>> import gym_gridworlds
+    >>> from gym_gridworlds.observation_wrappers import AddGoalWrapper
+    >>> env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human", random_goals=True)
+    >>> obs, _ = env.reset()
+    >>> print(obs)
+    0
+    >>> env = AddGoalWrapper(env)
+    >>> obs, _ = env.reset()
+    >>> print(obs)
+    (0, 0)
+    """
+
+    def __init__(self, env):
+        super().__init__(env)
+
+    def observation(self, obs):
+        goal = np.argwhere(self.env.unwrapped.grid == GOOD)
+        # is this a tuple? if so convert to with ravel/unravel
+        # then concat to obs or make it a tuple, depending on the obs space
+
+
 class CoordinateWrapper(gymnasium.ObservationWrapper):
     """See README.
 
