@@ -339,14 +339,8 @@ class Gridworld(gym.Env):
         self.distance_reward = distance_reward
 
         self.n_rows, self.n_cols = self.grid.shape
-        if self.coordinate_observation:
-            self.observation_space = gym.spaces.Box(
-                low=np.array([0.0, 0.0]),
-                high=np.array([self.n_rows - 1, self.n_cols - 1]),
-                dtype=np.float32,
-            )
-        else:
-            self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
+        # Observation space changes depending on if goals are in use or not
+        self.set_observation_space()
 
         self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
         self.agent_pos = None
@@ -368,6 +362,16 @@ class Gridworld(gym.Env):
             (self.window_size[0] - self.padding[0] * 2) // self.n_cols,
             (self.window_size[1] - self.padding[1] * 2) // self.n_rows,
         )  # fmt: skip
+
+    def set_observation_space(self):
+        if self.coordinate_observation:
+            self.observation_space = gym.spaces.Box(
+                low=np.array([0.0, 0.0]),
+                high=np.array([self.n_rows - 1, self.n_cols - 1]),
+                dtype=np.float32,
+            )
+        else:
+            self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
     def set_state(self, state):
         if self.coordinate_observation:
@@ -413,12 +417,15 @@ class Gridworld(gym.Env):
         goals = np.logical_or(self.grid == GOOD, self.grid == GOOD_SMALL)
         n_goals = goals.sum()
         self.grid[goals] = EMPTY
+        updated_goals_list = []
         for i in range(n_goals):
             allowed_tiles = np.argwhere(self.grid == EMPTY)
             n_allowed = allowed_tiles.shape[0]
             assert n_allowed != 0, "there is no tile where the agent can spawn"
             new_goal_pos = tuple(allowed_tiles[self.np_random.integers(n_allowed)])
+            updated_goals_list.append(new_goal_pos)
             self.grid[new_goal_pos] = GOOD if i == 0 else GOOD_SMALL
+        return updated_goals_list
 
     def _reset(self, seed: int = None, **kwargs):
         self.grid = np.asarray(GRIDS[self.grid_key])
@@ -772,6 +779,52 @@ class Gridworld(gym.Env):
 
             pygame.display.quit()
             pygame.quit()
+
+
+class SingleGoalGridworld(Gridworld):
+    def __init__(self, grid: str, **kwargs):
+        super().__init__(grid, **kwargs)
+
+        # TODO: Validate grid for only having a single goal
+        self.goal_pos = None
+        self.set_goal_observation()
+
+
+    def set_observation_space(self):
+        if self.coordinate_observation:
+            box_space = gym.spaces.Box(
+                        low=np.array([0.0, 0.0]),
+                        high=np.array([self.n_rows - 1, self.n_cols - 1]),
+                        dtype=np.float32,
+            )
+            self.observation_space = gym.spaces.Tuple((box_space, box_space,))
+        else:
+            discrete_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
+            self.observation_space = gym.spaces.Tuple((discrete_space, discrete_space,))
+
+    def _randomize_goals(self):
+        goal_list = super()._randomize_goals()
+        self.goal_pos = goal_list[0]
+
+    def get_state(self):
+        pos = self.agent_pos
+        goal_pos = self.goal_pos
+        if self.observation_noise > 0.0:
+            if self.np_random.random() < self.observation_noise:
+                pos = (
+                    self.np_random.integers(0, self.n_rows),
+                    self.np_random.integers(0, self.n_cols),
+                )  # note that the random position can be also a wall or a pit
+        if self.coordinate_observation:
+            return (np.array(pos, dtype=np.float32), np.array(goal_pos, dtype=np.float32) )
+        else:
+            return (
+                np.ravel_multi_index(pos, (self.n_rows, self.n_cols)),
+                np.ravel_multi_index(goal_pos, (self.n_rows, self.n_cols))
+            )
+
+    def set_goal_observation(self):
+        self.goal_pos = tuple(coord[0] for coord in  np.where(self.grid == GOOD) )
 
 
 class RiverSwim(Gridworld):

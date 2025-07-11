@@ -178,7 +178,7 @@ register(
 
 register(
     id="Gym-Gridworlds/FourRooms-Symmetrical-11x11-v0",
-    entry_point="gym_gridworlds.gridworld:Gridworld",
+    entry_point="gym_gridworlds.gridworld:SingleGoalGridworld",
     max_episode_steps=200,
     kwargs={
         "grid": "11x11_four_rooms_symmetrical",
@@ -190,7 +190,7 @@ register(
 
 register(
     id="Gym-Gridworlds/FourRooms-Original-13x13-v0",
-    entry_point="gym_gridworlds.gridworld:Gridworld",
+    entry_point="gym_gridworlds.gridworld:SingleGoalGridworld",
     max_episode_steps=200,
     kwargs={
         "grid": "13x13_four_rooms_original",
