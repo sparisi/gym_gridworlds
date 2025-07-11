@@ -1,5 +1,8 @@
 import numpy as np
 import gymnasium
+from gymnasium.spaces import Discrete
+from numpy.f2py.auxfuncs import throw_error
+
 from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL
 
 
@@ -24,11 +27,24 @@ class AddGoalWrapper(gymnasium.ObservationWrapper):
 
     def __init__(self, env):
         super().__init__(env)
+        self._rows = env.unwrapped.n_rows
+        self._cols = env.unwrapped.n_cols
+        size = self._rows * self._cols
+        self.observation_space = gymnasium.spaces.MultiDiscrete([size, size])
+        self.goal_pos = None
+
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        goal_location = np.argwhere(self.env.unwrapped.grid == GOOD)
+        if goal_location.shape[0] > 1:
+            raise NotImplementedError("Only one goal at a time is supported!")
+        self.goal_pos = np.ravel_multi_index(goal_location[0], (self._rows,  self._cols))
+        return [obs, self.goal_pos], info
+
 
     def observation(self, obs):
-        goal = np.argwhere(self.env.unwrapped.grid == GOOD)
-        # is this a tuple? if so convert to with ravel/unravel
-        # then concat to obs or make it a tuple, depending on the obs space
+        return [obs, self.goal_pos]
 
 
 class CoordinateWrapper(gymnasium.ObservationWrapper):
