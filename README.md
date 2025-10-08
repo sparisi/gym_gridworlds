@@ -23,7 +23,7 @@ Run `python` and then
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/TravelField-32x32-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 env.step(4) # STAY
