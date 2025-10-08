@@ -3,6 +3,7 @@ import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
 from typing import Optional
 from collections import defaultdict
+from enum import Enum
 
 # state IDs
 EMPTY = -1
@@ -30,17 +31,33 @@ REWARDS[BAD_SMALL] = -0.1
 REWARDS[PIT] = -100
 
 # rendering colors
-RED = (255, 0, 0)
-PALE_RED = (155, 0, 0)
-GREEN = (0, 255, 0)
-DARK_GREEN = (0, 155, 0)
-BLUE = (0, 0, 255)
-ORANGE = (255, 175, 0)
-PALE_YELLOW = (255, 255, 155)
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (100, 100, 100)
-PURPLE = (102, 51, 153)
+class Color(tuple, Enum):
+    RED = (255, 0, 0)
+    PALE_RED = (155, 0, 0)
+    GREEN = (0, 255, 0)
+    DARK_GREEN = (0, 155, 0)
+    BLUE = (0, 0, 255)
+    ORANGE = (255, 175, 0)
+    PALE_YELLOW = (255, 255, 155)
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    GRAY = (100, 100, 100)
+    PURPLE = (102, 51, 153)
+    BROWN = (139, 69, 19)
+
+COLORMAP = dict()
+COLORMAP[EMPTY] = Color.BLACK
+COLORMAP[QCKSND] = Color.PALE_YELLOW
+COLORMAP[GOOD_SMALL] = Color.DARK_GREEN
+COLORMAP[GOOD] = Color.GREEN
+COLORMAP[BAD] = Color.RED
+COLORMAP[BAD_SMALL] = Color.PALE_RED
+COLORMAP[WALL] = Color.GRAY
+COLORMAP[PIT] = Color.PURPLE
+COLORMAP[LEFT] = Color.BLACK
+COLORMAP[RIGHT] = Color.BLACK
+COLORMAP[UP] = Color.BLACK
+COLORMAP[DOWN] = Color.BLACK
 
 # fmt: off
 GRIDS = {
@@ -246,7 +263,10 @@ class Gridworld(gym.Env):
 
     ## Starting State
     By default, the episode starts with the agent at the top-left tile `(0, 0)`.
-    You can change it by making the environment with `start_pos=(3, 4)` (or any position you want).
+    You can manually select the starting position by making the environment with
+    the argument `start_pos`, e.g., `start_pos=(3, 4)`.
+    You can use the key "max" to automatically select the end of the grid, e.g.,
+    `start_pos=("max", 0)` will place the agent at the bottom-right corner.
     If you make the environment with `start_pos=None`, the starting position will be random.
     In both cases (fixed and random), the starting position cannot be a tile with
     a wall or a pit.
@@ -328,9 +348,11 @@ class Gridworld(gym.Env):
         **kwargs,
     ):
         self.random_goals = random_goals
-        self.start_pos = start_pos
         self.grid_key = grid
         self.grid = np.asarray(GRIDS[self.grid_key])
+        self.start_pos = tuple(
+            y - 1 if x == "max" else x for x, y in zip(start_pos, self.grid.shape)
+        )
         self.n_rows, self.n_cols = self.grid.shape
 
         if start_pos is not None:
@@ -558,7 +580,7 @@ class Gridworld(gym.Env):
             t_size[1] * self.n_rows + border_pixels * 2,
         )
         background = pygame.Rect(background_init, background_end)
-        pygame.draw.rect(self.window_surface, WHITE, background)
+        pygame.draw.rect(self.window_surface, Color.WHITE, background)
 
         # draw tiles
         for y in range(self.n_rows):
@@ -594,26 +616,12 @@ class Gridworld(gym.Env):
                             pygame.draw.rect(self.window_surface, rnd_color, rect)
                     continue
 
-                if self.grid[y][x] == GOOD:
-                    pygame.draw.rect(self.window_surface, GREEN, rect)
-                elif self.grid[y][x] == GOOD_SMALL:
-                    pygame.draw.rect(self.window_surface, DARK_GREEN, rect)
-                elif self.grid[y][x] == BAD:
-                    pygame.draw.rect(self.window_surface, RED, rect)
-                elif self.grid[y][x] == BAD_SMALL:
-                    pygame.draw.rect(self.window_surface, PALE_RED, rect)
-                elif self.grid[y][x] == QCKSND:
-                    pygame.draw.rect(self.window_surface, PALE_YELLOW, rect)
-                elif self.grid[y][x] == WALL:
-                    pygame.draw.rect(self.window_surface, PURPLE, rect)
-                elif self.grid[y][x] == PIT:
-                    pygame.draw.rect(self.window_surface, WHITE, rect)
-                elif self.grid[y][x] in [EMPTY, LEFT, RIGHT, UP, DOWN]:
-                    pygame.draw.rect(self.window_surface, BLACK, rect)
+                # draw environment elements
+                pygame.draw.rect(self.window_surface, COLORMAP[self.grid[y][x]], rect)
 
                 # draw agent
                 if (y, x) == self.agent_pos:
-                    pygame.draw.ellipse(self.window_surface, BLUE, rect)
+                    pygame.draw.ellipse(self.window_surface, Color.BLUE, rect)
 
                 # draw arrow for one-directional tiles
                 if self.grid[y][x] in [LEFT, RIGHT, UP, DOWN]:
@@ -660,14 +668,14 @@ class Gridworld(gym.Env):
                     else:
                         pass
                     pygame.draw.polygon(
-                        self.window_surface, GRAY, (start_pos, end_pos), arrow_width
+                        self.window_surface, Color.GRAY, (start_pos, end_pos), arrow_width
                     )
                     arr_pos = arrow_head(
                         end_pos,
                         [cs / 2 - border_pixels - 1 for cs in t_size],
                         self.grid[y][x],
                     )
-                    pygame.draw.polygon(self.window_surface, GRAY, arr_pos, 0)
+                    pygame.draw.polygon(self.window_surface, Color.GRAY, arr_pos, 0)
 
                 # some pixels are white noise
                 if self.observation_noise > 0.0:
@@ -697,7 +705,7 @@ class Gridworld(gym.Env):
                         y * t_size[1] + t_size[1] / 4 + self.padding[1] + border_pixels,
                     )
                     rect = pygame.Rect(pos, tuple(cs * 0.5 for cs in t_size))
-                    pygame.draw.ellipse(self.window_surface, ORANGE, rect)
+                    pygame.draw.ellipse(self.window_surface, Color.ORANGE, rect)
                 else:  # draw arrow
                     pos = (
                         x * t_size[0] + t_size[0] / 2 + self.padding[0] + border_pixels,
@@ -720,16 +728,16 @@ class Gridworld(gym.Env):
 
                     pygame.draw.polygon(
                         self.window_surface,
-                        ORANGE,
+                        Color.ORANGE,
                         (pos, end_pos),
-                        arrow_width - border_pixels * 2,
+                        max(arrow_width - border_pixels * 2, 1),
                     )
                     arr_pos = arrow_head(
                         end_pos,
-                        [cs / 5 - border_pixels for cs in t_size],
+                        [max(cs / 5 - border_pixels, 1) for cs in t_size],
                         self.last_action,
                     )
-                    pygame.draw.polygon(self.window_surface, ORANGE, arr_pos, 0)
+                    pygame.draw.polygon(self.window_surface, Color.ORANGE, arr_pos, 0)
 
         if mode == "human":
             pygame.event.pump()

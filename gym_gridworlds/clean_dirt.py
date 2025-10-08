@@ -9,12 +9,12 @@ from gym_gridworlds.gridworld import Gridworld
 # fmt: on
 
 
-class DirtCleaning(Gridworld):
+class CleanDirt(Gridworld):
     """
     Dirt appear in empty tiles and the agent has to go and clean it by doing
     STAY. Doing so yields a positive reward (+1) and dirt disappears.
     The agent also gets a small negative reward (-0.1) for every dirt on the grid
-    at every timestep. 
+    at every timestep.
     Episodes do not end when the agent collect dirt. Only other terminal
     conditions (e.g., falling into pits) can terminate an episode.
     The idea is to mimic a simple cleaning agent that keeps a room clean.

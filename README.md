@@ -23,7 +23,7 @@ Run `python` and then
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/TravelField-32x32-v0", render_mode="human")
 env.reset()
 env.step(1) # DOWN
 env.step(4) # STAY
@@ -222,7 +222,10 @@ probability that a pixel is white noise.
 
 ### <ins>Starting State</ins>
 By default, the episode starts with the agent at the top-left tile `(0, 0)`.
-You can change it by making the environment with `start_pos=(3, 4)` (or any position you want).
+You can manually select the starting position by making the environment with
+the argument `start_pos`, e.g., `start_pos=(3, 4)`.
+You can use the key "max" to automatically select the end of the grid, e.g.,
+`start_pos=("max", 0)` will place the agent at the bottom-right corner.
 If you make the environment with `start_pos=None`, the starting position will be random.
 In both cases (fixed and random), the starting position cannot be a tile with
 a wall or a pit.

@@ -203,10 +203,21 @@ register(
 #### HARD ENVIRONMENTS ####
 
 register(
-    id="Gym-Gridworlds/DirtCleaning-10x10-v0",
-    entry_point="gym_gridworlds.gridworld_hard:DirtCleaning",
+    id="Gym-Gridworlds/CleanDirt-10x10-v0",
+    entry_point="gym_gridworlds.clean_dirt:CleanDirt",
     max_episode_steps=500,
     kwargs={
         "grid": "10x10_empty",
+    },
+)
+
+register(
+    id="Gym-Gridworlds/TravelField-32x32-v0",
+    entry_point="gym_gridworlds.travel_field:TravelField",
+    max_episode_steps=1000,
+    kwargs={
+        "grid": "large_field",
+        "start_pos": ("max", 0),
+        "no_stay": True,
     },
 )
