@@ -345,6 +345,7 @@ class Gridworld(gym.Env):
         nonzero_reward_noise_std: Optional[float] = 0.0,
         observation_noise: Optional[float] = 0.0,
         view_radius: Optional[int] = 99999,
+        max_resolution: Optional[tuple] = (256, 256),
         **kwargs,
     ):
         self.random_goals = random_goals
@@ -382,8 +383,8 @@ class Gridworld(gym.Env):
         self.window_surface = None
         self.clock = None
         self.window_size = (
-            min(64 * self.n_cols, 512),
-            min(64 * self.n_rows, 512),
+            min(64 * self.n_cols, max_resolution[0]),
+            min(64 * self.n_rows, max_resolution[1]),
         )  # fmt: skip
         self.padding = (
             max(self.window_size[0] // 20, 1),
@@ -568,7 +569,7 @@ class Gridworld(gym.Env):
                 )
 
         t_size = self.tile_size  # abbrev
-        border_pixels = 1
+        border_pixels = min(min(t_size) // 20, 1)
 
         # draw background (shift according to padding)
         background_init = (
