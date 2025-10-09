@@ -60,7 +60,7 @@ to render the `DangerMaze-6x6-v0` gridworld (right figure).
 - Black tiles with gray arrows are tiles where the agent can move only in one direction (other actions will fail),
 - Red tiles give negative rewards,
 - Green tiles give positive rewards (the brighter, the higher),
-- Yellow tiles are quicksands, where all actions will fail with 90% probability,
+- Yellow tiles are quicksand, where all actions will fail with 90% probability,
 - The agent is the blue circle,
 - The orange arrow denotes the agent's last action,
 - The orange dot denotes that the agent did not try to move with its last action.

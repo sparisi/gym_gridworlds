@@ -222,7 +222,6 @@ register(
     },
 )
 
-
 register(
     id="Gym-Gridworlds/TravelField-10x10-v0",
     entry_point="gym_gridworlds.travel_field:TravelField",
@@ -231,5 +230,14 @@ register(
         "grid": "small_field",
         "start_pos": ("max", 0),
         "no_stay": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/Penalty-Randomized-4x4-v0",
+    entry_point="gym_gridworlds.rnd_move:RandomizedTiles",
+    max_episode_steps=500,
+    kwargs={
+        "grid": "4x4_penalty_rnd_move",
     },
 )
