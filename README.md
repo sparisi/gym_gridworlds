@@ -9,6 +9,9 @@ five actions (left, right, up, down, stay) and default transition function
 (e.g., doing "stay" in goal states ends the episode).  
 You can change actions and transition function by implementing more classes.
 For example, in `RiverSwim` there are only two actions and no terminal state.  
+Basic gridworlds are defined in [gridworlds.py](gym_gridworlds/gridworlds.py) and
+are presented below. Harder gridworlds are defined in separate files in [gym_gridworlds](gym_gridworlds)
+and are not discussed here (but are fully documented).
 
 
 ## Install and Examples
