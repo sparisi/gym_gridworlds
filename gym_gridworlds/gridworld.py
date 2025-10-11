@@ -383,7 +383,7 @@ class Gridworld(gym.Env):
         self.window_surface = None
         self.clock = None
 
-
+        # Rendering attributes
         max_width, max_height = max_resolution
         base_tile_size = 64
 
@@ -395,24 +395,25 @@ class Gridworld(gym.Env):
         scale = min(max_width / base_width, max_height / base_height, 1.0)
         tile_size = (base_tile_size * scale) // 1
 
-        # White border: 5% of tile size, capped at 1
-        white_tile_border_size = min(int(round(0.05 * tile_size)), 1)
+        # White padding around each tile: 5% of tile size
+        white_pad_size = (0.05 * tile_size) // 1
 
         # Total rendering with white border
-        render_width = self.n_cols * (tile_size + white_tile_border_size) + white_tile_border_size
-        render_height = self.n_rows * (tile_size + white_tile_border_size) + white_tile_border_size
+        render_width = self.n_cols * (tile_size + white_pad_size) + white_pad_size
+        render_height = self.n_rows * (tile_size + white_pad_size) + white_pad_size
 
-        # Black border: 5% of full rendering
-        black_window_border_size = min(1, int(round(0.05 * max(render_width, render_height))))
+        # Black padding around the whole grid: 5% of full rendering
+        black_pad_size = (0.05 * max(render_width, render_height)) // 1
 
         # Total window size including black border
-        window_width = int(render_width + 2 * black_window_border_size)
-        window_height = int(render_height + 2 * black_window_border_size)
+        window_width = int(render_width + 2 * black_pad_size)
+        window_height = int(render_height + 2 * black_pad_size)
 
         self.window_size = (window_width, window_height)
         self.tile_size = int(tile_size)
-        self.white_tile_border_size = white_tile_border_size
-        self.black_window_border_size = black_window_border_size
+        self.white_pad_size = int(white_pad_size)
+        self.black_pad_size = int(black_pad_size)
+
 
     def set_state(self, state):
         self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
@@ -587,19 +588,14 @@ class Gridworld(gym.Env):
                     (end_pos[0], end_pos[1] - size[1]),
                 )
 
-        # abbreviations
-        t_size = self.tile_size
-        t_shift = self.black_window_border_size
-        w_border = self.white_tile_border_size
+        tile_with_pad_size = self.tile_size + self.white_pad_size
+        bw_pad = self.black_pad_size + self.white_pad_size
 
-        # draw background (shift according to padding)
-        background_init = (
-            self.padding[0] - border_pixels,
-            self.padding[1] - border_pixels,
-        )
+        # draw white background (shift according to black padding)
+        background_init = (self.black_pad_size, self.black_pad_size)
         background_end = (
-            t_size[0] * self.n_cols + border_pixels * 2,
-            t_size[1] * self.n_rows + border_pixels * 2,
+            tile_with_pad_size * self.n_cols + self.white_pad_size,
+            tile_with_pad_size * self.n_rows + self.white_pad_size,
         )
         background = pygame.Rect(background_init, background_end)
         pygame.draw.rect(self.window_surface, Color.WHITE, background)
@@ -608,30 +604,26 @@ class Gridworld(gym.Env):
         for y in range(self.n_rows):
             for x in range(self.n_cols):
                 pos = (
-                    x * t_size[0] + self.padding[0],
-                    y * t_size[1] + self.padding[1],
-                )  # shift according to padding
-                rect = pygame.Rect(
-                    tuple(p + border_pixels for p in pos),
-                    tuple(ts - border_pixels * 2 for ts in t_size),
-                )  # shift according to white edge
+                    x * tile_with_pad_size + bw_pad,
+                    y * tile_with_pad_size + bw_pad,
+                )
+                rect = pygame.Rect(pos[0], pos[1], self.tile_size, self.tile_size)
 
                 # mask unobservable tiles with white noise
                 if not (
-                    y >= self.agent_pos[0] - self.view_radius
-                    and y <= self.agent_pos[0] + self.view_radius
-                    and x >= self.agent_pos[1] - self.view_radius
-                    and x <= self.agent_pos[1] + self.view_radius
+                    y >= self.agent_pos[0] - self.view_radius and
+                    y <= self.agent_pos[0] + self.view_radius and
+                    x >= self.agent_pos[1] - self.view_radius and
+                    x <= self.agent_pos[1] + self.view_radius
                 ):
                     grain = 5
                     for i in range(grain):
                         for j in range(grain):
                             rect = pygame.Rect(
-                                (
-                                    pos[0] + i / grain * t_size[0],
-                                    pos[1] + j / grain * t_size[1],
-                                ),
-                                tuple(cs / grain for cs in t_size),
+                                pos[0] + i / grain * self.tile_size,
+                                pos[1] + j / grain * self.tile_size,
+                                tile_with_pad_size / grain,
+                                tile_with_pad_size / grain,
                             )
                             rnd_color = self.np_random.random(3) * 255
                             rnd_color = [(rnd_color * (0.2989, 0.5870, 0.1140)).sum()] * 3  # grayscale
@@ -649,44 +641,44 @@ class Gridworld(gym.Env):
                 if self.grid[y][x] in [LEFT, RIGHT, UP, DOWN]:
                     if self.grid[y][x] == LEFT:
                         start_pos = (
-                            pos[0] + t_size[0] - border_pixels - 1,
-                            pos[1] + t_size[1] / 2,
+                            pos[0] + self.tile_size,
+                            pos[1] + self.tile_size // 2,
                         )
                         end_pos = (
-                            pos[0] + t_size[0] / 2,
-                            pos[1] + t_size[1] / 2,
+                            pos[0] + self.tile_size // 2,
+                            pos[1] + self.tile_size // 2,
                         )
-                        arrow_width = t_size[1] // 3
+                        arrow_width = self.tile_size // 3
                     elif self.grid[y][x] == DOWN:
                         start_pos = (
-                            pos[0] + t_size[0] / 2,
-                            pos[1] + border_pixels,
+                            pos[0] + self.tile_size // 2,
+                            pos[1],
                         )
                         end_pos = (
-                            pos[0] + t_size[0] / 2,
-                            pos[1] + t_size[1] / 2,
+                            pos[0] + self.tile_size // 2,
+                            pos[1] + self.tile_size // 2,
                         )
-                        arrow_width = t_size[0] // 3
+                        arrow_width = self.tile_size // 3
                     elif self.grid[y][x] == RIGHT:
                         start_pos = (
-                            pos[0] + border_pixels,
-                            pos[1] + t_size[1] / 2
+                            pos[0],
+                            pos[1] + self.tile_size // 2
                         )
                         end_pos = (
-                            pos[0] + t_size[0] / 2,
-                            pos[1] + t_size[1] / 2,
+                            pos[0] + self.tile_size // 2,
+                            pos[1] + self.tile_size // 2,
                         )
-                        arrow_width = t_size[1] // 3
+                        arrow_width = self.tile_size // 3
                     elif self.grid[y][x] == UP:
                         start_pos = (
-                            pos[0] + t_size[0] / 2,
-                            pos[1] + t_size[1] - border_pixels - 1,
+                            pos[0] + self.tile_size // 2,
+                            pos[1] + self.tile_size,
                         )
                         end_pos = (
-                            pos[0] + t_size[0] / 2,
-                            pos[1] + t_size[1] / 2,
+                            pos[0] + self.tile_size // 2,
+                            pos[1] + self.tile_size // 2,
                         )
-                        arrow_width = t_size[0] // 3
+                        arrow_width = self.tile_size // 3
                     else:
                         pass
                     pygame.draw.polygon(
@@ -694,7 +686,7 @@ class Gridworld(gym.Env):
                     )
                     arr_pos = arrow_head(
                         end_pos,
-                        [cs / 2 - border_pixels - 1 for cs in t_size],
+                        (self.tile_size / 2,) * 2,
                         self.grid[y][x],
                     )
                     pygame.draw.polygon(self.window_surface, Color.GRAY, arr_pos, 0)
@@ -706,11 +698,10 @@ class Gridworld(gym.Env):
                         for j in range(grain):
                             if self.np_random.random() < self.observation_noise:
                                 rect = pygame.Rect(
-                                    (
-                                        pos[0] + i / grain * t_size[0],
-                                        pos[1] + j / grain * t_size[1],
-                                    ),
-                                    tuple(cs / grain for cs in t_size),
+                                    pos[0] + i / grain * self.tile_size,
+                                    pos[1] + j / grain * self.tile_size,
+                                    tile_with_pad_size / grain,
+                                    tile_with_pad_size / grain,
                                 )
                                 rnd_color = self.np_random.random(3) * 255
                                 rnd_color = [(rnd_color * (0.2989, 0.5870, 0.1140)).sum()] * 3  # grayscale
@@ -723,28 +714,28 @@ class Gridworld(gym.Env):
 
                 if self.last_action == STAY:  # draw circle
                     pos = (
-                        x * t_size[0] + t_size[0] / 4 + self.padding[0] + border_pixels,
-                        y * t_size[1] + t_size[1] / 4 + self.padding[1] + border_pixels,
+                        x * tile_with_pad_size + bw_pad + self.tile_size / 4,
+                        y * tile_with_pad_size + bw_pad + self.tile_size / 4,
                     )
-                    rect = pygame.Rect(pos, tuple(cs * 0.5 for cs in t_size))
+                    rect = pygame.Rect(pos[0], pos[1], self.tile_size / 2, self.tile_size / 2)
                     pygame.draw.ellipse(self.window_surface, Color.ORANGE, rect)
                 else:  # draw arrow
                     pos = (
-                        x * t_size[0] + t_size[0] / 2 + self.padding[0] + border_pixels,
-                        y * t_size[1] + t_size[1] / 2 + self.padding[1] + border_pixels,
+                        x * tile_with_pad_size + bw_pad + self.tile_size / 2,
+                        y * tile_with_pad_size + bw_pad + self.tile_size / 2,
                     )
                     if self.last_action == LEFT:
-                        end_pos = (pos[0] - t_size[0] / 4, pos[1])
-                        arrow_width = t_size[1] // 6
+                        end_pos = (pos[0] - self.tile_size / 4, pos[1])
+                        arrow_width = self.tile_size // 4
                     elif self.last_action == DOWN:
-                        end_pos = (pos[0], pos[1] + t_size[1] / 4)
-                        arrow_width = t_size[0] // 6
+                        end_pos = (pos[0], pos[1] + self.tile_size / 4)
+                        arrow_width = self.tile_size // 4
                     elif self.last_action == RIGHT:
-                        end_pos = (pos[0] + t_size[0] / 4, pos[1])
-                        arrow_width = t_size[1] // 6
+                        end_pos = (pos[0] + self.tile_size / 4, pos[1])
+                        arrow_width = self.tile_size // 4
                     elif self.last_action == UP:
-                        end_pos = (pos[0], pos[1] - t_size[1] / 4)
-                        arrow_width = t_size[0] // 6
+                        end_pos = (pos[0], pos[1] - self.tile_size / 4)
+                        arrow_width = self.tile_size // 4
                     else:
                         raise ValueError("illegal action")
 
@@ -752,11 +743,11 @@ class Gridworld(gym.Env):
                         self.window_surface,
                         Color.ORANGE,
                         (pos, end_pos),
-                        max(arrow_width - border_pixels * 2, 1),
+                        max(arrow_width - self.white_pad_size * 2, 1),
                     )
                     arr_pos = arrow_head(
                         end_pos,
-                        [max(cs / 5 - border_pixels, 1) for cs in t_size],
+                        (max(self.tile_size / 4 - self.white_pad_size, 1),) * 2,
                         self.last_action,
                     )
                     pygame.draw.polygon(self.window_surface, Color.ORANGE, arr_pos, 0)
