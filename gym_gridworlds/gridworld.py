@@ -642,6 +642,7 @@ class Gridworld(gym.Env):
 
                 # draw arrow for one-directional tiles
                 if self.grid[y][x] in [LEFT, RIGHT, UP, DOWN]:
+                    arrow_width = self.tile_size // 3
                     if self.grid[y][x] == LEFT:
                         start_pos = (
                             pos[0] + self.tile_size,
@@ -651,7 +652,6 @@ class Gridworld(gym.Env):
                             pos[0] + self.tile_size // 2,
                             pos[1] + self.tile_size // 2,
                         )
-                        arrow_width = self.tile_size // 3
                     elif self.grid[y][x] == DOWN:
                         start_pos = (
                             pos[0] + self.tile_size // 2,
@@ -661,7 +661,6 @@ class Gridworld(gym.Env):
                             pos[0] + self.tile_size // 2,
                             pos[1] + self.tile_size // 2,
                         )
-                        arrow_width = self.tile_size // 3
                     elif self.grid[y][x] == RIGHT:
                         start_pos = (
                             pos[0],
@@ -671,7 +670,6 @@ class Gridworld(gym.Env):
                             pos[0] + self.tile_size // 2,
                             pos[1] + self.tile_size // 2,
                         )
-                        arrow_width = self.tile_size // 3
                     elif self.grid[y][x] == UP:
                         start_pos = (
                             pos[0] + self.tile_size // 2,
@@ -681,7 +679,6 @@ class Gridworld(gym.Env):
                             pos[0] + self.tile_size // 2,
                             pos[1] + self.tile_size // 2,
                         )
-                        arrow_width = self.tile_size // 3
                     else:
                         pass
                     pygame.draw.polygon(
@@ -689,7 +686,7 @@ class Gridworld(gym.Env):
                     )
                     arr_pos = arrow_head(
                         end_pos,
-                        (self.tile_size / 2,) * 2,
+                        (self.tile_size // 2,) * 2,
                         self.grid[y][x],
                     )
                     pygame.draw.polygon(self.window_surface, Color.GRAY, arr_pos, 0)
