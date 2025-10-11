@@ -707,15 +707,15 @@ class Gridworld(gym.Env):
                                 rnd_color = [(rnd_color * (0.2989, 0.5870, 0.1140)).sum()] * 3  # grayscale
                                 pygame.draw.rect(self.window_surface, rnd_color, rect)
 
-            # draw last action
+        # draw last action
         if self.last_pos is not None:
             x = self.last_pos[1]
             y = self.last_pos[0]
 
             if self.last_action == STAY:  # draw circle
                 pos = (
-                    x * tile_with_pad_size + bw_pad + self.tile_size / 4 + self.white_pad_size,
-                    y * tile_with_pad_size + bw_pad + self.tile_size / 4 + self.white_pad_size,
+                    x * tile_with_pad_size + bw_pad + self.tile_size / 4,
+                    y * tile_with_pad_size + bw_pad + self.tile_size / 4,
                 )
                 rect = pygame.Rect(pos[0], pos[1], self.tile_size / 2, self.tile_size / 2)
                 pygame.draw.ellipse(self.window_surface, Color.ORANGE, rect)
