@@ -591,13 +591,16 @@ class Gridworld(gym.Env):
         tile_with_pad_size = self.tile_size + self.white_pad_size
         bw_pad = self.black_pad_size + self.white_pad_size
 
-        # draw white background (shift according to black padding)
+        # draw black background for the padding
+        self.window_surface.fill(Color.BLACK)
+
+        # draw white background for the grid (shift according to black padding)
         background_init = (self.black_pad_size, self.black_pad_size)
-        background_end = (
-            tile_with_pad_size * self.n_cols + self.white_pad_size,
-            tile_with_pad_size * self.n_rows + self.white_pad_size,
+        background_dims = (
+            self.n_cols * tile_with_pad_size + self.white_pad_size,
+            self.n_rows * tile_with_pad_size + self.white_pad_size,
         )
-        background = pygame.Rect(background_init, background_end)
+        background = pygame.Rect(background_init, background_dims)
         pygame.draw.rect(self.window_surface, Color.WHITE, background)
 
         # draw tiles
