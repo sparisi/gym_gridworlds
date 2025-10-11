@@ -382,18 +382,37 @@ class Gridworld(gym.Env):
         self.render_mode = render_mode
         self.window_surface = None
         self.clock = None
-        self.window_size = (
-            min(64 * self.n_cols, max_resolution[0]),
-            min(64 * self.n_rows, max_resolution[1]),
-        )  # fmt: skip
-        self.padding = (
-            max(self.window_size[0] // 20, 1),
-            max(self.window_size[1] // 20, 1),
-        )  # fmt: skip
-        self.tile_size = (
-            (self.window_size[0] - self.padding[0] * 2) // self.n_cols,
-            (self.window_size[1] - self.padding[1] * 2) // self.n_rows,
-        )  # fmt: skip
+
+
+        max_width, max_height = max_resolution
+        base_tile_size = 64
+
+        # Base rendering size (without any borders)
+        base_width = self.n_cols * base_tile_size
+        base_height = self.n_rows * base_tile_size
+
+        # Scale down if it exceeds max_resolution (preserve aspect ratio)
+        scale = min(max_width / base_width, max_height / base_height, 1.0)
+        tile_size = (base_tile_size * scale) // 1
+
+        # White border: 5% of tile size, capped at 1
+        white_tile_border_size = min(int(round(0.05 * tile_size)), 1)
+
+        # Total rendering with white border
+        render_width = self.n_cols * (tile_size + white_tile_border_size) + white_tile_border_size
+        render_height = self.n_rows * (tile_size + white_tile_border_size) + white_tile_border_size
+
+        # Black border: 5% of full rendering
+        black_window_border_size = min(1, int(round(0.05 * max(render_width, render_height))))
+
+        # Total window size including black border
+        window_width = int(render_width + 2 * black_window_border_size)
+        window_height = int(render_height + 2 * black_window_border_size)
+
+        self.window_size = (window_width, window_height)
+        self.tile_size = int(tile_size)
+        self.white_tile_border_size = white_tile_border_size
+        self.black_window_border_size = black_window_border_size
 
     def set_state(self, state):
         self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
