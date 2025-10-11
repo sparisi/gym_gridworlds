@@ -587,8 +587,10 @@ class Gridworld(gym.Env):
                     (end_pos[0], end_pos[1] - size[1]),
                 )
 
-        t_size = self.tile_size  # abbrev
-        border_pixels = min(min(t_size) // 20, 1)
+        # abbreviations
+        t_size = self.tile_size
+        t_shift = self.black_window_border_size
+        w_border = self.white_tile_border_size
 
         # draw background (shift according to padding)
         background_init = (
