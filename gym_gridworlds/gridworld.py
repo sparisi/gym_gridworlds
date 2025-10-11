@@ -682,7 +682,10 @@ class Gridworld(gym.Env):
                     else:
                         pass
                     pygame.draw.polygon(
-                        self.window_surface, Color.GRAY, (start_pos, end_pos), arrow_width
+                        self.window_surface,
+                        Color.GRAY,
+                        (start_pos, end_pos),
+                        arrow_width,
                     )
                     arr_pos = arrow_head(
                         end_pos,
@@ -714,28 +717,30 @@ class Gridworld(gym.Env):
 
             if self.last_action == STAY:  # draw circle
                 pos = (
-                    x * tile_with_pad_size + bw_pad + self.tile_size / 4,
-                    y * tile_with_pad_size + bw_pad + self.tile_size / 4,
+                    x * tile_with_pad_size + bw_pad,
+                    y * tile_with_pad_size + bw_pad,
                 )
-                rect = pygame.Rect(pos[0], pos[1], self.tile_size / 2, self.tile_size / 2)
-                pygame.draw.ellipse(self.window_surface, Color.ORANGE, rect)
+                rect = pygame.Rect(
+                    (pos[0], pos[1]),
+                    (self.tile_size, self.tile_size),
+                )
+                rect.centerx = pos[0] + self.tile_size / 2
+                rect.centery = pos[1] + self.tile_size / 2
+                pygame.draw.ellipse(self.window_surface, Color.ORANGE, rect.scale_by(0.5))
             else:  # draw arrow
                 pos = (
-                    x * tile_with_pad_size + bw_pad + self.tile_size / 2,
-                    y * tile_with_pad_size + bw_pad + self.tile_size / 2,
+                    x * tile_with_pad_size + bw_pad + self.tile_size // 2,
+                    y * tile_with_pad_size + bw_pad + self.tile_size // 2,
                 )
+                arrow_width = self.tile_size // 6
                 if self.last_action == LEFT:
-                    end_pos = (pos[0] - self.tile_size / 4, pos[1])
-                    arrow_width = self.tile_size // 4
+                    end_pos = (pos[0] - self.tile_size // 4, pos[1])
                 elif self.last_action == DOWN:
-                    end_pos = (pos[0], pos[1] + self.tile_size / 4)
-                    arrow_width = self.tile_size // 4
+                    end_pos = (pos[0], pos[1] + self.tile_size // 4)
                 elif self.last_action == RIGHT:
-                    end_pos = (pos[0] + self.tile_size / 4, pos[1])
-                    arrow_width = self.tile_size // 4
+                    end_pos = (pos[0] + self.tile_size // 4, pos[1])
                 elif self.last_action == UP:
-                    end_pos = (pos[0], pos[1] - self.tile_size / 4)
-                    arrow_width = self.tile_size // 4
+                    end_pos = (pos[0], pos[1] - self.tile_size // 4)
                 else:
                     raise ValueError("illegal action")
 
@@ -743,11 +748,11 @@ class Gridworld(gym.Env):
                     self.window_surface,
                     Color.ORANGE,
                     (pos, end_pos),
-                    max(arrow_width - self.white_pad_size * 2, 1),
+                    arrow_width,
                 )
                 arr_pos = arrow_head(
                     end_pos,
-                    (max(self.tile_size / 4 - self.white_pad_size, 1),) * 2,
+                    (self.tile_size // 5,) * 2,
                     self.last_action,
                 )
                 pygame.draw.polygon(self.window_surface, Color.ORANGE, arr_pos, 0)
