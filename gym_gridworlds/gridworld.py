@@ -708,49 +708,49 @@ class Gridworld(gym.Env):
                                 pygame.draw.rect(self.window_surface, rnd_color, rect)
 
             # draw last action
-            if self.last_pos is not None:
-                x = self.last_pos[1]
-                y = self.last_pos[0]
+        if self.last_pos is not None:
+            x = self.last_pos[1]
+            y = self.last_pos[0]
 
-                if self.last_action == STAY:  # draw circle
-                    pos = (
-                        x * tile_with_pad_size + bw_pad + self.tile_size / 4,
-                        y * tile_with_pad_size + bw_pad + self.tile_size / 4,
-                    )
-                    rect = pygame.Rect(pos[0], pos[1], self.tile_size / 2, self.tile_size / 2)
-                    pygame.draw.ellipse(self.window_surface, Color.ORANGE, rect)
-                else:  # draw arrow
-                    pos = (
-                        x * tile_with_pad_size + bw_pad + self.tile_size / 2,
-                        y * tile_with_pad_size + bw_pad + self.tile_size / 2,
-                    )
-                    if self.last_action == LEFT:
-                        end_pos = (pos[0] - self.tile_size / 4, pos[1])
-                        arrow_width = self.tile_size // 4
-                    elif self.last_action == DOWN:
-                        end_pos = (pos[0], pos[1] + self.tile_size / 4)
-                        arrow_width = self.tile_size // 4
-                    elif self.last_action == RIGHT:
-                        end_pos = (pos[0] + self.tile_size / 4, pos[1])
-                        arrow_width = self.tile_size // 4
-                    elif self.last_action == UP:
-                        end_pos = (pos[0], pos[1] - self.tile_size / 4)
-                        arrow_width = self.tile_size // 4
-                    else:
-                        raise ValueError("illegal action")
+            if self.last_action == STAY:  # draw circle
+                pos = (
+                    x * tile_with_pad_size + bw_pad + self.tile_size / 4 + self.white_pad_size,
+                    y * tile_with_pad_size + bw_pad + self.tile_size / 4 + self.white_pad_size,
+                )
+                rect = pygame.Rect(pos[0], pos[1], self.tile_size / 2, self.tile_size / 2)
+                pygame.draw.ellipse(self.window_surface, Color.ORANGE, rect)
+            else:  # draw arrow
+                pos = (
+                    x * tile_with_pad_size + bw_pad + self.tile_size / 2,
+                    y * tile_with_pad_size + bw_pad + self.tile_size / 2,
+                )
+                if self.last_action == LEFT:
+                    end_pos = (pos[0] - self.tile_size / 4, pos[1])
+                    arrow_width = self.tile_size // 4
+                elif self.last_action == DOWN:
+                    end_pos = (pos[0], pos[1] + self.tile_size / 4)
+                    arrow_width = self.tile_size // 4
+                elif self.last_action == RIGHT:
+                    end_pos = (pos[0] + self.tile_size / 4, pos[1])
+                    arrow_width = self.tile_size // 4
+                elif self.last_action == UP:
+                    end_pos = (pos[0], pos[1] - self.tile_size / 4)
+                    arrow_width = self.tile_size // 4
+                else:
+                    raise ValueError("illegal action")
 
-                    pygame.draw.polygon(
-                        self.window_surface,
-                        Color.ORANGE,
-                        (pos, end_pos),
-                        max(arrow_width - self.white_pad_size * 2, 1),
-                    )
-                    arr_pos = arrow_head(
-                        end_pos,
-                        (max(self.tile_size / 4 - self.white_pad_size, 1),) * 2,
-                        self.last_action,
-                    )
-                    pygame.draw.polygon(self.window_surface, Color.ORANGE, arr_pos, 0)
+                pygame.draw.polygon(
+                    self.window_surface,
+                    Color.ORANGE,
+                    (pos, end_pos),
+                    max(arrow_width - self.white_pad_size * 2, 1),
+                )
+                arr_pos = arrow_head(
+                    end_pos,
+                    (max(self.tile_size / 4 - self.white_pad_size, 1),) * 2,
+                    self.last_action,
+                )
+                pygame.draw.polygon(self.window_surface, Color.ORANGE, arr_pos, 0)
 
         if mode == "human":
             pygame.event.pump()
