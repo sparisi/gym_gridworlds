@@ -212,7 +212,7 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/TravelField-27x28-v0",
+    id="Gym-Gridworlds/TravelField-28x28-v0",
     entry_point="gym_gridworlds.travel_field:TravelField",
     max_episode_steps=1000,
     kwargs={
