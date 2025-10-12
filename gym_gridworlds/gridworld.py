@@ -351,9 +351,11 @@ class Gridworld(gym.Env):
         self.random_goals = random_goals
         self.grid_key = grid
         self.grid = np.asarray(GRIDS[self.grid_key])
-        self.start_pos = tuple(
-            y - 1 if x == "max" else x for x, y in zip(start_pos, self.grid.shape)
-        )
+        self.start_pos = start_pos
+        if self.start_pos is not None:
+            self.start_pos = tuple(
+                y - 1 if x == "max" else x for x, y in zip(start_pos, self.grid.shape)
+            )
         self.n_rows, self.n_cols = self.grid.shape
 
         if start_pos is not None:
