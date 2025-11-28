@@ -184,11 +184,11 @@ You can use `playground.py` to test an environment. For example, run
 python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True --env-arg no_stay=True --env-arg observation_noise=0.2 --record
 ```
 You will be able to move around the environment with the directional arrow keys,
-see the rewards received by the agent, and save a gif of the episodes.
+see the rewards received by the agent, and save gifs like the one below.
 
 <div align="center">
     <figure>
-        <img src="figures/TravelField-28x28-v0.gif" height=150 width=150 />
+        <img src="figures/TravelField-28x28-v0.gif" height=200 width=200 />
     </figure>
 </div>
 
