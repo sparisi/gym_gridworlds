@@ -186,6 +186,11 @@ python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_rewa
 You will be able to move around the environment with the directional arrow keys,
 see the rewards received by the agent, and save a gif of the episodes.
 
+<div align="center">
+    <figure>
+        <img src="figures/TravelField-28x28-v0.gif" height=150 width=150 />
+    </figure>
+</div>
 
 ## Default MDP (`Gridworld` Class)
 
