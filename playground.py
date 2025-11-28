@@ -1,11 +1,15 @@
 """
-Move:           ← ↑ → ↓
-Stay:           ENTER
-Reset Board:    R
-Quit:           Q
+Move:   ← ↑ → ↓
+Stay:   ENTER
+Reset:  R
+Quit:   Q
 
-python playground.py ENVIRONMENT --record
+python playground.py ENVIRONMENT --record --env-arg= ...
 --record to save a gif of the game
+--env-arg to pass optional environment arguments
+
+Example:
+python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True --env-arg no_stay=True --record
 """
 
 import imageio
@@ -16,30 +20,73 @@ from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY
 import argparse
 from pynput import keyboard
 import time
+from pathlib import Path
 
-# Mutable object (list) to signal when the program should exit
+# Mutable so we can update it in on_press`
 program_running = [True]
-sum_rewards = [0]  # Mutable so we can update it in `on_press`
+sum_rewards = [0]
+
+def parse_env_args(arg_list):
+    env_kwargs = {}
+    for item in arg_list:
+        if "=" not in item:
+            raise ValueError(f"Invalid format for --env-arg '{item}', expected key=value")
+        key, value = item.split("=", 1)
+
+        # Try to auto-convert type: int, float, bool
+        if value.lower() == "true":
+            value = True
+        elif value.lower() == "false":
+            value = False
+        else:
+            try:
+                value = int(value)
+            except ValueError:
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass  # leave as string
+
+        env_kwargs[key] = value
+
+    return env_kwargs
 
 parser = argparse.ArgumentParser()
 parser.add_argument("env")
+parser.add_argument(
+    "--env-arg",
+    action="append",
+    default=[],
+    help="Extra environment arguments in key=value format",
+)
 parser.add_argument("--record", action="store_true")
 args = parser.parse_args()
 
-env = gymnasium.make(args.env, render_mode="human")
+env_kwargs = parse_env_args(args.env_arg)
+env = gymnasium.make(args.env, render_mode="human", **env_kwargs)
 
 if args.record:
     # Gymnasium human rendering does not return RGB array, so we must make a copy
-    env_record = gymnasium.make(args.env, render_mode="rgb_array")
+    env_record = gymnasium.make(args.env, render_mode="rgb_array", **env_kwargs)
     frames = []
 
 
 def step(action):
+    if action not in env.action_space:
+        print("Illegal action, skipped")
+        return
+    state = env.unwrapped.agent_pos
     next_obs, rwd, term, trunc, info = env.step(action)
     sum_rewards[0] = sum_rewards[0] + rwd
+    next_state = env.unwrapped.agent_pos
 
-    if term or trunc:
-        print("Episode ended, sum of rewards:", sum_rewards[0])
+    print(f"{state} | {action} | {rwd} | {next_state}")
+
+    if term:
+        print("Terminal state, sum of rewards:", sum_rewards[0])
+        sum_rewards[0] = 0
+    elif trunc:
+        print("Time step limit, sum of rewards:", sum_rewards[0])
         sum_rewards[0] = 0
 
     if args.record:
@@ -88,10 +135,12 @@ def on_press(key):
 
 print(
     "\n"
-    "Move: \t\t← ↑ → ↓\n"
-    "Stay: \t\tENTER\n"
-    "Reset Board: \tR\n"
-    "Quit: \t\tQ\n"
+    "Move: \t← ↑ → ↓\n"
+    "Stay: \tENTER\n"
+    "Reset: \tR\n"
+    "Quit: \tQ\n"
+    "\n"
+    "Prints are: (S | A | R | S')"
 )
 
 reset()
@@ -106,7 +155,8 @@ try:
 finally:
     # Cleanup in main thread
     if args.record:
-        imageio.mimsave(args.env + ".gif", frames, fps=5, loop=0)
+        gif_name = "".join(Path(args.env).parts).replace("Gym-Gridworlds", "")
+        imageio.mimsave(gif_name + ".gif", frames, fps=5, loop=0)
     listener.stop()
     env.close()
     if args.record:
