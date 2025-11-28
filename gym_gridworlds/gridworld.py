@@ -278,6 +278,8 @@ class Gridworld(gym.Env):
     This is the probability that the action will be random.
     For example, if `random_action_prob=0.1` there is a 10% chance that the agent
     will do a random action instead of doing the one passed to `self.step(action)`.
+    Another way to add stochasticity is with `slippery_prob`, which is the probability
+    that the agent slips and moves twice (similar to "sticky actions" in other environments).
 
     ## Rewards
     - Doing STAY at the goal: +1
@@ -341,6 +343,7 @@ class Gridworld(gym.Env):
         distance_reward: Optional[bool] = False,
         render_mode: Optional[str] = None,
         random_action_prob: Optional[float] = 0.0,
+        slippery_prob: Optional[float] = 0.0,
         reward_noise_std: Optional[float] = 0.0,
         nonzero_reward_noise_std: Optional[float] = 0.0,
         observation_noise: Optional[float] = 0.0,
@@ -369,6 +372,7 @@ class Gridworld(gym.Env):
 
         self.no_stay = no_stay
         self.random_action_prob = random_action_prob
+        self.slippery_prob = slippery_prob
         self.reward_noise_std = reward_noise_std
         self.nonzero_reward_noise_std = nonzero_reward_noise_std
         assert 0.0 <= observation_noise < 1.0, "observation_noise must be in [0.0, 1.0)"
@@ -525,6 +529,27 @@ class Gridworld(gym.Env):
                 reward = REWARDS[PIT]
             elif self.grid[self.agent_pos] == WALL:
                 self.agent_pos = self.last_pos  # can't walk on walls
+
+            # Move again if slipped
+            if self.slippery_prob > 0.0 and self.np_random.random() < self.slippery_prob:
+                    self.agent_pos = _move(
+                        self.agent_pos[0],
+                        self.agent_pos[1],
+                        action,
+                        self.n_rows,
+                        self.n_cols,
+                    )
+                    if self.grid[self.agent_pos] == PIT:
+                        terminated = True
+                        reward = REWARDS[PIT]
+                    elif self.grid[self.agent_pos] == WALL:
+                        self.agent_pos = self.last_pos
+
+        if self.distance_difference_reward:
+            closest_goal_new_dist = np.abs(
+                np.argwhere(self.grid == GOOD) - self.agent_pos
+            ).sum(1).min()
+            reward -= (closest_goal_new_dist - closest_goal_dist) * (100 / self.n_rows / self.n_cols)
 
         return self.get_state(), reward, terminated, False, {}
 

@@ -21,6 +21,7 @@ import argparse
 from pynput import keyboard
 import time
 from pathlib import Path
+import json
 
 # Mutable so we can update it in on_press`
 program_running = [True]
@@ -32,23 +33,11 @@ def parse_env_args(arg_list):
         if "=" not in item:
             raise ValueError(f"Invalid format for --env-arg '{item}', expected key=value")
         key, value = item.split("=", 1)
-
-        # Try to auto-convert type: int, float, bool
-        if value.lower() == "true":
-            value = True
-        elif value.lower() == "false":
-            value = False
-        else:
-            try:
-                value = int(value)
-            except ValueError:
-                try:
-                    value = float(value)
-                except ValueError:
-                    pass  # leave as string
-
+        try:
+            value = json.loads(value)  # Works for lists, dicts, numbers, booleans, null
+        except json.JSONDecodeError:
+            pass  # Fallback: keep as string
         env_kwargs[key] = value
-
     return env_kwargs
 
 parser = argparse.ArgumentParser()

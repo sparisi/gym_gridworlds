@@ -181,12 +181,16 @@ env.reset(seed=42)
 ## Playground
 You can use `playground.py` to test an environment. For example, run
 ```
+python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 --env-arg max_resolution=[512,512] --record
 python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True --env-arg no_stay=True --env-arg observation_noise=0.2 --record
 ```
 You will be able to move around the environment with the directional arrow keys,
 see the rewards received by the agent, and save gifs like the one below.
 
 <div align="center">
+    <figure>
+        <img src="FourRooms-Original-13x13-v0.gif" height=200 width=200 />
+    </figure>
     <figure>
         <img src="figures/TravelField-28x28-v0.gif" height=200 width=200 />
     </figure>
@@ -253,6 +257,8 @@ Transition can be made stochastic everywhere by passing `random_action_prob`.
 This is the probability that the action will be random.
 For example, if `random_action_prob=0.1` there is a 10% chance that the agent
 will do a random action instead of doing the one passed to `self.step(action)`.  
+Another way to add stochasticity is with `slippery_prob`, which is the probability
+that the agent slips and moves twice (similar to "sticky actions" in other environments).
 
 ### <ins>Rewards</ins>
 - Doing `STAY` at the goal: +1
