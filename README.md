@@ -189,7 +189,7 @@ see the rewards received by the agent, and save gifs like the one below.
 
 <div align="center">
     <figure>
-        <img src="FourRooms-Original-13x13-v0.gif" height=200 width=200 />
+        <img src="figures/FourRooms-Original-13x13-v0.gif" height=200 width=200 />
     </figure>
     <figure>
         <img src="figures/TravelField-28x28-v0.gif" height=200 width=200 />
