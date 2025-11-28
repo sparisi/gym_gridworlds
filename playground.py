@@ -37,8 +37,11 @@ if args.record:
 def step(action):
     next_obs, rwd, term, trunc, info = env.step(action)
     sum_rewards[0] = sum_rewards[0] + rwd
+
     if term or trunc:
         print("Episode ended, sum of rewards:", sum_rewards[0])
+        sum_rewards[0] = 0
+
     if args.record:
         env_record.step(action)
         frame = env_record.render()
@@ -49,6 +52,9 @@ def step(action):
 def reset():
     seed = np.random.randint(999)
     env.reset(seed=seed)
+    env.render()
+    sum_rewards[0] = 0
+
     if args.record:
         env_record.reset(seed=seed)
         frame = env_record.render()
