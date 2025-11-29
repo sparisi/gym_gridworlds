@@ -100,15 +100,15 @@ def reset():
 
 def on_press(key):
     try:
-        if key == keyboard.Key.up:
+        if key == keyboard.Key.up or key == keyboard.Key.num8:
             step(UP)
-        elif key == keyboard.Key.down:
+        elif key == keyboard.Key.down or key == keyboard.Key.num2:
             step(DOWN)
-        elif key == keyboard.Key.left:
+        elif key == keyboard.Key.left or key == keyboard.Key.num4:
             step(LEFT)
-        elif key == keyboard.Key.right:
+        elif key == keyboard.Key.right or key == keyboard.Key.num6:
             step(RIGHT)
-        elif key == keyboard.Key.enter:
+        elif key == keyboard.Key.enter or key == keyboard.Key.num5:
             step(STAY)
         elif key.char.isalpha() and key.char == "q":
             # Can't call env.close() or pygame will freeze everything
