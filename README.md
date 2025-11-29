@@ -280,9 +280,13 @@ White noise can be added to all rewards by passing `reward_noise_std`,
 or only to nonzero rewards with `nonzero_reward_noise_std`.
 
 &#10148; <strong>Auxiliary Rewards</strong>  
-An auxiliary negative reward based on the Manhattan distance to the closest
-goal can be added by passing `distance_reward=True`. The distance is scaled
-according to the size of the grid.
+Auxiliary rewards based on the distance to the closest goal can be
+added by passing `distance_reward=True` or `distance_difference_reward=True`.
+The former is the negative Manhattan distance scaled according to the size
+of the grid to be in the range [-1, 0].
+The latter is the difference between the next state and current state
+Manhattan distances to the goal. It can be +1 (if the agent moves closer
+to the goal), 0 (if it does STAY), or -1 (if it moves further).
 
 ### <ins>Episode End</ins>
 By default, an episode ends if any of the following happens:

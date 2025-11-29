@@ -301,9 +301,13 @@ class Gridworld(gym.Env):
     or only to nonzero rewards with `nonzero_reward_noise_std`.
 
     #### Auxiliary Rewards
-    An auxiliary negative reward based on the Manhattan distance to the closest
-    goal can be added by passing `distance_reward=True`. The distance is scaled
-    according to the size of the grid.
+    Auxiliary rewards based on the distance to the closest goal can be
+    added by passing `distance_reward=True` or `distance_difference_reward=True`.
+    The former is the negative Manhattan distance scaled according to the size
+    of the grid to be in the range [-1, 0].
+    The latter is the difference between the next state and current state
+    Manhattan distances to the goal, and can be +1 (if the agent moves closer
+    to the goal), 0 (if it does STAY), or -1 (if it moves further).
 
     ## Episode End
     By default, an episode ends if any of the following happens:
@@ -341,6 +345,7 @@ class Gridworld(gym.Env):
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
         distance_reward: Optional[bool] = False,
+        distance_difference_reward: Optional[bool] = False,
         render_mode: Optional[str] = None,
         random_action_prob: Optional[float] = 0.0,
         slippery_prob: Optional[float] = 0.0,
@@ -378,6 +383,7 @@ class Gridworld(gym.Env):
         assert 0.0 <= observation_noise < 1.0, "observation_noise must be in [0.0, 1.0)"
         self.observation_noise = observation_noise
         self.distance_reward = distance_reward
+        self.distance_difference_reward = distance_difference_reward
         self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
         self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
@@ -498,10 +504,15 @@ class Gridworld(gym.Env):
             reward += self.np_random.normal() * self.nonzero_reward_noise_std
 
         if self.distance_reward:
-            closest_goal = np.abs(
+            closest_goal_dist = np.abs(
                 np.argwhere(self.grid == GOOD) - self.agent_pos
             ).sum(1).min()
-            reward -= closest_goal / (self.n_rows * self.n_cols)
+            reward -= closest_goal_dist / (self.n_rows + self.n_cols - 2)
+
+        if self.distance_difference_reward:
+            closest_goal_dist = np.abs(
+                np.argwhere(self.grid == GOOD) - self.agent_pos
+            ).sum(1).min()
 
         if self.grid[self.agent_pos] == QCKSND and self.np_random.random() > 0.1:
             pass  # fail to move in quicksand
@@ -523,7 +534,6 @@ class Gridworld(gym.Env):
                     self.n_rows,
                     self.n_cols,
                 )
-
             if self.grid[self.agent_pos] == PIT:
                 terminated = True  # agent dies
                 reward = REWARDS[PIT]
@@ -549,7 +559,7 @@ class Gridworld(gym.Env):
             closest_goal_new_dist = np.abs(
                 np.argwhere(self.grid == GOOD) - self.agent_pos
             ).sum(1).min()
-            reward -= (closest_goal_new_dist - closest_goal_dist) * (100 / self.n_rows / self.n_cols)
+            reward -= closest_goal_new_dist - closest_goal_dist
 
         return self.get_state(), reward, terminated, False, {}
 

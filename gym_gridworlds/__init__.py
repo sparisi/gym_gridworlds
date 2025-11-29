@@ -218,7 +218,6 @@ register(
     kwargs={
         "grid": "large_field",
         "start_pos": ("max", 0),
-        "no_stay": True,
     },
 )
 
@@ -229,7 +228,6 @@ register(
     kwargs={
         "grid": "small_field",
         "start_pos": ("max", 0),
-        "no_stay": True,
     },
 )
 
