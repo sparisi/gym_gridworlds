@@ -146,7 +146,7 @@ GRIDS = {
         [EMPTY, BAD, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, PIT, PIT, GOOD],
     ],
-    "11x11_four_rooms_symmetrical" : [
+    "11x11_four_rooms_symmetrical": [
         [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
         [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
         [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
