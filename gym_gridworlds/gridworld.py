@@ -117,20 +117,20 @@ GRIDS = {
     ],
     "2x2_empty": [
         [EMPTY, EMPTY],
-        [EMPTY, GOOD],
+        [EMPTY, GOOD ],
     ],
     "3x3_empty": [
         [EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY],
-        [EMPTY, EMPTY, GOOD],
+        [EMPTY, EMPTY, GOOD ],
     ],
     "3x3_empty_loop": [
         [EMPTY, LEFT,  EMPTY],
-        [EMPTY, RIGHT, UP],
-        [EMPTY, EMPTY, GOOD],
+        [EMPTY, RIGHT, UP   ],
+        [EMPTY, EMPTY, GOOD ],
     ],
     "3x3_penalty": [
-        [EMPTY, BAD,   GOOD],
+        [EMPTY, BAD,   GOOD ],
         [EMPTY, BAD,   EMPTY],
         [EMPTY, EMPTY, EMPTY],
     ],
@@ -143,19 +143,19 @@ GRIDS = {
         [[GOOD_SMALL] + [EMPTY for _ in range(4)] + [GOOD]]
     ,
     "4x4_quicksand": [
-        [EMPTY, EMPTY,  BAD,   GOOD],
+        [EMPTY, EMPTY,  BAD,   GOOD ],
         [EMPTY, EMPTY,  BAD,   EMPTY],
         [EMPTY, QCKSND, EMPTY, EMPTY],
         [EMPTY, EMPTY,  EMPTY, EMPTY],
     ],
     "4x4_quicksand_distract": [
-        [EMPTY, GOOD_SMALL, BAD,        GOOD],
+        [EMPTY, GOOD_SMALL, BAD,        GOOD ],
         [EMPTY, BAD,        EMPTY,      EMPTY],
         [EMPTY, QCKSND,     GOOD_SMALL, EMPTY],
         [EMPTY, EMPTY,      EMPTY,      EMPTY],
     ],
     "4x5_full": [
-        [EMPTY, EMPTY, GOOD_SMALL, BAD,        GOOD],
+        [EMPTY, EMPTY, GOOD_SMALL, BAD,        GOOD ],
         [EMPTY, EMPTY, BAD,        EMPTY,      EMPTY],
         [RIGHT, EMPTY, QCKSND,     GOOD_SMALL, EMPTY],
         [UP,    EMPTY, EMPTY,      EMPTY,      EMPTY],
@@ -171,7 +171,7 @@ GRIDS = {
         [EMPTY,      LEFT,      LEFT,      LEFT],
     ],
     "2x11_two_room_distract": [
-        [GOOD_SMALL, EMPTY, EMPTY, EMPTY, RIGHT, DOWN,  LEFT,  EMPTY, EMPTY, EMPTY, GOOD],
+        [GOOD_SMALL, EMPTY, EMPTY, EMPTY, RIGHT, DOWN,  LEFT,  EMPTY, EMPTY, EMPTY, GOOD ],
         [EMPTY,      EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
     "5x5_barrier": [
@@ -182,17 +182,17 @@ GRIDS = {
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
     "4x12_cliffwalk": [
-        [EMPTY, PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   GOOD],
+        [EMPTY, PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   GOOD ],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
     "5x6_danger_maze": [
         [EMPTY, PIT,   PIT,   PIT,   EMPTY, EMPTY],
-        [EMPTY, EMPTY, BAD,   BAD,   EMPTY, WALL],
-        [EMPTY, PIT,   EMPTY, WALL,  EMPTY, WALL],
+        [EMPTY, EMPTY, BAD,   BAD,   EMPTY, WALL ],
+        [EMPTY, PIT,   EMPTY, WALL,  EMPTY, WALL ],
         [EMPTY, BAD,   EMPTY, EMPTY, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY, PIT,   PIT,   GOOD],
+        [EMPTY, EMPTY, EMPTY, PIT,   PIT,   GOOD ],
     ],
     "11x11_four_rooms_symmetrical": [
         [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
