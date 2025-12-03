@@ -693,8 +693,8 @@ class Gridworld(gym.Env):
                         pos[1] + self.tile_size // 2,
                     )
                     start_pos = (
-                        center[0] - movement[1] * (self.tile_size - self.white_pad_size) // 2,
-                        center[1] - movement[0] * (self.tile_size - self.white_pad_size) // 2,
+                        center[0] - movement[1] * (self.tile_size // 2 - self.white_pad_size),
+                        center[1] - movement[0] * (self.tile_size // 2 - self.white_pad_size),
                     )
                     pygame.draw.polygon(
                         self.window_surface,
@@ -704,7 +704,7 @@ class Gridworld(gym.Env):
                     )
                     arr_pos = arrow_head(
                         center,
-                        ((self.tile_size - self.white_pad_size) // 2,) * 2,
+                        ((self.tile_size // 2 - self.white_pad_size),) * 2,
                         self.grid[y][x],
                     )
                     pygame.draw.polygon(self.window_surface, Color.GRAY, arr_pos, 0)
