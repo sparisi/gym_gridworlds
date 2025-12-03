@@ -15,12 +15,16 @@ BAD_SMALL = 12
 WALL = -3
 PIT = -4
 
-# action IDs (and for one-directional states)
+# action IDs (also used for one-directional states)
 LEFT = 0
 DOWN = 1
 RIGHT = 2
 UP = 3
 STAY = 4
+UP_LEFT = 5
+DOWN_LEFT = 6
+DOWN_RIGHT = 7
+UP_RIGHT = 8
 
 # default rewards
 REWARDS = defaultdict(lambda: 0)
@@ -45,6 +49,30 @@ class Color(tuple, Enum):
     PURPLE = (102, 51, 153)
     BROWN = (139, 69, 19)
 
+# tile movement mapping
+ACTION_TO_VEC = {
+    STAY: (0, 0),
+    LEFT: (0, -1),
+    DOWN: (+1, 0),
+    RIGHT: (0, +1),
+    UP: (-1, 0),
+    UP_LEFT: (-1, -1),
+    UP_RIGHT: (-1, +1),
+    DOWN_LEFT: (+1, -1),
+    DOWN_RIGHT: (+1, +1),
+}
+
+def _move(row, col, a, n_rows, n_cols):
+    movement = ACTION_TO_VEC.get(a, None)
+    if movement is None:
+        raise ValueError("illegal action")
+    new_row = row + movement[0]
+    new_col = col + movement[1]
+    if not (0 <= new_col < n_cols and 0 <= new_row < n_rows):
+        return (row, col)
+    return (new_row, new_col)
+
+# tile colors
 COLORMAP = dict()
 COLORMAP[EMPTY] = Color.BLACK
 COLORMAP[QCKSND] = Color.PALE_YELLOW
@@ -54,10 +82,23 @@ COLORMAP[BAD] = Color.RED
 COLORMAP[BAD_SMALL] = Color.PALE_RED
 COLORMAP[WALL] = Color.GRAY
 COLORMAP[PIT] = Color.PURPLE
-COLORMAP[LEFT] = Color.BLACK
-COLORMAP[RIGHT] = Color.BLACK
-COLORMAP[UP] = Color.BLACK
-COLORMAP[DOWN] = Color.BLACK
+for action in ACTION_TO_VEC:
+    COLORMAP[action] = Color.BLACK
+
+char_dict = {
+    ".": EMPTY,
+    "□": WALL,
+    "_": QCKSND,
+    " ": PIT,
+    "O": GOOD,
+    "o": GOOD_SMALL,
+    "X": BAD,
+    "x": BAD_SMALL,
+    "←": LEFT,
+    "→": RIGHT,
+    "↑": UP,
+    "↓": DOWN,
+}
 
 # fmt: off
 GRIDS = {
@@ -176,22 +217,6 @@ GRIDS = {
     ],
 }
 # fmt: on
-
-
-def _move(row, col, a, nrow, ncol):
-    if a == LEFT:
-        col = max(col - 1, 0)
-    elif a == DOWN:
-        row = min(row + 1, nrow - 1)
-    elif a == RIGHT:
-        col = min(col + 1, ncol - 1)
-    elif a == UP:
-        row = max(row - 1, 0)
-    elif a == STAY:
-        pass
-    else:
-        raise ValueError("illegal action")
-    return (row, col)
 
 
 class Gridworld(gym.Env):
@@ -344,6 +369,7 @@ class Gridworld(gym.Env):
         start_pos: Optional[tuple] = (0, 0),
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
+        diagonal_moves: Optional[bool] = False,
         distance_reward: Optional[bool] = False,
         distance_difference_reward: Optional[bool] = False,
         render_mode: Optional[str] = None,
@@ -386,7 +412,9 @@ class Gridworld(gym.Env):
         self.distance_difference_reward = distance_difference_reward
         self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
-        self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
+        num_actions = 8 if diagonal_moves else 4
+        num_actions += 0 if no_stay else 1
+        self.action_space = gym.spaces.Discrete(num_actions)
         self.agent_pos = None
         self.last_action = None
 
@@ -503,13 +531,7 @@ class Gridworld(gym.Env):
         if reward != 0.0 and self.nonzero_reward_noise_std > 0.0:
             reward += self.np_random.normal() * self.nonzero_reward_noise_std
 
-        if self.distance_reward:
-            closest_goal_dist = np.abs(
-                np.argwhere(self.grid == GOOD) - self.agent_pos
-            ).sum(1).min()
-            reward -= closest_goal_dist / (self.n_rows + self.n_cols - 2)
-
-        if self.distance_difference_reward:
+        if self.distance_reward or self.distance_difference_reward:
             closest_goal_dist = np.abs(
                 np.argwhere(self.grid == GOOD) - self.agent_pos
             ).sum(1).min()
@@ -518,10 +540,8 @@ class Gridworld(gym.Env):
             pass  # fail to move in quicksand
         else:
             if (
-                self.grid[self.agent_pos] == LEFT and action != LEFT or
-                self.grid[self.agent_pos] == RIGHT and action != RIGHT or
-                self.grid[self.agent_pos] == UP and action != UP or
-                self.grid[self.agent_pos] == DOWN and action != DOWN
+                self.grid[self.agent_pos] in ACTION_TO_VEC and
+                self.grid[self.agent_pos] != action
             ):  # fmt: skip
                 pass  # fail to move in one-directional tile
             else:
@@ -554,6 +574,9 @@ class Gridworld(gym.Env):
                         reward = REWARDS[PIT]
                     elif self.grid[self.agent_pos] == WALL:
                         self.agent_pos = self.last_pos
+
+        if self.distance_reward:
+            reward -= closest_goal_dist / (self.n_rows + self.n_cols - 2)
 
         if self.distance_difference_reward:
             closest_goal_new_dist = np.abs(
@@ -600,30 +623,14 @@ class Gridworld(gym.Env):
             self.clock = pygame.time.Clock()
 
         def arrow_head(pos, size, dir):
-            if dir == LEFT:
-                return (
-                    (end_pos[0], end_pos[1] - size[1]),
-                    (end_pos[0], end_pos[1] + size[1]),
-                    (end_pos[0] - size[0], end_pos[1]),
-                )
-            elif dir == DOWN:
-                return (
-                    (end_pos[0] - size[0], end_pos[1]),
-                    (end_pos[0] + size[0], end_pos[1]),
-                    (end_pos[0], end_pos[1] + size[1]),
-                )
-            elif dir == RIGHT:
-                return (
-                    (end_pos[0], end_pos[1] - size[1]),
-                    (end_pos[0], end_pos[1] + size[1]),
-                    (end_pos[0] + size[0], end_pos[1]),
-                )
-            elif dir == UP:
-                return (
-                    (end_pos[0] - size[0], end_pos[1]),
-                    (end_pos[0] + size[0], end_pos[1]),
-                    (end_pos[0], end_pos[1] - size[1]),
-                )
+            movement = ACTION_TO_VEC.get(dir, None)
+            if movement is None:
+                raise ValueError("illegal action")
+            return (
+                (pos[0] - movement[0] * size[0], pos[1] + movement[1] * size[1]),
+                (pos[0] + movement[0] * size[0], pos[1] - movement[1] * size[1]),
+                (pos[0] + movement[1] * size[0], pos[1] + movement[0] * size[1]),
+            )
 
         tile_with_pad_size = self.tile_size + self.white_pad_size
         bw_pad = self.black_pad_size + self.white_pad_size
@@ -678,55 +685,26 @@ class Gridworld(gym.Env):
                     pygame.draw.ellipse(self.window_surface, Color.BLUE, rect)
 
                 # draw arrow for one-directional tiles
-                if self.grid[y][x] in [LEFT, RIGHT, UP, DOWN]:
+                movement = ACTION_TO_VEC.get(self.grid[y][x], None)
+                if movement is not None:
                     arrow_width = self.tile_size // 3
-                    if self.grid[y][x] == LEFT:
-                        start_pos = (
-                            pos[0] + self.tile_size,
-                            pos[1] + self.tile_size // 2,
-                        )
-                        end_pos = (
-                            pos[0] + self.tile_size // 2,
-                            pos[1] + self.tile_size // 2,
-                        )
-                    elif self.grid[y][x] == DOWN:
-                        start_pos = (
-                            pos[0] + self.tile_size // 2,
-                            pos[1],
-                        )
-                        end_pos = (
-                            pos[0] + self.tile_size // 2,
-                            pos[1] + self.tile_size // 2,
-                        )
-                    elif self.grid[y][x] == RIGHT:
-                        start_pos = (
-                            pos[0],
-                            pos[1] + self.tile_size // 2
-                        )
-                        end_pos = (
-                            pos[0] + self.tile_size // 2,
-                            pos[1] + self.tile_size // 2,
-                        )
-                    elif self.grid[y][x] == UP:
-                        start_pos = (
-                            pos[0] + self.tile_size // 2,
-                            pos[1] + self.tile_size,
-                        )
-                        end_pos = (
-                            pos[0] + self.tile_size // 2,
-                            pos[1] + self.tile_size // 2,
-                        )
-                    else:
-                        pass
+                    center = (
+                        pos[0] + self.tile_size // 2,
+                        pos[1] + self.tile_size // 2,
+                    )
+                    start_pos = (
+                        center[0] - movement[1] * (self.tile_size - self.white_pad_size) // 2,
+                        center[1] - movement[0] * (self.tile_size - self.white_pad_size) // 2,
+                    )
                     pygame.draw.polygon(
                         self.window_surface,
                         Color.GRAY,
-                        (start_pos, end_pos),
+                        (start_pos, center),
                         arrow_width,
                     )
                     arr_pos = arrow_head(
-                        end_pos,
-                        (self.tile_size // 2,) * 2,
+                        center,
+                        ((self.tile_size - self.white_pad_size) // 2,) * 2,
                         self.grid[y][x],
                     )
                     pygame.draw.polygon(self.window_surface, Color.GRAY, arr_pos, 0)
@@ -748,7 +726,7 @@ class Gridworld(gym.Env):
                                 pygame.draw.rect(self.window_surface, rnd_color, rect)
 
         # draw last action
-        if self.last_pos is not None:
+        if self.last_pos is not None and self.last_action is not None:
             x = self.last_pos[1]
             y = self.last_pos[0]
 
@@ -757,30 +735,23 @@ class Gridworld(gym.Env):
                     x * tile_with_pad_size + bw_pad,
                     y * tile_with_pad_size + bw_pad,
                 )
-                rect = pygame.Rect(
-                    (pos[0], pos[1]),
-                    (self.tile_size, self.tile_size),
-                )
+                rect = pygame.Rect(pos, (self.tile_size,) * 2)
                 rect.centerx = pos[0] + self.tile_size / 2
                 rect.centery = pos[1] + self.tile_size / 2
                 pygame.draw.ellipse(self.window_surface, Color.ORANGE, rect.scale_by(0.5))
             else:  # draw arrow
+                movement = ACTION_TO_VEC.get(self.last_action, None)
+                if movement is None:
+                    raise ValueError("illegal action")
+                arrow_width = self.tile_size // 6
                 pos = (
                     x * tile_with_pad_size + bw_pad + self.tile_size // 2,
                     y * tile_with_pad_size + bw_pad + self.tile_size // 2,
                 )
-                arrow_width = self.tile_size // 6
-                if self.last_action == LEFT:
-                    end_pos = (pos[0] - self.tile_size // 4, pos[1])
-                elif self.last_action == DOWN:
-                    end_pos = (pos[0], pos[1] + self.tile_size // 4)
-                elif self.last_action == RIGHT:
-                    end_pos = (pos[0] + self.tile_size // 4, pos[1])
-                elif self.last_action == UP:
-                    end_pos = (pos[0], pos[1] - self.tile_size // 4)
-                else:
-                    raise ValueError("illegal action")
-
+                end_pos = (
+                    pos[0] + movement[1] * self.tile_size // 4,
+                    pos[1] + movement[0] * self.tile_size // 4,
+                )
                 pygame.draw.polygon(
                     self.window_surface,
                     Color.ORANGE,
