@@ -168,11 +168,11 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/DangerMaze-6x6-v0",
+    id="Gym-Gridworlds/DangerMaze-5x6-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
-        "grid": "6x6_danger_maze",
+        "grid": "5x6_danger_maze",
     },
 )
 

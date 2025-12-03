@@ -180,12 +180,12 @@ GRIDS = {
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
-    "6x6_danger_maze": [
         [EMPTY, PIT, PIT, PIT, EMPTY, EMPTY],
         [EMPTY, EMPTY, BAD, BAD, EMPTY, WALL],
         [EMPTY, PIT, EMPTY, WALL, EMPTY, WALL],
         [EMPTY, BAD, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, PIT, PIT, GOOD],
+    "5x6_danger_maze": [
     ],
     "11x11_four_rooms_symmetrical": [
         [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
