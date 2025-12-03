@@ -26,7 +26,7 @@ class CleanDirt(Gridworld):
     Use pixel-observations to solve this task.
     """
 
-    def __init__(self, dirt_prob=0.05, **kwargs):
+    def __init__(self, dirt_prob=0.1, **kwargs):
         Gridworld.__init__(self, **kwargs)
         self.dirt_prob = dirt_prob
 
