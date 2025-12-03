@@ -145,9 +145,9 @@ the rewards position to the observation (`MatrixWithGoalWrapper`), or to learn f
 ```python
 GRIDS["5x5_wall"] = [
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, WALL, WALL, WALL, EMPTY],
-    [EMPTY, WALL, GOOD, EMPTY, EMPTY],
-    [EMPTY, WALL, WALL, WALL, EMPTY],
+    [EMPTY, WALL,  WALL,  WALL,  EMPTY],
+    [EMPTY, WALL,  GOOD,  EMPTY, EMPTY],
+    [EMPTY, WALL,  WALL,  WALL,  EMPTY],
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
 ]
 ```

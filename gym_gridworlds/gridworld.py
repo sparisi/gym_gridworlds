@@ -21,6 +21,8 @@ DOWN = 1
 RIGHT = 2
 UP = 3
 STAY = 4
+
+# diagonal actions are currently not supported
 UP_LEFT = 5
 DOWN_LEFT = 6
 DOWN_RIGHT = 7
@@ -85,6 +87,7 @@ COLORMAP[PIT] = Color.PURPLE
 for action in ACTION_TO_VEC:
     COLORMAP[action] = Color.BLACK
 
+# parse grids from txt file
 char_dict = {
     ".": EMPTY,
     "□": WALL,
@@ -98,6 +101,10 @@ char_dict = {
     "→": RIGHT,
     "↑": UP,
     "↓": DOWN,
+    "↖": UP_LEFT,
+    "↗": UP_RIGHT,
+    "↙": DOWN_LEFT,
+    "↘": DOWN_RIGHT,
 }
 
 # fmt: off
@@ -118,13 +125,13 @@ GRIDS = {
         [EMPTY, EMPTY, GOOD],
     ],
     "3x3_empty_loop": [
-        [EMPTY, LEFT, EMPTY],
+        [EMPTY, LEFT,  EMPTY],
         [EMPTY, RIGHT, UP],
         [EMPTY, EMPTY, GOOD],
     ],
     "3x3_penalty": [
-        [EMPTY, BAD, GOOD],
-        [EMPTY, BAD, EMPTY],
+        [EMPTY, BAD,   GOOD],
+        [EMPTY, BAD,   EMPTY],
         [EMPTY, EMPTY, EMPTY],
     ],
     "10x10_empty":
@@ -136,84 +143,84 @@ GRIDS = {
         [[GOOD_SMALL] + [EMPTY for _ in range(4)] + [GOOD]]
     ,
     "4x4_quicksand": [
-        [EMPTY, EMPTY, BAD, GOOD],
-        [EMPTY, EMPTY, BAD, EMPTY],
+        [EMPTY, EMPTY,  BAD,   GOOD],
+        [EMPTY, EMPTY,  BAD,   EMPTY],
         [EMPTY, QCKSND, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY,  EMPTY, EMPTY],
     ],
     "4x4_quicksand_distract": [
-        [EMPTY, GOOD_SMALL, BAD, GOOD],
-        [EMPTY, BAD, EMPTY, EMPTY],
-        [EMPTY, QCKSND, GOOD_SMALL, EMPTY],
-        [EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, GOOD_SMALL, BAD,        GOOD],
+        [EMPTY, BAD,        EMPTY,      EMPTY],
+        [EMPTY, QCKSND,     GOOD_SMALL, EMPTY],
+        [EMPTY, EMPTY,      EMPTY,      EMPTY],
     ],
     "4x5_full": [
-        [EMPTY, EMPTY, GOOD_SMALL, BAD, GOOD],
-        [EMPTY, EMPTY, BAD, EMPTY, EMPTY],
-        [RIGHT, EMPTY, QCKSND, GOOD_SMALL, EMPTY],
-        [UP, EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, GOOD_SMALL, BAD,        GOOD],
+        [EMPTY, EMPTY, BAD,        EMPTY,      EMPTY],
+        [RIGHT, EMPTY, QCKSND,     GOOD_SMALL, EMPTY],
+        [UP,    EMPTY, EMPTY,      EMPTY,      EMPTY],
     ],
     "3x5_two_room_quicksand": [
-        [EMPTY, EMPTY, LEFT, EMPTY, GOOD],
+        [EMPTY, EMPTY, LEFT,   EMPTY, GOOD],
         [EMPTY, EMPTY, QCKSND, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, EMPTY,  EMPTY, EMPTY],
     ],
     "3x4_corridor": [
-        [EMPTY, LEFT, LEFT, LEFT],
+        [EMPTY,      LEFT,      LEFT,      LEFT],
         [GOOD_SMALL, BAD_SMALL, BAD_SMALL, GOOD],
-        [EMPTY, LEFT, LEFT, LEFT],
+        [EMPTY,      LEFT,      LEFT,      LEFT],
     ],
     "2x11_two_room_distract": [
-        [GOOD_SMALL, EMPTY, EMPTY, EMPTY, RIGHT, DOWN, LEFT, EMPTY, EMPTY, EMPTY, GOOD],
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+        [GOOD_SMALL, EMPTY, EMPTY, EMPTY, RIGHT, DOWN,  LEFT,  EMPTY, EMPTY, EMPTY, GOOD],
+        [EMPTY,      EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
     "5x5_barrier": [
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-        [EMPTY, LEFT, UP, RIGHT, EMPTY],
-        [EMPTY, LEFT, GOOD, EMPTY, EMPTY],
-        [EMPTY, LEFT, DOWN, RIGHT, EMPTY],
+        [EMPTY, LEFT,  UP,    RIGHT, EMPTY],
+        [EMPTY, LEFT,  GOOD,  EMPTY, EMPTY],
+        [EMPTY, LEFT,  DOWN,  RIGHT, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
     "4x12_cliffwalk": [
-        [EMPTY, PIT, PIT, PIT, PIT, PIT, PIT, PIT, PIT, PIT, PIT, GOOD],
+        [EMPTY, PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   GOOD],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
     ],
-        [EMPTY, PIT, PIT, PIT, EMPTY, EMPTY],
-        [EMPTY, EMPTY, BAD, BAD, EMPTY, WALL],
-        [EMPTY, PIT, EMPTY, WALL, EMPTY, WALL],
-        [EMPTY, BAD, EMPTY, EMPTY, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY, PIT, PIT, GOOD],
     "5x6_danger_maze": [
+        [EMPTY, PIT,   PIT,   PIT,   EMPTY, EMPTY],
+        [EMPTY, EMPTY, BAD,   BAD,   EMPTY, WALL],
+        [EMPTY, PIT,   EMPTY, WALL,  EMPTY, WALL],
+        [EMPTY, BAD,   EMPTY, EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, EMPTY, PIT,   PIT,   GOOD],
     ],
     "11x11_four_rooms_symmetrical": [
-        [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
         [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, WALL, WALL, EMPTY, WALL, WALL, WALL, EMPTY, WALL, WALL, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, WALL,  WALL,  EMPTY, WALL,  WALL,  WALL,  EMPTY, WALL,  WALL,  WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
         [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, GOOD, WALL],
-        [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, GOOD,  WALL],
+        [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
     ],
     "13x13_four_rooms_original": [
-        [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
         [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, WALL, EMPTY, WALL, WALL, WALL, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, WALL, WALL, EMPTY, WALL, WALL, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, WALL,  EMPTY, WALL,  WALL,  WALL,  WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  WALL,  WALL,  EMPTY, WALL,  WALL,  WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
         [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL, EMPTY, EMPTY, EMPTY, EMPTY, GOOD, WALL],
-        [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
+        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, GOOD,  WALL],
+        [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
     ],
 }
 # fmt: on
@@ -332,7 +339,7 @@ class Gridworld(gym.Env):
     of the grid to be in the range [-1, 0].
     The latter is the difference between the next state and current state
     Manhattan distances to the goal, and can be +1 (if the agent moves closer
-    to the goal), 0 (if it does STAY), or -1 (if it moves further).
+    to the goal), 0 (if it does STAY), or -1 (if it moves further from the goal).
 
     ## Episode End
     By default, an episode ends if any of the following happens:
@@ -369,7 +376,6 @@ class Gridworld(gym.Env):
         start_pos: Optional[tuple] = (0, 0),
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
-        diagonal_moves: Optional[bool] = False,
         distance_reward: Optional[bool] = False,
         distance_difference_reward: Optional[bool] = False,
         render_mode: Optional[str] = None,
@@ -412,9 +418,7 @@ class Gridworld(gym.Env):
         self.distance_difference_reward = distance_difference_reward
         self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
-        num_actions = 8 if diagonal_moves else 4
-        num_actions += 0 if no_stay else 1
-        self.action_space = gym.spaces.Discrete(num_actions)
+        self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
         self.agent_pos = None
         self.last_action = None
 
