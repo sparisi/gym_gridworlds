@@ -64,14 +64,14 @@ ACTION_TO_VEC = {
     DOWN_RIGHT: (+1, +1),
 }
 
-def _move(row, col, a, n_rows, n_cols):
-    movement = ACTION_TO_VEC.get(a, None)
+def _move(pos, action, shape):
+    movement = ACTION_TO_VEC.get(action, None)
     if movement is None:
         raise ValueError("illegal action")
-    new_row = row + movement[0]
-    new_col = col + movement[1]
-    if not (0 <= new_col < n_cols and 0 <= new_row < n_rows):
-        return (row, col)
+    new_row = pos[0] + movement[0]
+    new_col = pos[1] + movement[1]
+    if not (0 <= new_col < shape[1] and 0 <= new_row < shape[0]):
+        return pos
     return (new_row, new_col)
 
 # tile colors
@@ -552,11 +552,9 @@ class Gridworld(gym.Env):
                 if self.no_stay and action == STAY:
                     raise ValueError("illegal action")
                 self.agent_pos = _move(
-                    self.agent_pos[0],
-                    self.agent_pos[1],
+                    self.agent_pos,
                     action,
-                    self.n_rows,
-                    self.n_cols,
+                    (self.n_rows, self.n_cols),
                 )
             if self.grid[self.agent_pos] == PIT:
                 terminated = True  # agent dies
@@ -567,11 +565,9 @@ class Gridworld(gym.Env):
             # Move again if slipped
             if self.slippery_prob > 0.0 and self.np_random.random() < self.slippery_prob:
                     self.agent_pos = _move(
-                        self.agent_pos[0],
-                        self.agent_pos[1],
+                        self.agent_pos,
                         action,
-                        self.n_rows,
-                        self.n_cols,
+                        (self.n_rows, self.n_cols),
                     )
                     if self.grid[self.agent_pos] == PIT:
                         terminated = True
@@ -793,13 +789,13 @@ class RiverSwim(Gridworld):
     First presented in "An analysis of model-based Interval Estimation for Markov Decision Processes".
     Implementation according to https://rlgammazero.github.io/docs/2020_AAAI_tut_part1.pdf
 
-    One-dimensional grid with positive rewards at its ends, 0.01 in the leftmost
+    One-dimensional grid with positive rewards at its ends: 0.01 in the leftmost
     tile and 1 in the rightmost.
     The agent starts either in the 2nd or 3rd leftmost tile, the only actions are
     LEFT and RIGHT, and the transition is stochastic.
 
     This is an infinite horizon MDP, there is no terminal state.
-    Episodes are truncated after max_episode_steps (default 200).
+    Episodes are truncated after `max_episode_steps` (default 200).
     """
 
     def __init__(self, **kwargs):
