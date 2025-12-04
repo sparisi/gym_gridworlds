@@ -24,7 +24,7 @@ REWARDS[SWAMP] = -2.0
 REWARDS[GOAL] = 0
 
 # since grids are bigger than the basic ones, using characters instead of
-# variables to define them makes them easier to read
+# variables to define them makes them easier to read and modify
 char_dict = {
     ".": GRASS,
     "□": ROCK,
