@@ -334,12 +334,12 @@ class Gridworld(gym.Env):
 
     #### Auxiliary Rewards
     Auxiliary rewards based on the distance to the closest goal can be
-    added by passing `distance_reward=True` or `distance_difference_reward=True`.
-    The former is the negative Manhattan distance scaled according to the size
-    of the grid to be in the range [-1, 0].
-    The latter is the difference between the next state and current state
-    Manhattan distances to the goal, and can be +1 (if the agent moves closer
-    to the goal), 0 (if it does STAY), or -1 (if it moves further from the goal).
+    added by passing `distance_reward`. This is a dictionary with the following keys:
+    - `ord`: 2 for Euclidean, 1 for Manhattan;
+    - `difference`: if True, the reward will be `distance_at_current_state - distance_at_next_state`;
+      if False, the reward will be `distance_at_current_state / max_distance`, where
+      `max_distance` depends on the size of the grid;
+    - `coeff`: a coefficient for scaling the reward.
 
     ## Episode End
     By default, an episode ends if any of the following happens:
@@ -376,8 +376,7 @@ class Gridworld(gym.Env):
         start_pos: Optional[tuple] = (0, 0),
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
-        distance_reward: Optional[bool] = False,
-        distance_difference_reward: Optional[bool] = False,
+        distance_reward: Optional[dict] = None,
         render_mode: Optional[str] = None,
         random_action_prob: Optional[float] = 0.0,
         slippery_prob: Optional[float] = 0.0,
@@ -415,7 +414,6 @@ class Gridworld(gym.Env):
         assert 0.0 <= observation_noise < 1.0, "observation_noise must be in [0.0, 1.0)"
         self.observation_noise = observation_noise
         self.distance_reward = distance_reward
-        self.distance_difference_reward = distance_difference_reward
         self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
         self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
@@ -535,11 +533,6 @@ class Gridworld(gym.Env):
         if reward != 0.0 and self.nonzero_reward_noise_std > 0.0:
             reward += self.np_random.normal() * self.nonzero_reward_noise_std
 
-        if self.distance_reward or self.distance_difference_reward:
-            closest_goal_dist = np.abs(
-                np.argwhere(self.grid == GOOD) - self.agent_pos
-            ).sum(1).min()
-
         if self.grid[self.agent_pos] == QCKSND and self.np_random.random() > 0.1:
             pass  # fail to move in quicksand
         else:
@@ -575,14 +568,28 @@ class Gridworld(gym.Env):
                     elif self.grid[self.agent_pos] == WALL:
                         self.agent_pos = self.last_pos
 
-        if self.distance_reward:
-            reward -= closest_goal_dist / (self.n_rows + self.n_cols - 2)
+        # Auxiliary reward based on distance from the closest goal
+        def distance_from_closest_tile_type(tile_type, pos):
+            dist = np.linalg.norm(
+                np.argwhere(self.grid == tile_type) - pos,
+                ord=self.distance_reward["ord"],
+                axis=1,
+            )
+            if len(dist) == 0:
+                return 0.0
+            return dist.min()
 
-        if self.distance_difference_reward:
-            closest_goal_new_dist = np.abs(
-                np.argwhere(self.grid == GOOD) - self.agent_pos
-            ).sum(1).min()
-            reward -= closest_goal_new_dist - closest_goal_dist
+        if self.distance_reward is not None:
+            goal_dist = distance_from_closest_tile_type(GOOD, self.agent_pos)
+            if self.distance_reward["difference"]:
+                old_goal_dist = distance_from_closest_tile_type(GOOD, self.last_pos)
+                reward -= self.distance_reward["coeff"] * (goal_dist - old_goal_dist)
+            else:
+                max_dist = np.linalg.norm(
+                    [self.n_rows, self.n_cols],
+                    ord=self.distance_reward["ord"],
+                )
+                reward -= self.distance_reward["coeff"] * goal_dist / max_dist
 
         return self.get_state(), reward, terminated, False, {}
 

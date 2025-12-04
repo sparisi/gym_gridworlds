@@ -214,20 +214,30 @@ register(
 register(
     id="Gym-Gridworlds/TravelField-28x28-v0",
     entry_point="gym_gridworlds.travel_field:TravelField",
-    max_episode_steps=1000,
+    max_episode_steps=500,
     kwargs={
         "grid": "large_field",
         "start_pos": ("max", 0),
+        "distance_reward": {
+            "ord": 2,
+            "difference": True,
+            "coeff": 1,
+        },
     },
 )
 
 register(
     id="Gym-Gridworlds/TravelField-10x10-v0",
     entry_point="gym_gridworlds.travel_field:TravelField",
-    max_episode_steps=500,
+    max_episode_steps=200,
     kwargs={
         "grid": "small_field",
         "start_pos": ("max", 0),
+        "distance_reward": {
+            "ord": 2,
+            "difference": True,
+            "coeff": 1,
+        },
     },
 )
 
