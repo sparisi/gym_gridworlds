@@ -241,3 +241,14 @@ register(
         "grid": "4x4_penalty_rnd_move",
     },
 )
+
+register(
+    id="Gym-Gridworlds/Taxi-6x7-v0",
+    entry_point="gym_gridworlds.taxi:Taxi",
+    max_episode_steps=100,
+    kwargs={
+        "grid": "taxi_6x7",
+        "start_pos": (0, 0),
+        "no_stay": True,
+    },
+)

@@ -8,7 +8,8 @@ The default class `Gridworld` implements a "go-to-goal" task where the agent has
 five actions (left, right, up, down, stay) and default transition function
 (e.g., doing "stay" in goal states ends the episode).  
 You can change actions and transition function by implementing more classes.
-For example, in `RiverSwim` there are only two actions and no terminal state.  
+For example, in `RiverSwim` there are only two actions and no terminal state,
+or in `Taxi` the agent can pick up passengers and drive them to the goal.  
 Basic gridworlds are defined in [gridworld.py](gym_gridworlds/gridworld.py) and
 are presented below. Harder gridworlds are defined in separate files in [gym_gridworlds](gym_gridworlds)
 and are not discussed here (but are fully documented).
@@ -181,6 +182,7 @@ env.reset(seed=42)
 ## Playground
 You can use `playground.py` to test an environment. For example, run
 ```
+python playground.py Gym-Gridworlds/Taxi-6x7-v0 --record
 python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 --env-arg max_resolution=[512,512] --record
 python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True --env-arg no_stay=True --env-arg observation_noise=0.2 --record
 ```
@@ -188,6 +190,9 @@ You will be able to move around the environment with the directional arrow keys,
 see the rewards received by the agent, and save gifs like the ones below.
 
 <div align="center">
+    <figure>
+        <img src="figures/Taxi-6x7-v0.gif" height=200 width=200 />
+    </figure>
     <figure>
         <img src="figures/FourRooms-Original-13x13-v0.gif" height=200 width=200 />
     </figure>

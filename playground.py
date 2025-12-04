@@ -71,12 +71,11 @@ def step(action):
     if action not in env.action_space:
         print("Illegal action, skipped")
         return
-    state = env.unwrapped.agent_pos
+    obs = env.unwrapped.get_state()
     next_obs, rwd, term, trunc, info = env.step(action)
     sum_rewards[0] = sum_rewards[0] + rwd
     sum_rewards[1] = sum_rewards[1] + rwd * args.discount**t[0]
-    next_state = env.unwrapped.agent_pos
-    print(f"{t[0]}: {state} | {action} | {rwd} | {next_state}")
+    print(f"{t[0]}: {obs} | {action} | {rwd} | {next_obs}")
     t[0] += 1
 
     if term or trunc:
@@ -155,7 +154,7 @@ print(
     "Reset: \tBackspace\n"
     "Quit: \tEsc\n"
     "\n"
-    "Prints are 'Timestep: (State | Action | Reward | Next State)'"
+    "Prints are 'Timestep: (Obs | Action | Reward | Next Obs)'"
 )
 
 reset()
