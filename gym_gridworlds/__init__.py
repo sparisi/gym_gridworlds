@@ -218,11 +218,7 @@ register(
     kwargs={
         "grid": "large_field",
         "start_pos": ("max", 0),
-        "distance_reward": {
-            "ord": 2,
-            "difference": True,
-            "coeff": 1,
-        },
+        "distance_difference_reward": True,
     },
 )
 
@@ -233,11 +229,7 @@ register(
     kwargs={
         "grid": "small_field",
         "start_pos": ("max", 0),
-        "distance_reward": {
-            "ord": 2,
-            "difference": True,
-            "coeff": 1,
-        },
+        "distance_difference_reward": True,
     },
 )
 

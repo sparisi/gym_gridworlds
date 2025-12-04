@@ -280,13 +280,13 @@ White noise can be added to all rewards by passing `reward_noise_std`,
 or only to nonzero rewards with `nonzero_reward_noise_std`.
 
 &#10148; <strong>Auxiliary Rewards</strong>  
-Auxiliary rewards based on the distance to the closest goal can be
-added by passing `distance_reward`. This is a dictionary with the following keys:
-- `ord`: 2 for Euclidean, 1 for Manhattan;
-- `difference`: if True, the reward will be `distance_at_current_state - distance_at_next_state`;
-  if False, the reward will be `distance_at_current_state / max_distance`, where
-  `max_distance` depends on the size of the grid;
-- `coeff`: a coefficient for scaling the reward.
+Auxiliary rewards based on the Manhattan distance to the closest goal can be
+added by passing `distance_reward=True` or `distance_difference_reward=True`.
+The former is `distance_at_current_state / max_distance`, i.e., the distance
+from the current state scaled according to the size of the grid to be in the range [-1, 0].
+The latter is `distance_at_current_state - distance_at_next_state`, thus it
+can be +1 (if the agent moves closer to the goal), 0 (if it does STAY),
+or -1 (if it moves further from the goal).
 
 ### <ins>Episode End</ins>
 By default, an episode ends if any of the following happens:
