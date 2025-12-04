@@ -55,7 +55,7 @@ parser.add_argument(
     help="Extra environment arguments in key=value format",
 )
 parser.add_argument("--record", action="store_true")
-parser.add_argument("--discount", default=1.0)
+parser.add_argument("--discount", default=0.99)
 args = parser.parse_args()
 
 env_kwargs = parse_env_args(args.env_arg)
@@ -84,7 +84,7 @@ def step(action):
             print(f"Terminal state ...")
         elif trunc:
             print(f"Time step limit ...")
-        print(f"  ... sum of rewards: {sum_rewards[0]} (undiscounted), {sum_rewards[1]} (discounted)")
+        print(f"  ... sum of rewards: {sum_rewards[0]} (γ = 1), {sum_rewards[1]} (γ = {args.discount})")
         reset()
         sum_rewards[0] = 0.0
         sum_rewards[1] = 0.0
