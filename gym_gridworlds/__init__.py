@@ -247,8 +247,18 @@ register(
     entry_point="gym_gridworlds.taxi:Taxi",
     max_episode_steps=100,
     kwargs={
-        "grid": "taxi_6x7",
+        "grid": "6x7_taxi",
         "start_pos": (0, 0),
         "no_stay": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/Wall-50x50-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=500,
+    kwargs={
+        "grid": "50x50_wall",
+        "start_pos": ("max", 0),
     },
 )

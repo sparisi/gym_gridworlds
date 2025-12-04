@@ -9,7 +9,7 @@ from gym_gridworlds.gridworld import Gridworld
 PASS = GOOD_SMALL  # passenger, encoded as "GOOD_SMALL" just for rendering it with dark green tiles
 
 # fmt: off
-GRIDS["taxi_6x7"] = [
+GRIDS["6x7_taxi"] = [
     [EMPTY, WALL,  PASS,  EMPTY, WALL,  EMPTY, GOOD ],
     [EMPTY, WALL,  EMPTY, EMPTY, WALL,  EMPTY, EMPTY],
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
