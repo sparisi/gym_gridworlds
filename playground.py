@@ -76,9 +76,8 @@ def step(action):
     sum_rewards[0] = sum_rewards[0] + rwd
     sum_rewards[1] = sum_rewards[1] + rwd * args.discount**t[0]
     next_state = env.unwrapped.agent_pos
+    print(f"{t[0]}: {state} | {action} | {rwd} | {next_state}")
     t[0] += 1
-
-    print(f"{state} | {action} | {rwd} | {next_state}")
 
     if term or trunc:
         if term:
@@ -156,7 +155,7 @@ print(
     "Reset: \tBackspace\n"
     "Quit: \tEsc\n"
     "\n"
-    "Prints are: (State | Action | Reward | Next State)"
+    "Prints are 'Timestep: (State | Action | Reward | Next State)'"
 )
 
 reset()
