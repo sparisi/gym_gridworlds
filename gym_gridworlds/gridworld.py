@@ -403,6 +403,9 @@ class Gridworld(gym.Env):
     - Walking on a pit tile (termination),
     - The length of the episode is max_episode_steps (truncation).
 
+    It is possible to remove termination altogether by making the environment
+    with `infinite_horizon=True`.
+
     ## Rendering
     Human mode renders the environment as a grid with colored tiles.
 
@@ -430,6 +433,7 @@ class Gridworld(gym.Env):
         self,
         grid: str,
         start_pos: Optional[tuple] = (0, 0),
+        infinite_horizon: Optional[bool] = False,
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
         distance_reward: Optional[bool] = False,
@@ -464,6 +468,7 @@ class Gridworld(gym.Env):
             ), "the agent cannot start in a pit or a wall tile"   # fmt: skip
 
         self.no_stay = no_stay
+        self.infinite_horizon = infinite_horizon
         self.random_action_prob = random_action_prob
         self.slippery_prob = slippery_prob
         self.reward_noise_std = reward_noise_std
@@ -582,7 +587,7 @@ class Gridworld(gym.Env):
         reward = REWARDS[self.grid[self.agent_pos]] * 1.0  # float
         if self.grid[self.agent_pos] in [GOOD, GOOD_SMALL]:
             if action == STAY or self.no_stay:  # positive rewards are collected only with STAY
-                terminated = True
+                terminated = True  # positive rewards terminate the episode (unless self.infinite_horizon=True)
             else:
                 reward = 0
 
@@ -649,6 +654,8 @@ class Gridworld(gym.Env):
                 )
                 reward -= goal_dist / max_dist
 
+        if self.infinite_horizon:
+            terminated = False
         return self.get_state(), reward, terminated, False, {}
 
     def render(self):

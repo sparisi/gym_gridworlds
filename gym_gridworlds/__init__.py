@@ -155,6 +155,8 @@ register(
     max_episode_steps=200,
     kwargs={
         "grid": "river_swim_6",
+        "no_stay": True,
+        "infinite_horizon": True,
     },
 )
 

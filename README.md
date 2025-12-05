@@ -298,3 +298,6 @@ By default, an episode ends if any of the following happens:
 - A positive reward is collected (termination),
 - Walking on a pit tile (termination),
 - The length of the episode is `max_episode_steps` (truncation).
+
+It is possible to remove termination altogether by making the environment
+with `infinite_horizon=True`.
