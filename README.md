@@ -204,7 +204,7 @@ see the rewards received by the agent, and save gifs like the ones below.
 ## Default MDP (`Gridworld` Class)
 
 ### <ins>Action Space</ins>
-The action is discrete in the range `{0, 4}` for `{LEFT, DOWN, RIGHT, UP, STAY}`.
+The action is discrete in the range `{0, 4}` for `{LEFT, RIGHT, DOWN, UP, STAY}`.
 It is possible to remove the `STAY` action by making the environment with `no_stay=True`.
 
 ### <ins>Observation Space</ins>

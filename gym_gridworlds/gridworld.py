@@ -17,8 +17,8 @@ PIT = -4
 
 # action IDs (also used for one-directional states)
 LEFT = 0
-DOWN = 1
-RIGHT = 2
+RIGHT = 1
+DOWN = 2
 UP = 3
 STAY = 4
 
@@ -299,8 +299,8 @@ class Gridworld(gym.Env):
     The action is discrete in the range `{0, 4}`.
 
     - 0: Move left
-    - 1: Move down
-    - 2: Move right
+    - 1: Move right
+    - 2: Move down
     - 3: Move up
     - 4: Stay (do not move)
 
@@ -878,14 +878,6 @@ class RiverSwim(Gridworld):
         state = np.ravel_multi_index(self.agent_pos, (self.n_rows, self.n_cols))
         first = 0
         last = self.n_rows * self.n_cols - 1
-
-        # Map action to match Gridworld notation
-        if action == 0:
-            action = LEFT
-        elif action == 1:
-            action = RIGHT
-        else:
-            raise NotImplementedError("illegal action")
 
         # Stochastic transition
         original_action = action
