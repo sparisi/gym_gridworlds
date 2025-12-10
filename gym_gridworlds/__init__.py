@@ -216,11 +216,10 @@ register(
 register(
     id="Gym-Gridworlds/TravelField-28x28-v0",
     entry_point="gym_gridworlds.travel_field:TravelField",
-    max_episode_steps=500,
+    max_episode_steps=1000,
     kwargs={
         "grid": "large_field",
         "start_pos": ("max", 0),
-        "distance_difference_reward": True,
     },
 )
 
@@ -231,7 +230,6 @@ register(
     kwargs={
         "grid": "small_field",
         "start_pos": ("max", 0),
-        "distance_difference_reward": True,
     },
 )
 
