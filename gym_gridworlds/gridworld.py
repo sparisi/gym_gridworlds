@@ -605,8 +605,6 @@ class Gridworld(gym.Env):
             ):  # fmt: skip
                 pass  # fail to move in one-directional tile
             else:
-                if self.no_stay and action == STAY:
-                    raise ValueError("illegal action")
                 self.agent_pos = _move(
                     self.agent_pos,
                     action,
