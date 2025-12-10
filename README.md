@@ -183,8 +183,8 @@ env.reset(seed=42)
 You can use `playground.py` to test an environment. For example, run
 ```
 python playground.py Gym-Gridworlds/Taxi-6x7-v0 --record
-python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 --env-arg max_resolution=[512,512] --record
-python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True --env-arg no_stay=True --env-arg observation_noise=0.2 --record
+python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 max_resolution=[512,512] --record
+python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True no_stay=True observation_noise=0.2 --record
 ```
 You will be able to move around the environment with the directional arrow keys,
 see the rewards received by the agent, and save gifs like the ones below.

@@ -50,9 +50,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("env")
 parser.add_argument(
     "--env-arg",
-    action="append",
+    nargs="+",
     default=[],
-    help="Extra environment arguments in key=value format",
+    help="Environment arguments, for example: --env-arg no_stay=True infinite_horizon=True",
 )
 parser.add_argument("--record", action="store_true")
 parser.add_argument("--discount", default=0.99)
