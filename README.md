@@ -186,8 +186,8 @@ python playground.py Gym-Gridworlds/Taxi-6x7-v0 --record
 python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 max_resolution=[512,512] --record
 python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True no_stay=True observation_noise=0.2 --record
 ```
-You will be able to move around the environment with the directional arrow keys,
-see the rewards received by the agent, and save gifs like the ones below.
+You will be able to move the agent around the environment with the directional
+arrow keys, see the rewards received by the agent, and save gifs like the ones below.
 
 <div align="center">
     <figure>
@@ -206,8 +206,8 @@ see the rewards received by the agent, and save gifs like the ones below.
 ### <ins>Action Space</ins>
 The action is discrete in the range `{0, 4}` for `{LEFT, RIGHT, DOWN, UP, STAY}`.
 It is possible to remove the `STAY` action by making the environment with `no_stay=True`.  
-Diagonal actions (up-left, down-right, ...) are also supported but not used 
-in the default MDP.
+Diagonal actions `{5, 8}` for `{UP_LEFT, DOWN_LEFT, DOWN_RIGHT, UP_RIGHT}`
+are also supported but not used in the default MDP.
 
 ### <ins>Observation Space</ins>
 &#10148; <strong>Default</strong>  

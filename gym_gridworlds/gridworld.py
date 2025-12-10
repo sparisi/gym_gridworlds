@@ -304,9 +304,9 @@ class Gridworld(gym.Env):
     - 3: Move up
     - 4: Stay (do not move)
 
-    It is possible to remove the `STAY` action by making the environment with `no_stay=True`.  
-    Diagonal actions (up-left, down-right, ...) are also supported but not used
-    in the default MDP.
+    It is possible to remove the `STAY` action by making the environment with `no_stay=True`.
+    Diagonal actions `{5, 8}` for `{UP_LEFT, DOWN_LEFT, DOWN_RIGHT, UP_RIGHT}`
+    are also supported but not used in the default MDP.
 
     If the agent is in a "quicksand" tile, any action will fail with 90% probability.
 
