@@ -1,4 +1,5 @@
 import numpy as np
+import gymnasium as gym
 
 from gym_gridworlds.gridworld import (
     LEFT, DOWN, RIGHT, UP, STAY, WALL, GOOD, REWARDS, GRIDS, COLORMAP, Color
@@ -89,4 +90,9 @@ class TravelField(Gridworld):
     -0.25, and ROCK (gray) cannot be walked on.
     The optimal policy goes through ROAD tiles only, but the path is hard to find.
     There are also dead-end roads that may mislead the agent.
+    The agent can also move diagonally.
     """
+
+    def __init__(self, **kwargs):
+        Gridworld.__init__(self, **kwargs)
+        self.action_space = gym.spaces.Discrete(9)  # cardinal + diagonal + stay

@@ -22,7 +22,7 @@ DOWN = 2
 UP = 3
 STAY = 4
 
-# diagonal actions are currently not supported
+# diagonal actions are not used in the default grids, but can be used in harder grids (see travel_field.py)
 UP_LEFT = 5
 DOWN_LEFT = 6
 DOWN_RIGHT = 7
@@ -304,7 +304,9 @@ class Gridworld(gym.Env):
     - 3: Move up
     - 4: Stay (do not move)
 
-    It is possible to remove the `STAY` action by making the environment with `no_stay=True`.
+    It is possible to remove the `STAY` action by making the environment with `no_stay=True`.  
+    Diagonal actions (up-left, down-right, ...) are also supported but not used
+    in the default MDP.
 
     If the agent is in a "quicksand" tile, any action will fail with 90% probability.
 

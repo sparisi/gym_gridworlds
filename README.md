@@ -205,7 +205,9 @@ see the rewards received by the agent, and save gifs like the ones below.
 
 ### <ins>Action Space</ins>
 The action is discrete in the range `{0, 4}` for `{LEFT, RIGHT, DOWN, UP, STAY}`.
-It is possible to remove the `STAY` action by making the environment with `no_stay=True`.
+It is possible to remove the `STAY` action by making the environment with `no_stay=True`.  
+Diagonal actions (up-left, down-right, ...) are also supported but not used 
+in the default MDP.
 
 ### <ins>Observation Space</ins>
 &#10148; <strong>Default</strong>  
