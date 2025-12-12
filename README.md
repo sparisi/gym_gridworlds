@@ -220,17 +220,17 @@ For example, in a 3x3 grid the observations are
  6 7 8
 ```
 
-The observation can be transformed to better fit function approximation.
-- `gym_gridworlds.observation_wrappers.CoordinateWrapper` returns matrix coordinates
-`(row, col)`. In the above example, `obs = 3` becomes `obs = (1, 0)`.
-- `gym_gridworlds.observation_wrappers.MatrixWrapper` returns a map of the environment
-with one 1 at the agent's position. In the above example, `obs = 3` becomes
+The observation can be transformed to better fit function approximation (e.g., if you use DQN)
+using wrappers from [observation_wrappers.py](gym_gridworlds/observation_wrappers.py). For example
+- `CoordinateWrapper` returns matrix coordinates `(row, col)`.
+In the above example, `obs = 3` becomes `obs = (1, 0)`.
+- `MatrixWrapper` returns a map of the environment with one 1 at the agent's position.
+In the above example, `obs = 3` becomes
 ```
  0 0 0
  1 0 0
  0 0 0
  ```
- - See `gym_gridworlds.observation_wrappers` for more wrappers and examples.
 
 &#10148; <strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with
