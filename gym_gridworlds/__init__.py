@@ -237,7 +237,7 @@ register(
 register(
     id="Gym-Gridworlds/FourRooms-Cross-14x16-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
-    max_episode_steps=200,
+    max_episode_steps=50,
     kwargs={
         "grid": "14x16_four_rooms_cross",
         "no_stay": True,
