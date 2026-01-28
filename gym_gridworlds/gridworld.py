@@ -194,37 +194,80 @@ GRIDS = {
         [EMPTY, BAD,   EMPTY, EMPTY, EMPTY, EMPTY],
         [EMPTY, EMPTY, EMPTY, PIT,   PIT,   GOOD ],
     ],
-    "11x11_four_rooms_symmetrical": [
-        [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, WALL,  WALL,  EMPTY, WALL,  WALL,  WALL,  EMPTY, WALL,  WALL,  WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, GOOD,  WALL],
-        [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
-    ],
-    "13x13_four_rooms_original": [
-        [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, WALL,  EMPTY, WALL,  WALL,  WALL,  WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  WALL,  WALL,  EMPTY, WALL,  WALL,  WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL],
-        [WALL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  EMPTY, EMPTY, EMPTY, EMPTY, GOOD,  WALL],
-        [WALL, WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL,  WALL],
-    ],
 }
 
-# because this grid is very large, define with with characters to make it more readable
+# next grids are define with characters for the sake of simplicity
+
+GRIDS["11x11_four_rooms_symmetrical"] = [
+    [char_dict[c] for c in list(s)] for s in [
+        "□□□□□□□□□□□",
+        "□....□....□",
+        "□....□....□",
+        "□.........□",
+        "□....□....□",
+        "□□□.□□□.□□□",
+        "□....□....□",
+        "□.........□",
+        "□....□....□",
+        "□....□...O□",
+        "□□□□□□□□□□□",
+    ]
+]
+
+GRIDS["13x13_four_rooms_original"] = [
+    [char_dict[c] for c in list(s)] for s in [
+        "□□□□□□□□□□□□□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□...........□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□□.□□□□.....□",
+        "□.....□□□.□□□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□...........□",
+        "□.....□....O□",
+        "□□□□□□□□□□□□□",
+    ]
+]
+
+GRIDS["13x13_four_rooms_original_loop"] = [
+    [char_dict[c] for c in list(s)] for s in [
+        "□□□□□□□□□□□□□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□.....←.....□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□□↓□□□□.....□",
+        "□.....□□□↑□□□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□.....→.....□",
+        "□.....□....O□",
+        "□□□□□□□□□□□□□",
+    ]
+]
+
+GRIDS["13x13_four_rooms_original_stuck"] = [
+    [char_dict[c] for c in list(s)] for s in [
+        "□□□□□□□□□□□□□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□.....←.....□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□□↑□□□□.....□",
+        "□.....□□□↓□□□",
+        "□.....□.....□",
+        "□.....□.....□",
+        "□.....→.....□",
+        "□.....□....O□",
+        "□□□□□□□□□□□□□",
+    ]
+]
+
 GRIDS["50x50_wall"] = [
     [char_dict[c] for c in list(s)] for s in [
         ".................................................o",
