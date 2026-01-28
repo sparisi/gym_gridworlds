@@ -2,7 +2,7 @@ import numpy as np
 import gymnasium as gym
 
 from gym_gridworlds.gridworld import (
-    LEFT, DOWN, RIGHT, UP, STAY, WALL, GOOD, REWARDS, GRIDS, COLORMAP, Color
+    LEFT, DOWN, RIGHT, UP, STAY, WALL, GOOD, REWARDS, GRIDS, COLORMAP, Color, _move
 )
 from gym_gridworlds.gridworld import Gridworld
 
@@ -91,8 +91,22 @@ class TravelField(Gridworld):
     The optimal policy goes through ROAD tiles only, but the path is hard to find.
     There are also dead-end roads that may mislead the agent.
     The agent can also move diagonally.
+    By default, the episode terminates if the agent hits a ROCK.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, rock_is_terminal=False, **kwargs):
         Gridworld.__init__(self, **kwargs)
         self.action_space = gym.spaces.Discrete(9)  # cardinal + diagonal + stay
+        self.rock_is_terminal = rock_is_terminal
+
+    def _step(self, action: int):
+        obs, reward, terminated, truncated, info = Gridworld._step(self, action)
+        if self.rock_is_terminal:
+            tried_to_move_to = _move(
+                self.last_pos,
+                self.last_action,
+                (self.n_rows, self.n_cols),
+            )
+            if self.grid[tried_to_move_to] == ROCK:
+                terminated = True
+        return obs, reward, terminated, truncated, info
