@@ -234,6 +234,18 @@ register(
     },
 )
 
+register(
+    id="Gym-Gridworlds/FourRooms-Crossed-14x16-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=200,
+    kwargs={
+        "grid": "14x16_four_rooms_crossed",
+        "no_stay": True,
+        "start_pos": None,  # random
+        "random_goals": True,
+    },
+)
+
 # ------------------------------------------------------------------------------
 # Harder environments
 # ------------------------------------------------------------------------------
