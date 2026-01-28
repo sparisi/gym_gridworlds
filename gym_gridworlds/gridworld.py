@@ -268,7 +268,7 @@ GRIDS["13x13_four_rooms_original_stuck"] = [
     ]
 ]
 
-GRIDS["14x16_four_rooms_crossed"] = [
+GRIDS["14x16_four_rooms_cross"] = [
     [char_dict[c] for c in list(s)] for s in [
         "□□□□□□□□□□□□□□□□",
         "□□□.........□□□□",
