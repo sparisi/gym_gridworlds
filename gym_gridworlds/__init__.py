@@ -266,7 +266,7 @@ register(
     kwargs={
         "grid": "large_field",
         "start_pos": ("max", 0),
-        "rock_is_terminal": True,
+        # "rock_is_terminal": True,
     },
 )
 
@@ -277,7 +277,7 @@ register(
     kwargs={
         "grid": "small_field",
         "start_pos": ("max", 0),
-        "rock_is_terminal": True,
+        # "rock_is_terminal": True,
     },
 )
 
