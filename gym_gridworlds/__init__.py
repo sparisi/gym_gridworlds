@@ -276,7 +276,7 @@ register(
     entry_point="gym_gridworlds.travel_field:TravelField",
     max_episode_steps=1000,
     kwargs={
-        "grid": "large_field",
+        "grid": "large_field_v0",
         "start_pos": ("max", 0),
         # "rock_is_terminal": True,
     },
@@ -287,7 +287,29 @@ register(
     entry_point="gym_gridworlds.travel_field:TravelField",
     max_episode_steps=200,
     kwargs={
-        "grid": "small_field",
+        "grid": "small_field_v0",
+        "start_pos": ("max", 0),
+        # "rock_is_terminal": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/TravelField-28x28-v1",
+    entry_point="gym_gridworlds.travel_field:TravelField",
+    max_episode_steps=1000,
+    kwargs={
+        "grid": "large_field_v1",
+        "start_pos": ("max", 0),
+        # "rock_is_terminal": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/TravelField-10x10-v1",
+    entry_point="gym_gridworlds.travel_field:TravelField",
+    max_episode_steps=200,
+    kwargs={
+        "grid": "small_field_v1",
         "start_pos": ("max", 0),
         # "rock_is_terminal": True,
     },
