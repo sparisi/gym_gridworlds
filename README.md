@@ -178,6 +178,9 @@ env.reset(seed=42)
   <img src="figures/gridworld_wall_5x5.png" width="200" alt="Gridworld Full">
 </p>
 
+>>> (IN PROGRESS) You can use `map_editor.py` to draw customized grids and save/load
+>>> them to txt files. The current version supports only `TravelField` gridworlds.
+
 
 ## Playground
 You can use `playground.py` to test an environment. For example, run
