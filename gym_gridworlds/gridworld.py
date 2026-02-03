@@ -198,6 +198,23 @@ GRIDS = {
 
 # next grids are define with characters for the sake of simplicity
 
+GRIDS["12x12_maze"] = [
+    [char_dict[c] for c in list(s)] for s in [
+        "□□□□□□□□□□□□",
+        "□□.O.□□□□□□□",
+        "□□...□□□□□□□",
+        "□□□□.□□□...□",
+        "□..□.□□□□□.□",
+        "□..□.□□□□□.□",
+        "□..........□",
+        "□..□.□□□□□.□",
+        "□□□□.□□□□□.□",
+        "□□...□□□...□",
+        "□□...□□□□□□□",
+        "□□□□□□□□□□□□",
+    ]
+]
+
 GRIDS["11x11_four_rooms_symmetrical"] = [
     [char_dict[c] for c in list(s)] for s in [
         "□□□□□□□□□□□",

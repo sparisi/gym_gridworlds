@@ -246,6 +246,18 @@ register(
     },
 )
 
+# https://arxiv.org/pdf/2505.01336
+register(
+    id="Gym-Gridworlds/Maze-12x12-v0",
+    entry_point="gym_gridworlds.clean_dirt:Gridworld",
+    max_episode_steps=500,
+    kwargs={
+        "grid": "12x12_maze",
+        "no_stay": True,
+        "start_pos": (6, 7),  # center of the maze
+    },
+)
+
 # ------------------------------------------------------------------------------
 # Harder environments
 # ------------------------------------------------------------------------------
