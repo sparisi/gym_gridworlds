@@ -15,6 +15,7 @@ BAD = 11
 BAD_SMALL = 12
 WALL = -3
 PIT = -4
+RND_MOVE = 13  # see rnd_move.py
 
 # action IDs (also used for one-directional states)
 LEFT = 0
@@ -106,11 +107,12 @@ GRID_ENCODING = {
     "↗": UP_RIGHT,
     "↙": DOWN_LEFT,
     "↘": DOWN_RIGHT,
+    "*": RND_MOVE,
 }
 
 def load_grid(file_path, encoding):
     cwd = os.path.dirname(__file__)
-    file_path = os.path.join(cwd, "maps", file_path + ".txt")
+    file_path = os.path.join(cwd, "grids", file_path + ".txt")
     with open(file_path, "r", encoding="utf-8") as f:
         return np.asarray([
             [encoding[c] for c in line.strip()]

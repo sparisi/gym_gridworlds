@@ -1,17 +1,8 @@
 import numpy as np
 
 from gym_gridworlds.gridworld import EMPTY, GOOD_SMALL, GOOD, BAD, BAD_SMALL, WALL, PIT, QCKSND
-from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY, REWARDS, GRIDS
+from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY, REWARDS, RND_MOVE
 from gym_gridworlds.gridworld import Gridworld
-
-RND_MOVE = 13
-
-GRIDS["4x4_penalty_rnd_move"] = [
-    [EMPTY, EMPTY, BAD, GOOD],
-    [EMPTY, EMPTY, BAD, EMPTY],
-    [EMPTY, RND_MOVE, EMPTY, EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY],
-]
 
 
 class RandomizedTiles(Gridworld):

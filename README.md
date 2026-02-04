@@ -198,7 +198,7 @@ You can use `playground.py` to test an environment. For example, run
 ```
 python playground.py Gym-Gridworlds/Taxi-6x7-v0 --record
 python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 max_resolution=[512,512] --record
-python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True no_stay=True observation_noise=0.2 --record
+python playground.py Gym-Gridworlds/TravelField-28x28-v1 --env-arg distance_reward=True no_stay=True observation_noise=0.2 --record
 ```
 You will be able to move the agent around the environment with the directional
 arrow keys, see the rewards received by the agent, and save gifs like the ones below.
@@ -211,7 +211,7 @@ arrow keys, see the rewards received by the agent, and save gifs like the ones b
         <img src="figures/FourRooms-Original-13x13-v0.gif" height=200 width=200 />
     </figure>
     <figure>
-        <img src="figures/TravelField-28x28-v0.gif" height=200 width=200 />
+        <img src="figures/TravelField-28x28-v1.gif" height=200 width=200 />
     </figure>
 </div>
 
