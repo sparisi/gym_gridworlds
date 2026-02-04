@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
@@ -22,7 +23,7 @@ DOWN = 2
 UP = 3
 STAY = 4
 
-# diagonal actions are not used in the default grids, but can be used in harder grids (see travel_field.py)
+# diagonal actions are not used in the default grids, but can be used in harder grids (e.g., travel_field.py)
 UP_LEFT = 5
 DOWN_LEFT = 6
 DOWN_RIGHT = 7
@@ -87,8 +88,8 @@ COLORMAP[PIT] = Color.PURPLE
 for action in ACTION_TO_VEC:
     COLORMAP[action] = Color.BLACK
 
-# parse grids from txt file
-char_dict = {
+# to parse grids from txt file
+GRID_ENCODING = {
     ".": EMPTY,
     "□": WALL,
     "_": QCKSND,
@@ -107,258 +108,15 @@ char_dict = {
     "↘": DOWN_RIGHT,
 }
 
-# fmt: off
-GRIDS = {
-    "river_swim_6": [
-        [GOOD_SMALL] + [EMPTY for _ in range(4)] + [GOOD],
-    ],
-    "20_straight": [
-        [EMPTY for _ in range(19)] + [GOOD],
-    ],
-    "2x2_empty": [
-        [EMPTY, EMPTY],
-        [EMPTY, GOOD ],
-    ],
-    "3x3_empty": [
-        [EMPTY, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY],
-        [EMPTY, EMPTY, GOOD ],
-    ],
-    "3x3_empty_loop": [
-        [EMPTY, LEFT,  EMPTY],
-        [EMPTY, RIGHT, UP   ],
-        [EMPTY, EMPTY, GOOD ],
-    ],
-    "3x3_penalty": [
-        [EMPTY, BAD,   GOOD ],
-        [EMPTY, BAD,   EMPTY],
-        [EMPTY, EMPTY, EMPTY],
-    ],
-    "10x10_empty":
-        [[EMPTY for _ in range(10)] for _ in range(9)] +
-        [[EMPTY for _ in range(9)] + [GOOD]]
-    ,
-    "6x6_distract":
-        [[EMPTY for _ in range(6)] for _ in range(5)] +
-        [[GOOD_SMALL] + [EMPTY for _ in range(4)] + [GOOD]]
-    ,
-    "4x4_quicksand": [
-        [EMPTY, EMPTY,  BAD,   GOOD ],
-        [EMPTY, EMPTY,  BAD,   EMPTY],
-        [EMPTY, QCKSND, EMPTY, EMPTY],
-        [EMPTY, EMPTY,  EMPTY, EMPTY],
-    ],
-    "4x4_quicksand_distract": [
-        [EMPTY, GOOD_SMALL, BAD,        GOOD ],
-        [EMPTY, BAD,        EMPTY,      EMPTY],
-        [EMPTY, QCKSND,     GOOD_SMALL, EMPTY],
-        [EMPTY, EMPTY,      EMPTY,      EMPTY],
-    ],
-    "4x5_full": [
-        [EMPTY, EMPTY, GOOD_SMALL, BAD,        GOOD ],
-        [EMPTY, EMPTY, BAD,        EMPTY,      EMPTY],
-        [RIGHT, EMPTY, QCKSND,     GOOD_SMALL, EMPTY],
-        [UP,    EMPTY, EMPTY,      EMPTY,      EMPTY],
-    ],
-    "3x5_two_room_quicksand": [
-        [EMPTY, EMPTY, LEFT,   EMPTY, GOOD],
-        [EMPTY, EMPTY, QCKSND, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY,  EMPTY, EMPTY],
-    ],
-    "3x4_corridor": [
-        [EMPTY,      LEFT,      LEFT,      LEFT],
-        [GOOD_SMALL, BAD_SMALL, BAD_SMALL, GOOD],
-        [EMPTY,      LEFT,      LEFT,      LEFT],
-    ],
-    "2x11_two_room_distract": [
-        [GOOD_SMALL, EMPTY, EMPTY, EMPTY, RIGHT, DOWN,  LEFT,  EMPTY, EMPTY, EMPTY, GOOD ],
-        [EMPTY,      EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    ],
-    "5x5_barrier": [
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-        [EMPTY, LEFT,  UP,    RIGHT, EMPTY],
-        [EMPTY, LEFT,  GOOD,  EMPTY, EMPTY],
-        [EMPTY, LEFT,  DOWN,  RIGHT, EMPTY],
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    ],
-    "4x12_cliffwalk": [
-        [EMPTY, PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   PIT,   GOOD ],
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    ],
-    "5x6_danger_maze": [
-        [EMPTY, PIT,   PIT,   PIT,   EMPTY, EMPTY],
-        [EMPTY, EMPTY, BAD,   BAD,   EMPTY, WALL ],
-        [EMPTY, PIT,   EMPTY, WALL,  EMPTY, WALL ],
-        [EMPTY, BAD,   EMPTY, EMPTY, EMPTY, EMPTY],
-        [EMPTY, EMPTY, EMPTY, PIT,   PIT,   GOOD ],
-    ],
-}
-
-# next grids are define with characters for the sake of simplicity
-
-GRIDS["12x12_maze"] = [
-    [char_dict[c] for c in list(s)] for s in [
-        "□□□□□□□□□□□□",
-        "□□.O.□□□□□□□",
-        "□□...□□□□□□□",
-        "□□□□.□□□...□",
-        "□..□.□□□□□.□",
-        "□..□.□□□□□.□",
-        "□..........□",
-        "□..□.□□□□□.□",
-        "□□□□.□□□□□.□",
-        "□□...□□□...□",
-        "□□...□□□□□□□",
-        "□□□□□□□□□□□□",
-    ]
-]
-
-GRIDS["11x11_four_rooms_symmetrical"] = [
-    [char_dict[c] for c in list(s)] for s in [
-        "□□□□□□□□□□□",
-        "□....□....□",
-        "□....□....□",
-        "□.........□",
-        "□....□....□",
-        "□□□.□□□.□□□",
-        "□....□....□",
-        "□.........□",
-        "□....□....□",
-        "□....□...O□",
-        "□□□□□□□□□□□",
-    ]
-]
-
-GRIDS["13x13_four_rooms_original"] = [
-    [char_dict[c] for c in list(s)] for s in [
-        "□□□□□□□□□□□□□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□...........□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□□.□□□□.....□",
-        "□.....□□□.□□□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□...........□",
-        "□.....□....O□",
-        "□□□□□□□□□□□□□",
-    ]
-]
-
-GRIDS["13x13_four_rooms_original_loop"] = [
-    [char_dict[c] for c in list(s)] for s in [
-        "□□□□□□□□□□□□□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□.....←.....□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□□↓□□□□.....□",
-        "□.....□□□↑□□□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□.....→.....□",
-        "□.....□....O□",
-        "□□□□□□□□□□□□□",
-    ]
-]
-
-GRIDS["13x13_four_rooms_original_stuck"] = [
-    [char_dict[c] for c in list(s)] for s in [
-        "□□□□□□□□□□□□□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□...........□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□□↓□□□□.....□",
-        "□.....□□□_□□□",
-        "□.....□.....□",
-        "□.....□.....□",
-        "□.....←.....□",
-        "□.....□....O□",
-        "□□□□□□□□□□□□□",
-    ]
-]
-
-GRIDS["14x16_four_rooms_cross"] = [
-    [char_dict[c] for c in list(s)] for s in [
-        "□□□□□□□□□□□□□□□□",
-        "□□□............□",
-        "□□□............□",
-        "□□□.....□□□□□□□□",
-        "□□□□□...□□□□□□□□",
-        "□□□□□...□□□□□□□□",
-        "□..............□",
-        "□..............□",
-        "□□□□□□□□...□□□□□",
-        "□□□□□□□□...□□□□□",
-        "□□□□.......□□□□□",
-        "□□□□.......□□□□□",
-        "□O.............□",
-        "□□□□□□□□□□□□□□□□",
-    ]
-]
-
-GRIDS["50x50_wall"] = [
-    [char_dict[c] for c in list(s)] for s in [
-        ".................................................o",
-        "..................................................",
-        "..................................................",
-        "..................................................",
-        "..................................................",
-        "..................................................",
-        "..................................................",
-        "..................................................",
-        "..................................................",
-        "....□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□..........",
-        ".......................................□.........O",
-    ]
-]
-# fmt: on
+def load_grid(file_path, encoding):
+    cwd = os.path.dirname(__file__)
+    file_path = os.path.join(cwd, "maps", file_path + ".txt")
+    with open(file_path, "r", encoding="utf-8") as f:
+        return np.asarray([
+            [encoding[c] for c in line.strip()]
+            for line in f
+            if line.strip()  # remove empty lines
+        ])
 
 
 class Gridworld(gym.Env):
@@ -513,6 +271,7 @@ class Gridworld(gym.Env):
     def __init__(
         self,
         grid: str,
+        encoding: Optional[dict] = GRID_ENCODING,
         start_pos: Optional[tuple] = (0, 0),
         infinite_horizon: Optional[bool] = False,
         random_goals: Optional[bool] = False,
@@ -530,8 +289,8 @@ class Gridworld(gym.Env):
         **kwargs,
     ):
         self.random_goals = random_goals
-        self.grid_key = grid
-        self.grid = np.asarray(GRIDS[self.grid_key])
+        self.original_grid = load_grid(grid, encoding)
+        self.grid = self.original_grid.copy()
         self.start_pos = start_pos
         if self.start_pos is not None:
             self.start_pos = tuple(
@@ -648,7 +407,7 @@ class Gridworld(gym.Env):
             self.grid[tuple(new_goal)] = original_grid[tuple(goal)]
 
     def _reset(self, seed: int = None, **kwargs):
-        self.grid = np.asarray(GRIDS[self.grid_key])
+        self.grid = self.original_grid.copy()
         if self.random_goals:
             self._randomize_goals()
         if self.start_pos is None:

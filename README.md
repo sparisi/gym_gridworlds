@@ -142,16 +142,30 @@ the rewards position to the observation (`MatrixWithGoalWrapper`), or to learn f
 
 ## Make Your Own Gridworld
 
-1. Define your grid in `gym_gridworlds/gridworld.py`, for example
-```python
-GRIDS["5x5_wall"] = [
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-    [EMPTY, WALL,  WALL,  WALL,  EMPTY],
-    [EMPTY, WALL,  GOOD,  EMPTY, EMPTY],
-    [EMPTY, WALL,  WALL,  WALL,  EMPTY],
-    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
-]
 ```
+.          empty tile
+□          wall
+_          quicksand
+           pit (space character)
+O          positive reward
+o          smaller positive reward
+X          negative reward
+x          smaller negative reward
+←↖↑↗→↘↓↙  one-directional tiles
+```
+
+1. Encode your grid following the above mapping, and save it as `txt` file in `gym_gridworlds/grids`.
+For example save the grid below as `5x5_wall.txt`.
+```
+.....
+.□□□.
+.□O..
+.□□□.
+.....
+```
+
+>>> (IN PROGRESS) You can use `map_editor.py` to draw customized grids and save/load
+>>> them to txt files. The current version supports only `TravelField` grids.
 
 2. Register the environment in `gym_gridworlds/__init__.py`, for example
 ```python
@@ -177,9 +191,6 @@ env.reset(seed=42)
 <p align="center">
   <img src="figures/gridworld_wall_5x5.png" width="200" alt="Gridworld Full">
 </p>
-
->>> (IN PROGRESS) You can use `map_editor.py` to draw customized grids and save/load
->>> them to txt files. The current version supports only `TravelField` gridworlds.
 
 
 ## Playground

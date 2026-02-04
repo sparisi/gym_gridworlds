@@ -5,11 +5,11 @@ from gymnasium.envs.registration import register
 # ------------------------------------------------------------------------------
 
 register(
-    id="Gym-Gridworlds/Straight-20-v0",
+    id="Gym-Gridworlds/Straight-1x20-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
-        "grid": "20_straight",
+        "grid": "1x20_straight",
     },
 )
 
@@ -154,11 +154,11 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/RiverSwim-6-v0",
+    id="Gym-Gridworlds/RiverSwim-1x6-v0",
     entry_point="gym_gridworlds.gridworld:RiverSwim",
     max_episode_steps=200,
     kwargs={
-        "grid": "river_swim_6",
+        "grid": "1x6_river_swim",
         "no_stay": True,
         "infinite_horizon": True,
     },
@@ -276,7 +276,7 @@ register(
     entry_point="gym_gridworlds.travel_field:TravelField",
     max_episode_steps=1000,
     kwargs={
-        "grid": "large_field_v0",
+        "grid": "travel_field_28x28_v0",
         "start_pos": ("max", 0),
         # "rock_is_terminal": True,
     },
@@ -287,7 +287,7 @@ register(
     entry_point="gym_gridworlds.travel_field:TravelField",
     max_episode_steps=200,
     kwargs={
-        "grid": "small_field_v0",
+        "grid": "travel_field_10x10_v0",
         "start_pos": ("max", 0),
         # "rock_is_terminal": True,
     },
@@ -298,7 +298,7 @@ register(
     entry_point="gym_gridworlds.travel_field:TravelField",
     max_episode_steps=1000,
     kwargs={
-        "grid": "large_field_v1",
+        "grid": "travel_field_28x28_v1",
         "start_pos": ("max", 0),
         # "rock_is_terminal": True,
     },
@@ -309,7 +309,7 @@ register(
     entry_point="gym_gridworlds.travel_field:TravelField",
     max_episode_steps=200,
     kwargs={
-        "grid": "small_field_v1",
+        "grid": "travel_field_10x10_v1",
         "start_pos": ("max", 0),
         # "rock_is_terminal": True,
     },
