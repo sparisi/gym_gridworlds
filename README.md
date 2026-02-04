@@ -164,8 +164,8 @@ For example save the grid below as `5x5_wall.txt`.
 .....
 ```
 
->>> (IN PROGRESS) You can use `map_editor.py` to draw customized grids and save/load
->>> them to txt files. The current version supports only `TravelField` grids.
+> (IN PROGRESS) You can use `map_editor.py` to draw customized grids and save/load
+them to txt files. The current version supports only `TravelField` grids.
 
 2. Register the environment in `gym_gridworlds/__init__.py`, for example
 ```python
