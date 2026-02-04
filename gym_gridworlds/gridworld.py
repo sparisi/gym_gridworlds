@@ -151,7 +151,7 @@ class Gridworld(gym.Env):
 
     ## Observation Space
 
-    #### Default
+    #### Default (True State)
     The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
     Each integer denotes the current location of the agent.
     For example, in a 3x3 grid the observations are
@@ -159,6 +159,10 @@ class Gridworld(gym.Env):
      0 1 2
      3 4 5
      6 7 8
+
+     > The true state is always passed with the `info` dictionary, to retrieve
+     it even when wrappers are used. This makes debugging easier (e.g., it is
+     possible to count state visits even when RGB wrappers are used).
 
     #### Coordinate Wrapper
     `gym_gridworlds.observation_wrappers.MatrixCoordinateWrapper(env)` returns
@@ -377,15 +381,18 @@ class Gridworld(gym.Env):
 
     def reset(self, seed: int = None, **kwargs):
         super().reset(seed=seed, **kwargs)
-        self._reset(seed, **kwargs)
+        info = self._reset(seed, **kwargs)
         if self.render_mode is not None and self.render_mode == "human":
             self.render()
-        return self.get_state(), {}
+        obs = self.get_state()
+        info["state"] = obs
+        return obs, info
 
     def step(self, action: int):
         obs, reward, terminated, truncated, info = self._step(action)
         if self.render_mode is not None and self.render_mode == "human":
             self.render()
+        info["state"] = obs
         return obs, reward, terminated, truncated, info
 
     def _randomize_agent_pos(self):
@@ -418,6 +425,7 @@ class Gridworld(gym.Env):
             self.agent_pos = self.start_pos
         self.last_action = None
         self.last_pos = None
+        return {}
 
     def _step(self, action: int):
         self.last_pos = self.agent_pos

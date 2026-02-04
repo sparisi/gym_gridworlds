@@ -31,7 +31,7 @@ class RandomizedTiles(Gridworld):
     def _reset(self, seed: int = None, **kwargs):
         Gridworld._reset(self, seed=seed, **kwargs)
         self.randomize_tiles()
-        return self.get_state(), {}
+        return {}
 
     def _step(self, action: int):
         obs, reward, terminated, truncated, info = Gridworld._step(self, action)

@@ -224,7 +224,7 @@ Diagonal actions `{5, 8}` for `{UP_LEFT, DOWN_LEFT, DOWN_RIGHT, UP_RIGHT}`
 are also supported but not used in the default MDP.
 
 ### <ins>Observation Space</ins>
-&#10148; <strong>Default</strong>  
+&#10148; <strong>Default (True State)</strong>  
 The observation is discrete in the range `{0, n_rows * n_cols - 1}`.
 Each integer denotes the current location of the agent.
 For example, in a 3x3 grid the observations are
@@ -233,6 +233,10 @@ For example, in a 3x3 grid the observations are
  3 4 5
  6 7 8
 ```
+
+> The true state is always passed with the `info` dictionary, to retrieve
+it even when wrappers are used. This makes debugging easier (e.g., it is
+possible to count state visits even when RGB wrappers are used).
 
 The observation can be transformed to better fit function approximation (e.g., if you use DQN)
 using wrappers from [observation_wrappers.py](gym_gridworlds/observation_wrappers.py). For example
