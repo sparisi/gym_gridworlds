@@ -235,6 +235,30 @@ register(
 )
 
 register(
+    id="Gym-Gridworlds/FourRooms-Mini-8x7-Loop-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=200,
+    kwargs={
+        "grid": "8x7_four_rooms_mini_loop",
+        "no_stay": True,
+        "start_pos": None,  # random
+        "random_goals": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/FourRooms-Mini-8x7-Stuck-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=200,
+    kwargs={
+        "grid": "8x7_four_rooms_mini_stuck",
+        "no_stay": True,
+        "start_pos": None,  # random
+        "random_goals": True,
+    },
+)
+
+register(
     id="Gym-Gridworlds/FourRooms-Cross-14x16-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=50,
