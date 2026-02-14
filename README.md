@@ -184,7 +184,7 @@ register(
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/Wall-RandomStart-5x5-v0", grid="5x5_wall", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/Wall-RandomStart-5x5-v0", render_mode="human")
 env.reset(seed=42)
 ```
 
