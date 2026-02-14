@@ -84,7 +84,7 @@ COLORMAP[GOOD_SMALL] = Color.DARK_GREEN
 COLORMAP[GOOD] = Color.GREEN
 COLORMAP[BAD] = Color.RED
 COLORMAP[BAD_SMALL] = Color.PALE_RED
-COLORMAP[WALL] = Color.PURPLE
+COLORMAP[WALL] = Color.GRAY
 COLORMAP[PIT] = Color.WHITE
 for action in ACTION_TO_VEC:
     COLORMAP[action] = Color.BLACK
@@ -256,8 +256,8 @@ class Gridworld(gym.Env):
 
     - Black: empty tiles
     - White: pits
-    - Purple: walls
-    - Black with gray arrow: empty one-directional tile
+    - Gray: walls
+    - Black with purple arrow: empty one-directional tile
     - Green: goal
     - Pale green: distracting goal
     - Red: penalty tiles
@@ -618,7 +618,7 @@ class Gridworld(gym.Env):
                     )
                     pygame.draw.polygon(
                         self.window_surface,
-                        Color.GRAY,
+                        Color.PURPLE,
                         (start_pos, center),
                         arrow_width,
                     )
@@ -627,7 +627,7 @@ class Gridworld(gym.Env):
                         ((self.tile_size // 2 - self.white_pad_size),) * 2,
                         self.grid[y][x],
                     )
-                    pygame.draw.polygon(self.window_surface, Color.GRAY, arr_pos, 0)
+                    pygame.draw.polygon(self.window_surface, Color.PURPLE, arr_pos, 0)
 
                 # some pixels are white noise
                 if self.observation_noise > 0.0:

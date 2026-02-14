@@ -46,22 +46,22 @@ to render the `Full-4x5-v0` gridworld (middle figure), and
 ```python
 import gymnasium
 import gym_gridworlds
-env = gymnasium.make("Gym-Gridworlds/DangerMaze-6x6-v0", render_mode="human")
+env = gymnasium.make("Gym-Gridworlds/DangerMaze-5x6-v0", render_mode="human")
 env.reset()
 env.step(2) # DOWN
 ```
-to render the `DangerMaze-6x6-v0` gridworld (right figure).
+to render the `DangerMaze-5x6-v0` gridworld (right figure).
 
 <p align="center">
   <img src="figures/gridworld_penalty_3x3.png" width="170" alt="Gridworld Penalty"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="figures/gridworld_full_4x5.png" width="220" alt="Gridworld Full"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="figures/gridworld_danger_maze_6x6.png" width="215" alt="Gridworld Full">
+  <img src="figures/gridworld_danger_maze_5x6.png" width="215" alt="Gridworld Full">
 </p>
 
 - Black tiles are empty,
 - White tiles are pits (walking on them yields a large negative reward and the episode ends),
-- Purple tiles are walls (the agent cannot step on them),
-- Black tiles with gray arrows are tiles where the agent can move only in one direction (other actions will fail),
+- Gray tiles are walls (the agent cannot step on them),
+- Black tiles with purple arrows are tiles where the agent can move only in one direction (other actions will fail),
 - Red tiles give negative rewards,
 - Green tiles give positive rewards (the brighter, the higher),
 - Yellow tiles are quicksand, where all actions will fail with 90% probability,
