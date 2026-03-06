@@ -235,6 +235,18 @@ register(
 )
 
 register(
+    id="Gym-Gridworlds/FourRooms-Mini-8x7-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=100,
+    kwargs={
+        "grid": "8x7_four_rooms_mini",
+        "no_stay": True,
+        "start_pos": None,  # random
+        "random_goals": True,
+    },
+)
+
+register(
     id="Gym-Gridworlds/FourRooms-Mini-8x7-Loop-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
