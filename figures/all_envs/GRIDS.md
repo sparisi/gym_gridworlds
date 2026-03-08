@@ -22,7 +22,7 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `Empty-10x10-v0`  
 <img src="Empty-10x10-v0.png" width="220">
 
-`Empty-Distract-6x6-v0`: Bottom-right goal is a "distractor".  
+`Empty-Distract-6x6-v0`: Bottom-left goal is a "distractor".  
 <img src="Empty-Distract-6x6-v0.png" width="220">
 
 `Penalty-3x3-v0`: Red tiles with negative reward force the optimal agent to take a detour.  
@@ -92,7 +92,8 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `CleanDirt-10x10-v0`: The agent must clean dirt (green tiles) that randomly appear over time. The starting position is in the middle of the grid. No need to `STAY` to clean dirt.  
 <img src="CleanDirt-10x10-v0.png" width="220">
 
-`TravelField-28x28-v0`: The agent start in the bottom-leftmost tile and has to reach the red tile. The shortest path is through a swamp (brown tiles), but it yields large negative rewards. A longer but easy-to-find path is through grass (left side of the grid), but grass also yields negative rewards. The best path is through a road (yellow tiles, smallest negative reward), but it's harder to find. Beside the default actions (including `STAY`) the agent can also move diagonally. Designed to be solved without discount factor.  
+`TravelField-28x28-v0`: The agent start in the bottom-leftmost tile and has to reach the red tile. The shortest path is through a swamp (brown tiles), but it yields large negative rewards. The agent can easily avoid the swamp and walk only over grass (green tiles) by going up through the left side of the grid, and then left. However, grass also yields negative rewards (albeit smaller). The best path is through a road (yellow tiles, smallest negative reward), but it's the longest and harder to find. Beside the default actions (including `STAY`) the agent can also move diagonally.  
+Designed to be solved without discount factor. It is possible to make the environment with `distance_difference_reward=True` to make it even harder, because following the road temporarily brings the agent further from the goal.
 <img src="TravelField-28x28-v0.png" width="220">
 
 `TravelField-10x10-v0`: Smaller version of the above grid.   
