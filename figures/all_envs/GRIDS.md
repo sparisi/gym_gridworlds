@@ -5,7 +5,7 @@ python envs_to_figs.py
 <table>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Straight-1x20-v0.png" width="120">
+      <img src="Straight-1x20-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -15,7 +15,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Empty-RandomStart-2x2-v0.png" width="120">
+      <img src="Empty-RandomStart-2x2-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -25,7 +25,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Empty-RandomStart-3x3-v0" width="120">
+      <img src="Empty-RandomStart-3x3-v0" width="120">
     </td>
     <td>
       <p>
@@ -35,7 +35,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Empty-RandomGoal-3x3-v0" width="120">
+      <img src="Empty-RandomGoal-3x3-v0" width="120">
     </td>
     <td>
       <p>
@@ -45,7 +45,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Empty-Loop-3x3-v0" width="120">
+      <img src="Empty-Loop-3x3-v0" width="120">
     </td>
     <td>
       <p>
@@ -55,7 +55,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Empty-10x10-v0.png" width="120">
+      <img src="Empty-10x10-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -65,7 +65,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Empty-Distract-6x6-v0.png" width="120">
+      <img src="Empty-Distract-6x6-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -75,7 +75,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Penalty-3x3-v0.png" width="120">
+      <img src="Penalty-3x3-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -85,7 +85,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Quicksand-4x4-v0.png" width="120">
+      <img src="Quicksand-4x4-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -95,7 +95,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Quicksand-Distract-4x4-v0.png" width="120">
+      <img src="Quicksand-Distract-4x4-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -105,7 +105,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/TwoRoom-Quicksand-3x5-v0.png" width="120">
+      <img src="TwoRoom-Quicksand-3x5-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -115,7 +115,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Corridor-3x4-v0.png" width="120">
+      <img src="Corridor-3x4-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -125,7 +125,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Full-4x5-v0.png" width="120">
+      <img src="Full-4x5-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -135,7 +135,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Full-RandomGoalAndStart-4x5-v0.png" width="120">
+      <img src="Full-RandomGoalAndStart-4x5-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -145,7 +145,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/TwoRoom-Distract-Middle-2x11-v0.png" width="120">
+      <img src="TwoRoom-Distract-Middle-2x11-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -155,7 +155,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Barrier-5x5-v0.png" width="120">
+      <img src="Barrier-5x5-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -165,7 +165,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/RiverSwim-1x6-v0.png" width="120">
+      <img src="RiverSwim-1x6-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -175,7 +175,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/CliffWalk-4x12-v0.png" width="120">
+      <img src="CliffWalk-4x12-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -185,7 +185,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/DangerMaze-5x6-v0.png" width="120">
+      <img src="DangerMaze-5x6-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -195,7 +195,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/FourRooms-Symmetrical-11x11-v0" width="120">
+      <img src="FourRooms-Symmetrical-11x11-v0" width="120">
     </td>
     <td>
       <p>
@@ -205,7 +205,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/FourRooms-Original-13x13-v0.png" width="120">
+      <img src="FourRooms-Original-13x13-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -215,7 +215,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/FourRooms-Original-13x13-Stuck-v0.png" width="120">
+      <img src="FourRooms-Original-13x13-Stuck-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -225,7 +225,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/FourRooms-Original-13x13-Loop-v0.png" width="120">
+      <img src="FourRooms-Original-13x13-Loop-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -235,7 +235,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/FourRooms-Mini-8x7-v0.png" width="120">
+      <img src="FourRooms-Mini-8x7-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -245,7 +245,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/FourRooms-Mini-8x7-Loop-v0.png" width="120">
+      <img src="FourRooms-Mini-8x7-Loop-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -255,7 +255,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/FourRooms-Mini-8x7-Stuck-v0.png" width="120">
+      <img src="FourRooms-Mini-8x7-Stuck-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -265,7 +265,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/FourRooms-Cross-14x16-v0.png" width="120">
+      <img src="FourRooms-Cross-14x16-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -275,7 +275,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Maze-12x12-v0.png" width="120">
+      <img src="Maze-12x12-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -285,7 +285,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/CleanDirt-10x10-v0.png" width="120">
+      <img src="CleanDirt-10x10-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -295,7 +295,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/TravelField-28x28-v0.png" width="120">
+      <img src="TravelField-28x28-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -305,7 +305,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/TravelField-10x10-v0.png" width="120">
+      <img src="TravelField-10x10-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -315,7 +315,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/TravelField-28x28-v1.png" width="120">
+      <img src="TravelField-28x28-v1.png" width="120">
     </td>
     <td>
       <p>
@@ -325,7 +325,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/TravelField-10x10-v1.png" width="120">
+      <img src="TravelField-10x10-v1.png" width="120">
     </td>
     <td>
       <p>
@@ -335,7 +335,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Penalty-Randomized-4x4-v0.png" width="120">
+      <img src="Penalty-Randomized-4x4-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -345,7 +345,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Taxi-6x7-v0.png" width="120">
+      <img src="Taxi-6x7-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -355,7 +355,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="figures/all_envs/Wall-50x50-v0.png" width="120">
+      <img src="Wall-50x50-v0.png" width="120">
     </td>
     <td>
       <p>
