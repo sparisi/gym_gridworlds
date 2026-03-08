@@ -5,7 +5,7 @@
     </td>
     <td>
       <p>
-        `Straight-1x20-v0`: Start in the leftmost tile and reach the rightmost one (must do `STAY`).
+        <code>Straight-1x20-v0</code>: Start in the leftmost tile and reach the rightmost one (must do <code>STAY</code>).
       </p>
     </td>
   </tr>
@@ -15,7 +15,7 @@
     </td>
     <td>
       <p>
-        `Empty-RandomStart-2x2-v0`:
+        <code>Empty-RandomStart-2x2-v0</code>:
       </p>
     </td>
   </tr>
@@ -25,7 +25,7 @@
     </td>
     <td>
       <p>
-        `Empty-RandomStart-3x3-v0`:
+        <code>Empty-RandomStart-3x3-v0</code>:
       </p>
     </td>
   </tr>
@@ -35,7 +35,7 @@
     </td>
     <td>
       <p>
-        `Empty-RandomGoal-3x3-v0`:
+        <code>Empty-RandomGoal-3x3-v0</code>:
       </p>
     </td>
   </tr>
@@ -45,7 +45,7 @@
     </td>
     <td>
       <p>
-        `Empty-Loop-3x3-v0`:
+        <code>Empty-Loop-3x3-v0</code>:
       </p>
     </td>
   </tr>
@@ -55,7 +55,7 @@
     </td>
     <td>
       <p>
-        `Empty-10x10-v0`:
+        <code>Empty-10x10-v0</code>:
       </p>
     </td>
   </tr>
@@ -65,7 +65,7 @@
     </td>
     <td>
       <p>
-        `Empty-Distract-6x6-v0`:
+        <code>Empty-Distract-6x6-v0</code>:
       </p>
     </td>
   </tr>
@@ -75,7 +75,7 @@
     </td>
     <td>
       <p>
-        `Penalty-3x3-v0`:
+        <code>Penalty-3x3-v0</code>:
       </p>
     </td>
   </tr>
@@ -85,7 +85,7 @@
     </td>
     <td>
       <p>
-        `Quicksand-4x4-v0`:
+        <code>Quicksand-4x4-v0</code>:
       </p>
     </td>
   </tr>
@@ -95,7 +95,7 @@
     </td>
     <td>
       <p>
-        `Quicksand-Distract-4x4-v0`:
+        <code>Quicksand-Distract-4x4-v0</code>:
       </p>
     </td>
   </tr>
@@ -105,7 +105,7 @@
     </td>
     <td>
       <p>
-        `TwoRoom-Quicksand-3x5-v0`:
+        <code>TwoRoom-Quicksand-3x5-v0</code>:
       </p>
     </td>
   </tr>
@@ -115,7 +115,7 @@
     </td>
     <td>
       <p>
-        `Corridor-3x4-v0`:
+        <code>Corridor-3x4-v0</code>:
       </p>
     </td>
   </tr>
@@ -125,7 +125,7 @@
     </td>
     <td>
       <p>
-        `Full-4x5-v0`:
+        <code>Full-4x5-v0</code>:
       </p>
     </td>
   </tr>
@@ -135,7 +135,7 @@
     </td>
     <td>
       <p>
-        `Full-RandomGoalAndStart-4x5-v0`:
+        <code>Full-RandomGoalAndStart-4x5-v0</code>:
       </p>
     </td>
   </tr>
@@ -145,7 +145,7 @@
     </td>
     <td>
       <p>
-        `TwoRoom-Distract-Middle-2x11-v0`:
+        <code>TwoRoom-Distract-Middle-2x11-v0</code>:
       </p>
     </td>
   </tr>
@@ -155,7 +155,7 @@
     </td>
     <td>
       <p>
-        `Barrier-5x5-v0`:
+        <code>Barrier-5x5-v0</code>:
       </p>
     </td>
   </tr>
@@ -165,7 +165,7 @@
     </td>
     <td>
       <p>
-        `RiverSwim-1x6-v0`:
+        <code>RiverSwim-1x6-v0</code>:
       </p>
     </td>
   </tr>
@@ -175,7 +175,7 @@
     </td>
     <td>
       <p>
-        `CliffWalk-4x12-v0`:
+        <code>CliffWalk-4x12-v0</code>:
       </p>
     </td>
   </tr>
@@ -185,7 +185,7 @@
     </td>
     <td>
       <p>
-        `DangerMaze-5x6-v0`:
+        <code>DangerMaze-5x6-v0</code>:
       </p>
     </td>
   </tr>
@@ -195,7 +195,7 @@
     </td>
     <td>
       <p>
-        `FourRooms-Symmetrical-11x11-v0`:
+        <code>FourRooms-Symmetrical-11x11-v0</code>:
       </p>
     </td>
   </tr>
@@ -205,7 +205,7 @@
     </td>
     <td>
       <p>
-        `FourRooms-Original-13x13-v0`:
+        <code>FourRooms-Original-13x13-v0</code>:
       </p>
     </td>
   </tr>
@@ -215,7 +215,7 @@
     </td>
     <td>
       <p>
-        `FourRooms-Original-13x13-Stuck-v0`:
+        <code>FourRooms-Original-13x13-Stuck-v0</code>:
       </p>
     </td>
   </tr>
@@ -225,7 +225,7 @@
     </td>
     <td>
       <p>
-        `FourRooms-Original-13x13-Loop-v0`:
+        <code>FourRooms-Original-13x13-Loop-v0</code>:
       </p>
     </td>
   </tr>
@@ -235,7 +235,7 @@
     </td>
     <td>
       <p>
-        `FourRooms-Mini-8x7-v0`:
+        <code>FourRooms-Mini-8x7-v0</code>:
       </p>
     </td>
   </tr>
@@ -245,7 +245,7 @@
     </td>
     <td>
       <p>
-        `FourRooms-Mini-8x7-Loop-v0`:
+        <code>FourRooms-Mini-8x7-Loop-v0</code>:
       </p>
     </td>
   </tr>
@@ -255,7 +255,7 @@
     </td>
     <td>
       <p>
-        `FourRooms-Mini-8x7-Stuck-v0`:
+        <code>FourRooms-Mini-8x7-Stuck-v0</code>:
       </p>
     </td>
   </tr>
@@ -265,7 +265,7 @@
     </td>
     <td>
       <p>
-        `FourRooms-Cross-14x16-v0`:
+        <code>FourRooms-Cross-14x16-v0</code>:
       </p>
     </td>
   </tr>
@@ -275,7 +275,7 @@
     </td>
     <td>
       <p>
-        `Maze-12x12-v0`:
+        <code>Maze-12x12-v0</code>:
       </p>
     </td>
   </tr>
@@ -285,7 +285,7 @@
     </td>
     <td>
       <p>
-        `CleanDirt-10x10-v0`:
+        <code>CleanDirt-10x10-v0</code>:
       </p>
     </td>
   </tr>
@@ -295,7 +295,7 @@
     </td>
     <td>
       <p>
-        `TravelField-28x28-v0`:
+        <code>TravelField-28x28-v0</code>:
       </p>
     </td>
   </tr>
@@ -305,7 +305,7 @@
     </td>
     <td>
       <p>
-        `TravelField-10x10-v0`:
+        <code>TravelField-10x10-v0</code>:
       </p>
     </td>
   </tr>
@@ -315,7 +315,7 @@
     </td>
     <td>
       <p>
-        `TravelField-28x28-v1`:
+        <code>TravelField-28x28-v1</code>:
       </p>
     </td>
   </tr>
@@ -325,7 +325,7 @@
     </td>
     <td>
       <p>
-        `TravelField-10x10-v1`:
+        <code>TravelField-10x10-v1</code>:
       </p>
     </td>
   </tr>
@@ -335,7 +335,7 @@
     </td>
     <td>
       <p>
-        `Penalty-Randomized-4x4-v0`:
+        <code>Penalty-Randomized-4x4-v0</code>:
       </p>
     </td>
   </tr>
@@ -345,7 +345,7 @@
     </td>
     <td>
       <p>
-        `Taxi-6x7-v0`:
+        <code>Taxi-6x7-v0</code>:
       </p>
     </td>
   </tr>
@@ -355,7 +355,7 @@
     </td>
     <td>
       <p>
-        `Wall-50x50-v0`:
+        <code>Wall-50x50-v0</code>:
       </p>
     </td>
   </tr>
