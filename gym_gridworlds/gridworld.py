@@ -727,7 +727,7 @@ class RiverSwim(Gridworld):
     def _reset(self, seed: int = None, **kwargs):
         Gridworld._reset(self, seed=seed, **kwargs)
         self.agent_pos = (0, self.np_random.integers(1, 3))  # 2nd or 3rd tile
-        return self.get_state(), {}
+        return {}
 
     def _step(self, action: int):
         state = np.ravel_multi_index(self.agent_pos, (self.n_rows, self.n_cols))
