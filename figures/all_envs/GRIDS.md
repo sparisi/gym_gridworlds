@@ -99,7 +99,7 @@ Designed to be solved without discount factor. It is possible to make the enviro
 `TravelField-10x10-v0`: Smaller version of the above grid.   
 <img src="TravelField-10x10-v0.png" width="220">
 
-`TravelField-28x28-v1`: Easier version without distracting roads.  
+`TravelField-28x28-v1`: Harder version with distracting roads and road interruptions.  
 <img src="TravelField-28x28-v1.png" width="220">
 
 `TravelField-10x10-v1`: Smaller version of the above grid.  
