@@ -14,6 +14,8 @@ Basic gridworlds are defined in [gridworld.py](gym_gridworlds/gridworld.py) and
 are presented below. Harder gridworlds are defined in separate files in [gym_gridworlds](gym_gridworlds)
 and are not discussed here (but are fully documented).
 
+You can find a list of all environments [here](figures/all_envs/GRIDS.md).
+
 
 ## Install and Examples
 
