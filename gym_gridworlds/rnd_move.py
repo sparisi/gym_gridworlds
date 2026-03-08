@@ -12,7 +12,7 @@ class RandomizedTiles(Gridworld):
     only allowed action), but the allowed action changes randomly at every step.
     The randomization happens at the end of the transition, so the agent knows
     what action is allowed before acting.
-    When rendered, the gray arrow denoting the allowed action changes as well.
+    When rendered, the arrow denoting the allowed action changes as well.
 
     Tabular observations make it partially observable, as the agent can only
     know that any move has 25% chance of succeeding.

@@ -6,8 +6,8 @@ from gym_gridworlds.gridworld import (
 )
 from gym_gridworlds.gridworld import Gridworld
 
-ROCK = WALL
-GOAL = GOOD
+ROCK = 101
+GOAL = 102
 GRASS = 99
 ROAD = 98
 SWAMP = 97
