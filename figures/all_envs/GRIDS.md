@@ -93,7 +93,7 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 <img src="CleanDirt-10x10-v0.png" width="220">
 
 `TravelField-28x28-v0`: The agent start in the bottom-leftmost tile and has to reach the red tile. The shortest path is through a swamp (brown tiles), but it yields large negative rewards. The agent can easily avoid the swamp and walk only over grass (green tiles) by going up through the left side of the grid, and then left. However, grass also yields negative rewards (albeit smaller). The best path is through a road (yellow tiles, smallest negative reward), but it's the longest and harder to find. Beside the default actions (including `STAY`) the agent can also move diagonally.  
-Designed to be solved without discount factor. It is possible to make the environment with `distance_difference_reward=True` to make it even harder, because following the road temporarily brings the agent further from the goal.
+Designed to be solved without discount factor. It is possible to make the environment with `distance_difference_reward=True` to make it even harder, because following the road temporarily brings the agent further from the goal.  
 <img src="TravelField-28x28-v0.png" width="220">
 
 `TravelField-10x10-v0`: Smaller version of the above grid.   
