@@ -2,6 +2,7 @@ Unless stated otherwise, the agent must do `STAY` to get positive rewards in gre
 Starting position is always the top-leftmost tile, unless the name of the environment has `RandomStart` or stated otherwise.  
 Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_gridworlds/__init__.py) for more details.
 
+---
 
 `Straight-1x20-v0`  
 <img src="Straight-1x20-v0.png" width="220">
