@@ -1,5 +1,6 @@
 Unless stated otherwise, the agent must do `STAY` to get positive rewards in green tiles.  
-Starting position is always the top-leftmost tile, unless the name of the environment has `RandomStart` or stated otherwise.
+Starting position is always the top-leftmost tile, unless the name of the environment has `RandomStart` or stated otherwise.  
+Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_gridworlds/__init__.py) for more details.
 
 
 `Straight-1x20-v0`  
@@ -50,10 +51,10 @@ Starting position is always the top-leftmost tile, unless the name of the enviro
 `Barrier-5x5-v0`: One-directional tiles make a barrier around the goal.  
 <img src="Barrier-5x5-v0.png" width="220">
 
-`RiverSwim-1x6-v0`: Classic RL benchmark. No need to `STAY` in green tiles.  
+`RiverSwim-1x6-v0`: Classic RL benchmark. The agent starts either in the 2nd or 3rd leftmost tile, the only actions are `LEFT` and `RIGHT`, and the transition is stochastic. No need to `STAY` in green tiles. There are no terminal states.  
 <img src="RiverSwim-1x6-v0.png" width="220">
 
-`CliffWalk-4x12-v0`: Classic RL benchmark.  
+`CliffWalk-4x12-v0`: Classic RL benchmark. The agent starts in the top-leftmost tile, and the goal is located on the other side of a long pit.  
 <img src="CliffWalk-4x12-v0.png" width="220">
 
 `DangerMaze-5x6-v0`: Maze-like grid with pits, walls, and negative rewards.  
@@ -87,25 +88,25 @@ Starting position is always the top-leftmost tile, unless the name of the enviro
 `Maze-12x12-v0`: [The agent starts in the middle. No need to `STAY` in green tiles.](https://arxiv.org/pdf/2505.01336).  
 <img src="Maze-12x12-v0.png" width="220">
 
-`CleanDirt-10x10-v0`: [Check full description here](gym_gridworlds/gym_gridworlds/clean_dirt.py)  
+`CleanDirt-10x10-v0`: The agent must clean dirt (green tiles) that randomly appear over time. The starting position is in the middle of the grid. No need to `STAY` to clean dirt.  
 <img src="CleanDirt-10x10-v0.png" width="220">
 
-`TravelField-28x28-v0`: [Check full description here](gym_gridworlds/gym_gridworlds/travel_field.py). It has diagonal actions.  
+`TravelField-28x28-v0`: The agent start in the bottom-leftmost tile and has to reach the red tile. The shortest path is through a swamp (brown tiles), but it yields large negative rewards. A longer but easy-to-find path is through grass (left side of the grid), but grass also yields negative rewards. The best path is through a road (yellow tiles, smallest negative reward), but it's harder to find. Beside the default actions (including `STAY`) the agent can also move diagonally. Designed to be solved without discount factor.  
 <img src="TravelField-28x28-v0.png" width="220">
 
-`TravelField-10x10-v0`: [Check full description here](gym_gridworlds/gym_gridworlds/travel_field.py). It has diagonal actions.  
+`TravelField-10x10-v0`: Smaller version of the above grid.   
 <img src="TravelField-10x10-v0.png" width="220">
 
-`TravelField-28x28-v1`: [Check full description here](gym_gridworlds/gym_gridworlds/travel_field.py). It has diagonal actions.  
+`TravelField-28x28-v1`: Easier version without distracting roads.  
 <img src="TravelField-28x28-v1.png" width="220">
 
-`TravelField-10x10-v1`: [Check full description here](gym_gridworlds/gym_gridworlds/travel_field.py). It has diagonal actions.  
+`TravelField-10x10-v1`: Smaller version of the above grid.  
 <img src="TravelField-10x10-v1.png" width="220">
 
 `Penalty-Randomized-4x4-v0`: The one-directional tile randomly changes at every step.  
 <img src="Penalty-Randomized-4x4-v0.png" width="220">
 
-`Taxi-6x7-v0`: Classic RL benchmark. The agent starts in the top-rightmost tile. No need to `STAY` in green tiles.  
+`Taxi-6x7-v0`: Classic RL benchmark. The agent starts in the top-rightmost tile and has to collect passengers (dark green tiles) before reaching the goal. No need to `STAY` in green tiles.  
 <img src="Taxi-6x7-v0.png" width="220">
 
 `Wall-50x50-v0`: Large grid with a wall dividing it into two areas. One distracting reward is in the top-rightmost tile, while the goal is at the bottom-rightmost tile. The agent always starts in the bottom-leftmost tile.  
