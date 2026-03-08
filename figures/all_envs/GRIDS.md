@@ -1,7 +1,3 @@
-```
-python envs_to_figs.py
-```
-
 <table>
   <tr>
     <td align="center">
@@ -9,7 +5,7 @@ python envs_to_figs.py
     </td>
     <td>
       <p>
-        `Straight-1x20-v0`:
+        `Straight-1x20-v0`: Start in the leftmost tile and reach the rightmost one (must do `STAY`).
       </p>
     </td>
   </tr>
@@ -25,7 +21,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="Empty-RandomStart-3x3-v0" width="120">
+      <img src="Empty-RandomStart-3x3-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -35,7 +31,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="Empty-RandomGoal-3x3-v0" width="120">
+      <img src="Empty-RandomGoal-3x3-v0.png" width="120">
     </td>
     <td>
       <p>
@@ -45,7 +41,7 @@ python envs_to_figs.py
   </tr>
   <tr>
     <td align="center">
-      <img src="Empty-Loop-3x3-v0" width="120">
+      <img src="Empty-Loop-3x3-v0.png" width="120">
     </td>
     <td>
       <p>
