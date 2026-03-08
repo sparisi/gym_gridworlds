@@ -1,8 +1,7 @@
 Unless stated otherwise, the agent must do `STAY` to get positive rewards in green tiles.  
-Starting position is always the top-leftmost tile, unless the name of the environment has `RandomStart`.
+Starting position is always the top-leftmost tile, unless the name of the environment has `RandomStart` or stated otherwise.
 
-<img src="Straight-1x20-v0.png" width="120">  
-`Straight-1x20-v0`
+![Straight-1x20-v0](Straight-1x20-v `Straight-1x20-v0`)
 
 <img src="Empty-RandomStart-2x2-v0.png" width="120">
 `Empty-RandomStart-2x2-v0`
