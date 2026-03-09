@@ -199,11 +199,11 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/FourRooms-Original-13x13-v0",
+    id="Gym-Gridworlds/FourRooms-13x13-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
-        "grid": "13x13_four_rooms_original",
+        "grid": "13x13_four_rooms",
         "no_stay": True,
         "start_pos": None,  # random
         "random_goals": True,
@@ -211,11 +211,11 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/FourRooms-Original-13x13-Stuck-v0",
+    id="Gym-Gridworlds/FourRooms-Stuck-13x13-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
-        "grid": "13x13_four_rooms_original_stuck",
+        "grid": "13x13_four_rooms_stuck",
         "no_stay": True,
         "start_pos": None,  # random
         "random_goals": True,
@@ -223,11 +223,11 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/FourRooms-Original-13x13-Loop-v0",
+    id="Gym-Gridworlds/FourRooms-Loop-13x13-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
-        "grid": "13x13_four_rooms_original_loop",
+        "grid": "13x13_four_rooms_loop",
         "no_stay": True,
         "start_pos": None,  # random
         "random_goals": True,
@@ -235,7 +235,7 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/FourRooms-Mini-8x7-v0",
+    id="Gym-Gridworlds/FourRooms-8x7-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=100,
     kwargs={
@@ -247,11 +247,11 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/FourRooms-Mini-8x7-Loop-v0",
+    id="Gym-Gridworlds/FourRooms-Loop-8x7-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
-        "grid": "8x7_four_rooms_mini_loop",
+        "grid": "8x7_four_rooms_loop_mini",
         "no_stay": True,
         "start_pos": None,  # random
         "random_goals": True,
@@ -259,11 +259,11 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/FourRooms-Mini-8x7-Stuck-v0",
+    id="Gym-Gridworlds/FourRooms-Stuck-8x7-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,
     kwargs={
-        "grid": "8x7_four_rooms_mini_stuck",
+        "grid": "8x7_four_rooms_stuck_mini",
         "no_stay": True,
         "start_pos": None,  # random
         "random_goals": True,
@@ -283,11 +283,11 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/ThreeRooms-Split-14x16-v0",
+    id="Gym-Gridworlds/ThreeRooms-Wall-14x16-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=500,
     kwargs={
-        "grid": "14x16_three_rooms_split",
+        "grid": "14x16_three_rooms_wall",
         "no_stay": True,
         "start_pos": [
             (2, 0),   # first room
@@ -298,16 +298,46 @@ register(
 )
 
 register(
-    id="Gym-Gridworlds/ThreeRooms-SplitQuicksand-14x16-v0",
+    id="Gym-Gridworlds/ThreeRooms-Quicksand-14x16-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=500,
     kwargs={
-        "grid": "14x16_three_rooms_split_quicksand",
+        "grid": "14x16_three_rooms_quicksand",
         "no_stay": True,
         "start_pos": [
             (2, 0),   # first room
             (7, 0),   # second room
             (12, 0),  # third room
+        ],
+    },
+)
+
+register(
+    id="Gym-Gridworlds/ThreeRooms-Wall-11x8-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=200,
+    kwargs={
+        "grid": "11x8_three_rooms_wall_mini",
+        "no_stay": True,
+        "start_pos": [
+            (2, 0),   # first room
+            (4, 0),   # second room
+            (10, 0),  # third room
+        ],
+    },
+)
+
+register(
+    id="Gym-Gridworlds/ThreeRooms-Quicksand-11x8-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=200,
+    kwargs={
+        "grid": "11x8_three_rooms_quicksand_mini",
+        "no_stay": True,
+        "start_pos": [
+            (2, 0),   # first room
+            (4, 0),   # second room
+            (10, 0),  # third room
         ],
     },
 )
@@ -315,7 +345,7 @@ register(
 # https://arxiv.org/pdf/2505.01336
 register(
     id="Gym-Gridworlds/Maze-12x12-v0",
-    entry_point="gym_gridworlds.clean_dirt:Gridworld",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=500,
     kwargs={
         "grid": "12x12_maze",

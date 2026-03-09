@@ -8,7 +8,7 @@ for env_id in gymnasium.envs.registry:
         print(env_id)
         # env = gymnasium.make(env_id, render_mode="human")  # to render
         env = gymnasium.make(env_id, render_mode="rgb_array")  # to save as png
-        obs, info = env.reset()
+        obs, info = env.reset(seed=42)
         frame = env.render()
         root_dir = os.path.dirname(os.path.dirname(gym_gridworlds.__file__))
         save_path = os.path.join(root_dir, "figures", "all_envs")

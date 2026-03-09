@@ -64,33 +64,36 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `FourRooms-Symmetrical-11x11-v0`: Classic RL benchmark. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
 <img src="FourRooms-Symmetrical-11x11-v0.png" width="220">
 
-`FourRooms-Original-13x13-v0`: Classic RL benchmark. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
-<img src="FourRooms-Original-13x13-v0.png" width="220">
+`FourRooms-13x13-v0`: Classic RL benchmark. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
+<img src="FourRooms-13x13-v0.png" width="220">
 
 
-`FourRooms-Original-13x13-Stuck-v0`: The agent cannot exit the bottom-left room. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
-<img src="FourRooms-Original-13x13-Stuck-v0.png" width="220">
+`FourRooms-13x13-Stuck-v0`: The agent cannot exit the bottom-left room. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
+<img src="FourRooms-13x13-Stuck-v0.png" width="220">
 
-`FourRooms-Original-13x13-Loop-v0`: One-directional arrows enforce a "loop-like" path to visit all rooms. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
-<img src="FourRooms-Original-13x13-Loop-v0.png" width="220">
+`FourRooms-13x13-Loop-v0`: One-directional arrows enforce a "loop-like" path to visit all rooms. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
+<img src="FourRooms-13x13-Loop-v0.png" width="220">
 
-`FourRooms-Mini-8x7-v0`: Smaller version of the above environment.  
-<img src="FourRooms-Mini-8x7-v0.png" width="220">
+`FourRooms-8x7-v0`: Smaller version of the above environment.  
+<img src="FourRooms-8x7-v0.png" width="220">
 
-`FourRooms-Mini-8x7-Loop-v0`: Smaller version of the above environment.  
-<img src="FourRooms-Mini-8x7-Loop-v0.png" width="220">
+`FourRooms-Loop-8x7-v0`: Smaller version of the above environment.  
+<img src="FourRooms-8x7-Loop-v0.png" width="220">
 
-`FourRooms-Mini-8x7-Stuck-v0`: Smaller version of the above environment.  
-<img src="FourRooms-Mini-8x7-Stuck-v0.png" width="220">
+`FourRooms-Stuck-8x7-v0`: Smaller version of the above environment.  
+<img src="FourRooms-8x7-Stuck-v0.png" width="220">
 
 `FourRooms-Cross-14x16-v0`: Rooms are spread across the grid in a "cross-like" shape. Start position and goal are randomized at every reset.  
 <img src="FourRooms-Cross-14x16-v0.png" width="220">
 
-`ThreeRooms-Split-14x16-v0`: The three rooms are not connected, and there are three random starting positions (one for each room). Goals are not randomized. No need to `STAY` in green tiles.  
-<img src="ThreeRooms-Split-14x16-v0.png" width="220">
+`ThreeRooms-Wall-14x16-v0`: The three rooms are not connected, and there are three random starting positions (one for each room). Goals are not randomized. No need to `STAY` in green tiles.  
+<img src="ThreeRooms-Wall-14x16-v0.png" width="220">
 
-`ThreeRooms-SplitQuicksand-14x16-v0`: Like above, but walls are replaced by quicksand. Thus, rooms are connected but moving between them is unlikely (only 10% chance that an action succeeds in quicksand).  
-<img src="ThreeRooms-SplitQuicksand-14x16-v0.png" width="220">
+`ThreeRooms-Wall-11x8-v0`: The three rooms are not connected, and there are three random starting positions (one for each room). Goals are not randomized. No need to `STAY` in green tiles.  
+<img src="ThreeRooms-Wall-11x8-v0.png" width="220">
+
+`ThreeRooms-Quicksand-11x8-v0`: Like above, but walls are replaced by quicksand. Thus, rooms are connected but moving between them is unlikely (only 10% chance that an action succeeds in quicksand).  
+<img src="ThreeRooms-Quicksand-11x8-v0.png" width="220">
 
 `Maze-12x12-v0`: [The agent starts in the middle. No need to `STAY` in green tiles.](https://arxiv.org/pdf/2505.01336).  
 <img src="Maze-12x12-v0.png" width="220">
