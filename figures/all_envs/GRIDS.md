@@ -86,6 +86,12 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `FourRooms-Cross-14x16-v0`: Rooms are spread across the grid in a "cross-like" shape. Start position and goal are randomized at every reset.  
 <img src="FourRooms-Cross-14x16-v0.png" width="220">
 
+`ThreeRooms-Split-14x16-v0`: The three rooms are not connected, and there are three random starting positions (one for each room). Goals are not randomized. No need to `STAY` in green tiles.  
+<img src="ThreeRooms-Split-14x16-v0.png" width="220">
+
+`ThreeRooms-SplitQuicksand-14x16-v0`: Like above, but walls are replaced by quicksand. Thus, rooms are connected but moving between them is unlikely (only 10% chance that an action succeeds in quicksand).  
+<img src="ThreeRooms-SplitQuicksand-14x16-v0.png" width="220">
+
 `Maze-12x12-v0`: [The agent starts in the middle. No need to `STAY` in green tiles.](https://arxiv.org/pdf/2505.01336).  
 <img src="Maze-12x12-v0.png" width="220">
 

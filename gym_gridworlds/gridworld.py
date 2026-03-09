@@ -197,12 +197,15 @@ class Gridworld(gym.Env):
     ## Starting State
     By default, the episode starts with the agent at the top-left tile `(0, 0)`.
     You can manually select the starting position by making the environment with
-    the argument `start_pos`, e.g., `start_pos=(3, 4)`.
+    the argument `start_pos`, e.g., `start_pos=[(3, 4)]`.
     You can use the key "max" to automatically select the end of the grid, e.g.,
-    `start_pos=("max", 0)` will place the agent at the bottom-right corner.
+    `start_pos=[("max", 0)]` will place the agent at the bottom-right corner.
     If you make the environment with `start_pos=None`, the starting position will be random.
     In both cases (fixed and random), the starting position cannot be a tile with
     a wall or a pit.
+    Note that the starting position must be passed as a list of tuples. If more
+    than one tuple is passed (e.g., `start_pos=[(3, 4), ("max", 0)]`) then the
+    starting position will be randomly sampled from the list at every reset.
 
     ## Transition
     By default, the transition is deterministic except in quicksand tiles,
@@ -278,7 +281,7 @@ class Gridworld(gym.Env):
         self,
         grid: str,
         encoding: Optional[dict] = GRID_ENCODING,
-        start_pos: Optional[tuple] = (0, 0),
+        start_pos: Optional[tuple] = [(0, 0)],
         infinite_horizon: Optional[bool] = False,
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
@@ -297,21 +300,34 @@ class Gridworld(gym.Env):
         self.random_goals = random_goals
         self.original_grid = load_grid(grid, encoding)
         self.grid = self.original_grid.copy()
-        self.start_pos = start_pos
-        if self.start_pos is not None:
-            self.start_pos = tuple(
-                y - 1 if x == "max" else x for x, y in zip(start_pos, self.grid.shape)
-            )
         self.n_rows, self.n_cols = self.grid.shape
 
-        if start_pos is not None:
+        def is_list_of_tuples(x):
+            return isinstance(x, list) and all(isinstance(i, tuple) for i in x)
+
+        assert (
+            start_pos is None or is_list_of_tuples(start_pos)
+        ), "starting position must be None or a list of tuples"  # fmt: skip
+
+        def validate_position(pos):
             assert (
-                0 <= self.start_pos[0] < self.n_rows and
-                0 <= self.start_pos[1] < self.n_cols
-            ), f"received {self.start_pos} starting position, but bounds are {(self.n_rows, self.n_cols)})"   # fmt: skip
+                0 <= pos[0] < self.n_rows and
+                0 <= pos[1] < self.n_cols
+            ), f"received {pos} starting position, but bounds are {(self.n_rows, self.n_cols)})"  # fmt: skip
             assert (
-                self.grid[self.start_pos] not in [WALL, PIT]
-            ), "the agent cannot start in a pit or a wall tile"   # fmt: skip
+                self.grid[pos] not in [WALL, PIT]
+            ), "the agent cannot start in a pit or a wall tile"  # fmt: skip
+
+        def convert_position(pos):
+            pos = tuple(
+                y - 1 if x == "max" else x for x, y in zip(pos, self.grid.shape)
+            )
+            validate_position(pos)
+            return pos
+
+        self.start_pos = start_pos
+        if self.start_pos is not None:
+            self.start_pos = [convert_position(pos) for pos in start_pos]
 
         self.no_stay = no_stay
         self.infinite_horizon = infinite_horizon
@@ -422,7 +438,7 @@ class Gridworld(gym.Env):
         if self.start_pos is None:
             self._randomize_agent_pos()
         else:
-            self.agent_pos = self.start_pos
+            self.agent_pos = tuple(self.np_random.choice(self.start_pos))
         self.last_action = None
         self.last_pos = None
         return {}

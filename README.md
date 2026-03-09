@@ -270,12 +270,15 @@ probability that a pixel is white noise.
 ### <ins>Starting State</ins>
 By default, the episode starts with the agent at the top-left tile `(0, 0)`.
 You can manually select the starting position by making the environment with
-the argument `start_pos`, e.g., `start_pos=(3, 4)`.
+the argument `start_pos`, e.g., `start_pos=[(3, 4)]`.
 You can use the key "max" to automatically select the end of the grid, e.g.,
-`start_pos=("max", 0)` will place the agent at the bottom-right corner.
+`start_pos=[("max", 0)]` will place the agent at the bottom-right corner.
 If you make the environment with `start_pos=None`, the starting position will be random.
 In both cases (fixed and random), the starting position cannot be a tile with
-a wall or a pit.
+a wall or a pit.  
+Note that the starting position must be passed as a list of tuples. If more
+than one tuple is passed (e.g., `start_pos=[(3, 4), ("max", 0)]`) then the
+starting position will be randomly sampled from the list at every reset.
 
 ### <ins>Transition</ins>
 By default, the transition is deterministic except in quicksand tiles,

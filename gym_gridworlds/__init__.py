@@ -140,7 +140,7 @@ register(
     max_episode_steps=200,
     kwargs={
         "grid": "2x11_two_room_distract",
-        "start_pos": (1, 5),
+        "start_pos": [(1, 5)],
     },
 )
 
@@ -282,6 +282,36 @@ register(
     },
 )
 
+register(
+    id="Gym-Gridworlds/ThreeRooms-Split-14x16-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=500,
+    kwargs={
+        "grid": "14x16_three_rooms_split",
+        "no_stay": True,
+        "start_pos": [
+            (2, 0),   # first room
+            (7, 0),   # second room
+            (12, 0),  # third room
+        ],
+    },
+)
+
+register(
+    id="Gym-Gridworlds/ThreeRooms-SplitQuicksand-14x16-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=500,
+    kwargs={
+        "grid": "14x16_three_rooms_split_quicksand",
+        "no_stay": True,
+        "start_pos": [
+            (2, 0),   # first room
+            (7, 0),   # second room
+            (12, 0),  # third room
+        ],
+    },
+)
+
 # https://arxiv.org/pdf/2505.01336
 register(
     id="Gym-Gridworlds/Maze-12x12-v0",
@@ -290,7 +320,7 @@ register(
     kwargs={
         "grid": "12x12_maze",
         "no_stay": True,
-        "start_pos": (6, 7),  # center of the maze
+        "start_pos": [(6, 7)],  # center of the maze
     },
 )
 
@@ -313,7 +343,7 @@ register(
     max_episode_steps=1000,
     kwargs={
         "grid": "travel_field_28x28_v0",
-        "start_pos": ("max", 0),
+        "start_pos": [("max", 0)],
         # "rock_is_terminal": True,
     },
 )
@@ -324,7 +354,7 @@ register(
     max_episode_steps=200,
     kwargs={
         "grid": "travel_field_10x10_v0",
-        "start_pos": ("max", 0),
+        "start_pos": [("max", 0)],
         # "rock_is_terminal": True,
     },
 )
@@ -335,7 +365,7 @@ register(
     max_episode_steps=1000,
     kwargs={
         "grid": "travel_field_28x28_v1",
-        "start_pos": ("max", 0),
+        "start_pos": [("max", 0)],
         # "rock_is_terminal": True,
     },
 )
@@ -346,7 +376,7 @@ register(
     max_episode_steps=200,
     kwargs={
         "grid": "travel_field_10x10_v1",
-        "start_pos": ("max", 0),
+        "start_pos": [("max", 0)],
         # "rock_is_terminal": True,
     },
 )
@@ -366,7 +396,7 @@ register(
     max_episode_steps=100,
     kwargs={
         "grid": "6x7_taxi",
-        "start_pos": (0, 0),
+        "start_pos": [(0, 0)],
         "no_stay": True,
     },
 )
@@ -377,6 +407,6 @@ register(
     max_episode_steps=500,
     kwargs={
         "grid": "50x50_wall",
-        "start_pos": ("max", 0),
+        "start_pos": [("max", 0)],
     },
 )
