@@ -92,8 +92,8 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `ThreeRooms-Wall-11x8-v0`: Smaller version of the above environment.  
 <img src="ThreeRooms-Wall-11x8-v0.png" width="220">
 
-`ThreeRooms-Quicksand-11x8-v0`: Like above, but walls are replaced by quicksand. Thus, rooms are connected but moving between them is unlikely (only 10% chance that an action succeeds in quicksand).  
-<img src="ThreeRooms-Quicksand-11x8-v0.png" width="220">
+`ThreeRooms-Quicksand-14x16-v0`: Like above, but walls are replaced by quicksand. Thus, rooms are connected but moving between them is unlikely (only 10% chance that an action succeeds in quicksand).  
+<img src="ThreeRooms-Quicksand-14x16-v0.png" width="220">
 
 `ThreeRooms-Quicksand-11x8-v0`: Smaller version of the above environment.  
 <img src="ThreeRooms-Quicksand-11x8-v0.png" width="220">

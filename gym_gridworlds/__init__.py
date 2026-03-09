@@ -364,6 +364,7 @@ register(
     max_episode_steps=500,
     kwargs={
         "grid": "10x10_empty",
+        "start_pos": [(5, 5)],  # center of the grid
     },
 )
 
