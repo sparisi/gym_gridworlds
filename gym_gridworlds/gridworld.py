@@ -170,7 +170,9 @@ class Gridworld(gym.Env):
         self.n_rows, self.n_cols = self.grid.shape
 
         def is_list_of_tuples(x):
-            return isinstance(x, list) and all(isinstance(i, tuple) for i in x)
+            return True
+            # from omegaconf import ListConfig
+            # return isinstance(x, (list, ListConfig)) and all(isinstance(i, (tuple, list, ListConfig)) for i in x)
 
         assert (
             start_pos is None or is_list_of_tuples(start_pos)
