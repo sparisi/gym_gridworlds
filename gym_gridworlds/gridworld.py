@@ -204,11 +204,15 @@ class Gridworld(gym.Env):
     In both cases (fixed and random), the starting position cannot be a tile with
     a wall or a pit.
     Note that the starting position must be passed as a list of tuples. If more
-    than one tuple is passed,  the starting position will be randomly sampled from
+    than one tuple is passed, the starting position will be randomly sampled from
     the list at every reset.
-    If you want some starting states to be more likely to be sampled, add them
-    of them to the list. For example, with `start_pos=[(3, 4), (1, 0), (1, 0)]`
+    If you want some starting states to be more likely to be sampled, repeat them
+    within the list. For example, with `start_pos=[(3, 4), (1, 0), (1, 0)]`
     the agent has 66% chance of starting in `(1, 0)` and 33% of starting in `(3, 4)`.
+    If you make the environment with `loop_through_start_pos=True`, the starting
+    state will be different at every reset, following the order you passed with `start_pos`.
+    This can be useful for testing environments with multiple starting states with only
+    a few episodes. 
 
     ## Transition
     By default, the transition is deterministic except in quicksand tiles,
@@ -293,6 +297,7 @@ class Gridworld(gym.Env):
         grid: str,
         encoding: Optional[dict] = GRID_ENCODING,
         start_pos: Optional[tuple] = [(0, 0)],
+        loop_through_start_pos: Optional[bool] = False,
         infinite_horizon: Optional[bool] = False,
         random_goals: Optional[bool] = False,
         no_stay: Optional[bool] = False,
@@ -337,6 +342,8 @@ class Gridworld(gym.Env):
             validate_position(pos)
             return pos
 
+        self.loop_through_start_pos = loop_through_start_pos
+        self.start_pos_idx = 0
         self.start_pos = start_pos
         if self.start_pos is not None:
             self.start_pos = [convert_position(pos) for pos in start_pos]
@@ -453,7 +460,11 @@ class Gridworld(gym.Env):
         if self.start_pos is None:
             self._randomize_agent_pos()
         else:
-            self.agent_pos = tuple(self.np_random.choice(self.start_pos))
+            if not self.loop_through_start_pos:  # Uniformly random
+                self.agent_pos = tuple(self.np_random.choice(self.start_pos))
+            else:  # Loop through starting positions
+                self.agent_pos = self.start_pos[self.start_pos_idx]
+                self.start_pos_idx = (self.start_pos_idx + 1) % len(self.start_pos)
         self.last_action = None
         self.last_pos = None
         return {}

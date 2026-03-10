@@ -277,11 +277,30 @@ If you make the environment with `start_pos=None`, the starting position will be
 In both cases (fixed and random), the starting position cannot be a tile with
 a wall or a pit.  
 Note that the starting position must be passed as a list of tuples. If more
-than one tuple is passed,  the starting position will be randomly sampled from
+than one tuple is passed, the starting position will be randomly sampled from
 the list at every reset.
-If you want some starting states to be more likely to be sampled, add them
-of them to the list. For example, with `start_pos=[(3, 4), (1, 0), (1, 0)]`
-the agent has 66% chance of starting in `(1, 0)` and 33% of starting in `(3, 4)`.
+If you want some starting states to be more likely to be sampled, repeat them
+within the list. For example, with `start_pos=[(3, 4), (1, 0), (1, 0)]`
+the agent has 66% chance of starting in `(1, 0)` and 33% of starting in `(3, 4)`.  
+If you make the environment with `loop_through_start_pos=True`, the starting
+state will be different at every reset, following the order you passed with `start_pos`.
+This can be useful for testing environments with multiple starting states with only
+a few episodes. 
+For example,
+```python
+env = gymnasium.make("Gym-Gridworlds/Empty-10x10-v0", start_pos=[(3, 4), (1, 0), (2, 0)], loop_through_start_pos=True)
+obs, _ = env.reset()
+print(obs)  # 34 -> (3, 4) in matrix coordinates
+obs, _ = env.reset()
+print(obs)  # 10 -> (1, 0)
+obs, _ = env.reset()
+print(obs)  # 20 -> (2, 0)
+obs, _ = env.reset()
+print(obs)  # 34 -> (3, 4)
+obs, _ = env.reset()
+print(obs)  # 10 -> (1, 0)
+...
+```
 
 ### <ins>Transition</ins>
 By default, the transition is deterministic except in quicksand tiles,
