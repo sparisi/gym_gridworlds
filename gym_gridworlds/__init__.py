@@ -315,7 +315,7 @@ register(
 register(
     id="Gym-Gridworlds/ThreeRooms-Wall-11x8-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
-    max_episode_steps=200,
+    max_episode_steps=100,
     kwargs={
         "grid": "11x8_three_rooms_wall_mini",
         "no_stay": True,
@@ -330,7 +330,7 @@ register(
 register(
     id="Gym-Gridworlds/ThreeRooms-Quicksand-11x8-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
-    max_episode_steps=200,
+    max_episode_steps=100,
     kwargs={
         "grid": "11x8_three_rooms_quicksand_mini",
         "no_stay": True,

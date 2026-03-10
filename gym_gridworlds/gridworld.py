@@ -217,6 +217,14 @@ class Gridworld(gym.Env):
     Another way to add stochasticity is with `slippery_prob`, which is the probability
     that the agent slips and moves twice (similar to "sticky actions" in other environments).
 
+    ## Random Resets
+    You can pass `random_reset_prob` to have a chance that the environment
+    self-resets at any step. This doesn't change the `terminal` and `truncated`
+    flags, but simply transitions the agent to an initial state (i.e., the next state
+    will be the one returned by `env.reset()`).
+    Useful to mimic episodic tasks in the infinite horizon setting (should not
+    be used when there are terminal states).
+
     ## Rewards
     - Doing STAY at the goal: +1
     - Doing STAY at a distracting goal: 0.1
@@ -290,6 +298,7 @@ class Gridworld(gym.Env):
         render_mode: Optional[str] = None,
         random_action_prob: Optional[float] = 0.0,
         slippery_prob: Optional[float] = 0.0,
+        random_reset_prob: Optional[float] = 0.0,
         reward_noise_std: Optional[float] = 0.0,
         nonzero_reward_noise_std: Optional[float] = 0.0,
         observation_noise: Optional[float] = 0.0,
@@ -333,6 +342,7 @@ class Gridworld(gym.Env):
         self.infinite_horizon = infinite_horizon
         self.random_action_prob = random_action_prob
         self.slippery_prob = slippery_prob
+        self.random_reset_prob = random_reset_prob
         self.reward_noise_std = reward_noise_std
         self.nonzero_reward_noise_std = nonzero_reward_noise_std
         assert 0.0 <= observation_noise < 1.0, "observation_noise must be in [0.0, 1.0)"
@@ -409,6 +419,8 @@ class Gridworld(gym.Env):
         if self.render_mode is not None and self.render_mode == "human":
             self.render()
         info["state"] = obs
+        if self.np_random.random() < self.random_reset_prob:
+            obs, info = self.reset()
         return obs, reward, terminated, truncated, info
 
     def _randomize_agent_pos(self):

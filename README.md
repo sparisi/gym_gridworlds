@@ -290,6 +290,14 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 Another way to add stochasticity is with `slippery_prob`, which is the probability
 that the agent slips and moves twice (similar to "sticky actions" in other environments).
 
+## Random Resets
+You can pass `random_reset_prob` to have a chance that the environment
+self-resets at any step. This doesn't change the `terminal` and `truncated`
+flags, but simply transitions the agent to an initial state (i.e., the next state
+will be the one returned by `env.reset()`).  
+Useful to mimic episodic tasks in the infinite horizon setting (should not
+be used when there are terminal states).
+
 ### <ins>Rewards</ins>
 - Doing `STAY` at the goal: +1
 - Doing `STAY` at a distracting goal: 0.1
