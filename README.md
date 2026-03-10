@@ -279,6 +279,8 @@ a wall or a pit.
 Note that the starting position must be passed as a list of tuples. If more
 than one tuple is passed, the starting position will be randomly sampled from
 the list at every reset.
+
+&#10148; <strong>More Control Over The Starting State</strong>  
 If you want some starting states to be more likely to be sampled, repeat them
 within the list. For example, with `start_pos=[(3, 4), (1, 0), (1, 0)]`
 the agent has 66% chance of starting in `(1, 0)` and 33% of starting in `(3, 4)`.  
@@ -312,7 +314,7 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 Another way to add stochasticity is with `slippery_prob`, which is the probability
 that the agent slips and moves twice (similar to "sticky actions" in other environments).
 
-### <ins>Random Resets</ins>
+&#10148; <strong>Random Resets</strong>  
 You can pass `random_reset_prob` to have a chance that the environment
 self-resets at any step. This doesn't change the `terminal` and `truncated`
 flags, but simply transitions the agent to an initial state (i.e., the next state
