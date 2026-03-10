@@ -285,7 +285,7 @@ the agent has 66% chance of starting in `(1, 0)` and 33% of starting in `(3, 4)`
 If you make the environment with `loop_through_start_pos=True`, the starting
 state will be different at every reset, following the order you passed with `start_pos`.
 This can be useful for testing environments with multiple starting states with only
-a few episodes. 
+a few episodes.
 For example,
 ```python
 env = gymnasium.make("Gym-Gridworlds/Empty-10x10-v0", start_pos=[(3, 4), (1, 0), (2, 0)], loop_through_start_pos=True)
@@ -312,7 +312,7 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 Another way to add stochasticity is with `slippery_prob`, which is the probability
 that the agent slips and moves twice (similar to "sticky actions" in other environments).
 
-## Random Resets
+### Random Resets
 You can pass `random_reset_prob` to have a chance that the environment
 self-resets at any step. This doesn't change the `terminal` and `truncated`
 flags, but simply transitions the agent to an initial state (i.e., the next state

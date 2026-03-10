@@ -212,7 +212,7 @@ class Gridworld(gym.Env):
     If you make the environment with `loop_through_start_pos=True`, the starting
     state will be different at every reset, following the order you passed with `start_pos`.
     This can be useful for testing environments with multiple starting states with only
-    a few episodes. 
+    a few episodes.
 
     ## Transition
     By default, the transition is deterministic except in quicksand tiles,
@@ -224,7 +224,7 @@ class Gridworld(gym.Env):
     Another way to add stochasticity is with `slippery_prob`, which is the probability
     that the agent slips and moves twice (similar to "sticky actions" in other environments).
 
-    ## Random Resets
+    ### Random Resets
     You can pass `random_reset_prob` to have a chance that the environment
     self-resets at any step. This doesn't change the `terminal` and `truncated`
     flags, but simply transitions the agent to an initial state (i.e., the next state
