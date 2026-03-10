@@ -204,8 +204,11 @@ class Gridworld(gym.Env):
     In both cases (fixed and random), the starting position cannot be a tile with
     a wall or a pit.
     Note that the starting position must be passed as a list of tuples. If more
-    than one tuple is passed (e.g., `start_pos=[(3, 4), ("max", 0)]`) then the
-    starting position will be randomly sampled from the list at every reset.
+    than one tuple is passed,  the starting position will be randomly sampled from
+    the list at every reset.
+    If you want some starting states to be more likely to be sampled, add them
+    of them to the list. For example, with `start_pos=[(3, 4), (1, 0), (1, 0)]`
+    the agent has 66% chance of starting in `(1, 0)` and 33% of starting in `(3, 4)`.
 
     ## Transition
     By default, the transition is deterministic except in quicksand tiles,
