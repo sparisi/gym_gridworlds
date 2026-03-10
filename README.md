@@ -312,7 +312,7 @@ will do a random action instead of doing the one passed to `self.step(action)`.
 Another way to add stochasticity is with `slippery_prob`, which is the probability
 that the agent slips and moves twice (similar to "sticky actions" in other environments).
 
-### Random Resets
+### <ins>Random Resets</ins>
 You can pass `random_reset_prob` to have a chance that the environment
 self-resets at any step. This doesn't change the `terminal` and `truncated`
 flags, but simply transitions the agent to an initial state (i.e., the next state
