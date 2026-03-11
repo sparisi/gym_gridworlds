@@ -83,10 +83,13 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `FourRooms-Stuck-8x7-v0`: Smaller version of the above environment.  
 <img src="FourRooms-Stuck-8x7-v0.png" width="220">
 
+`FourRooms-Wall-7x7-v0`: Rooms are not connected, and there are four random starting positions (one for each room, all in the corner closest to the center). Goals are not randomized. No need to `STAY` in green tiles.  
+<img src="FourRooms-Wall-7x7-v0.png" width="220">
+
 `FourRooms-Cross-14x16-v0`: Rooms are spread across the grid in a "cross-like" shape. Start position and goal are randomized at every reset.  
 <img src="FourRooms-Cross-14x16-v0.png" width="220">
 
-`ThreeRooms-Wall-14x16-v0`: The three rooms are not connected, and there are three random starting positions (one for each room). Goals are not randomized. No need to `STAY` in green tiles.  
+`ThreeRooms-Wall-14x16-v0`: The three rooms are not connected, and there are three random starting positions (one for each room, all in the leftmost column). Goals are not randomized. No need to `STAY` in green tiles.  
 <img src="ThreeRooms-Wall-14x16-v0.png" width="220">
 
 `ThreeRooms-Wall-11x8-v0`: Smaller version of the above environment.  

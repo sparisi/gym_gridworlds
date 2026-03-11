@@ -271,6 +271,22 @@ register(
 )
 
 register(
+    id="Gym-Gridworlds/FourRooms-Wall-7x7-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=100,
+    kwargs={
+        "grid": "7x7_four_rooms_wall_mini",
+        "no_stay": True,
+        "start_pos": [
+            (2, 2),   # first room
+            (2, 4),   # second room
+            (4, 2),   # third room
+            (4, 4),   # fourth room
+        ],
+    },
+)
+
+register(
     id="Gym-Gridworlds/FourRooms-Cross-14x16-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=50,
