@@ -1,7 +1,7 @@
 import numpy as np
 
 from gym_gridworlds.gridworld import EMPTY, GOOD_SMALL, GOOD, BAD, BAD_SMALL, WALL, PIT, QCKSND
-from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY, REWARDS, RND_MOVE
+from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY, RND_MOVE
 from gym_gridworlds.gridworld import Gridworld
 
 

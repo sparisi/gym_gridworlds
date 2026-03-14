@@ -1,7 +1,7 @@
 import numpy as np
 
 from gym_gridworlds.gridworld import EMPTY, GOOD_SMALL, GOOD, BAD, BAD_SMALL, WALL, PIT, QCKSND
-from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY, REWARDS
+from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY
 from gym_gridworlds.gridworld import Gridworld
 
 
@@ -33,7 +33,7 @@ class CleanDirt(Gridworld):
             self.grid[self.agent_pos] = EMPTY
             terminated = False
 
-        rwd -= REWARDS[BAD_SMALL] * (self.grid == GOOD).sum()  # add penalty for every dirt
+        rwd -= self.rewards[BAD_SMALL] * (self.grid == GOOD).sum()  # add penalty for every dirt
 
         if self.np_random.random() < self.dirt_prob:  # spawn new dirt
             allowed_tiles = np.argwhere(self.grid == EMPTY)

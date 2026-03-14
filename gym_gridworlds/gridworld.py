@@ -168,6 +168,8 @@ class Gridworld(gym.Env):
         self.original_grid = load_grid(grid, encoding)
         self.grid = self.original_grid.copy()
         self.n_rows, self.n_cols = self.grid.shape
+        self.rewards = REWARDS.copy()
+        self.colormap = COLORMAP.copy()
 
         def is_list_of_tuples(x):
             return True
@@ -328,7 +330,7 @@ class Gridworld(gym.Env):
         self.last_action = action
 
         terminated = False
-        reward = REWARDS[self.grid[self.agent_pos]] * 1.0  # float
+        reward = self.rewards[self.grid[self.agent_pos]] * 1.0  # float
         if self.grid[self.agent_pos] in [GOOD, GOOD_SMALL]:
             if action == STAY or self.no_stay:  # positive rewards are collected only with STAY
                 terminated = True  # positive rewards terminate the episode (unless self.infinite_horizon=True)
@@ -356,7 +358,7 @@ class Gridworld(gym.Env):
                 )
             if self.grid[self.agent_pos] == PIT:
                 terminated = True  # agent dies
-                reward = REWARDS[PIT]
+                reward = self.rewards[PIT]
             elif self.grid[self.agent_pos] == WALL:
                 self.agent_pos = self.last_pos  # can't walk on walls
 
@@ -369,7 +371,7 @@ class Gridworld(gym.Env):
                     )
                     if self.grid[self.agent_pos] == PIT:
                         terminated = True
-                        reward = REWARDS[PIT]
+                        reward = self.rewards[PIT]
                     elif self.grid[self.agent_pos] == WALL:
                         self.agent_pos = self.last_pos
 
@@ -492,7 +494,11 @@ class Gridworld(gym.Env):
                     continue
 
                 # draw environment elements
-                pygame.draw.rect(self.window_surface, COLORMAP[self.grid[y][x]], rect)
+                pygame.draw.rect(
+                    self.window_surface,
+                    self.colormap[self.grid[y][x]],
+                    rect,
+                )
 
                 # draw agent
                 if (y, x) == self.agent_pos:

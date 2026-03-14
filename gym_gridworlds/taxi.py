@@ -3,7 +3,7 @@ from itertools import product
 import gymnasium as gym
 
 from gym_gridworlds.gridworld import EMPTY, GOOD_SMALL, GOOD, BAD, BAD_SMALL, WALL, PIT, QCKSND
-from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY, REWARDS
+from gym_gridworlds.gridworld import LEFT, DOWN, RIGHT, UP, STAY
 from gym_gridworlds.gridworld import Gridworld
 
 PASS = GOOD_SMALL  # passenger, encoded as "GOOD_SMALL" just for rendering it with dark green tiles
