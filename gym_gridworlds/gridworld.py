@@ -255,6 +255,14 @@ class Gridworld(gym.Env):
         self.white_pad_size = int(white_pad_size)
         self.black_pad_size = int(black_pad_size)
 
+    @property
+    def grid_reachable(self):
+        # the agent can reach pits, but the transition is terminal so the agent
+        # will never see (s_t = PIT)
+        return np.logical_and(
+            self.original_grid != WALL,
+            self.original_grid != PIT,
+        )
 
     def set_state(self, state):
         self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
