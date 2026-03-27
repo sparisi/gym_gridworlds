@@ -111,14 +111,11 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 Designed to be solved without discount factor because all rewards are negative and the goal is terminal. It is possible to make the environment with `distance_difference_reward=True` to make it even harder, because following the road temporarily brings the agent further from the goal.  
 <img src="TravelField-28x28-v0.png" width="220">
 
-`TravelField-10x10-v0`: Smaller version of the above grid.   
-<img src="TravelField-10x10-v0.png" width="220">
+`TravelField-12x12-v0`: Smaller version of the above grid.   
+<img src="TravelField-12x12-v0.png" width="220">
 
 `TravelField-28x28-v1`: Harder version with distracting roads and road interruptions.  
 <img src="TravelField-28x28-v1.png" width="220">
-
-`TravelField-10x10-v1`: Smaller version of the above grid.  
-<img src="TravelField-10x10-v1.png" width="220">
 
 `Penalty-Randomized-4x4-v0`: The one-directional tile randomly changes at every step.  
 <img src="Penalty-Randomized-4x4-v0.png" width="220">
