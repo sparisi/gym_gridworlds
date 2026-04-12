@@ -251,6 +251,9 @@ In the above example, `obs = 3` becomes
  1 0 0
  0 0 0
  ```
+ - `ContinuousObservationWrapper` returns continuous observations based on the
+ agent's position with a random fixed offset (to cover all of the observation space),
+ normalized in `[0, 1]`. In the above example, `obs = 3` becomes `obs = [0.37237617, 0.03904283]`.
 
 &#10148; <strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with

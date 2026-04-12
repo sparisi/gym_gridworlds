@@ -166,3 +166,44 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
         map_rewards[self.env.unwrapped.grid == GOOD] = REWARDS[GOOD]
         map_rewards[self.env.unwrapped.grid == GOOD_SMALL] = REWARDS[GOOD_SMALL]
         return np.stack((map, map_rewards), axis=2)
+
+
+class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
+    """Observations are agent's coordinate normalized in [0, 1].
+    To ensure to visit all of the continuous state space, uniform noise in [-0.5, 0.5]
+    is added to the initial position. The noise changes at every reset and is
+    kept fixed for the whole episode.
+    The agent's discrete position is used for rewards and transitions.
+
+    Example:
+
+    >>> import gymnasium
+    >>> import gym_gridworlds
+    >>> from gym_gridworlds.observation_wrappers import ContinuousObservationWrapper
+    >>> env = gymnasium.make("Gym-Gridworlds/Full-4x5-v0", render_mode="human", random_goals=True)
+    >>> env = ContinuousObservationWrapper(env)
+    >>> obs, _ = env.reset(seed=42)
+    >>> print(obs)
+    [0.03102131 0.02481705]
+    >>> obs, *_ = env.step(1)
+    [0.03102131 0.22481704]
+    """
+
+    def __init__(self, env):
+        super().__init__(env)
+        self.grid_shape = np.array(env.unwrapped.grid.shape, dtype=np.float32)
+        self.observation_space = gymnasium.spaces.Box(
+            low=0.0,
+            high=1.0,
+            shape=(2,),
+            dtype=np.float32,
+        )
+        self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5)
+
+    def observation(self, obs):
+        pos = np.array(self.env.unwrapped.agent_pos, dtype=np.float32)
+        return (pos + self.agent_pos_offset + 0.5) / self.grid_shape
+
+    def _reset(self, seed: int = None, **kwargs):
+        self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5)
+        return super()._reset(seed, **kwargs)
