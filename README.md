@@ -236,9 +236,9 @@ For example, in a 3x3 grid the observations are
  6 7 8
 ```
 
-> The true state is always passed with the `info` dictionary, to retrieve
-it even when wrappers are used. This makes debugging easier (e.g., it is
-possible to count state visits even when RGB wrappers are used).
+> The true state is always passed with the `info` dictionary as `info["state"]`,
+to retrieve it even when wrappers are used. This makes debugging easier (e.g., it
+is possible to count state visits even when RGB wrappers are used).
 
 The observation can be transformed to better fit function approximation (e.g., if you use DQN)
 using wrappers from [observation_wrappers.py](gym_gridworlds/observation_wrappers.py). For example
@@ -254,6 +254,7 @@ In the above example, `obs = 3` becomes
  - `ContinuousObservationWrapper` returns continuous observations based on the
  agent's position with a random fixed offset (to cover all of the observation space),
  normalized in `[0, 1]`. In the above example, `obs = 3` becomes `obs = [0.37237617, 0.03904283]`.
+ Read the wrapper documentation for more info.
 
 &#10148; <strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with
