@@ -253,7 +253,7 @@ In the above example, `obs = 3` becomes
  ```
  - `ContinuousObservationWrapper` returns continuous observations based on the
  agent's position with a random fixed offset (to cover all of the observation space),
- normalized in `[0, 1]`. In the above example, `obs = 3` becomes `obs = [0.37237617, 0.03904283]`.
+ normalized in `[-1, 1]`. In the above example, `obs = 3` becomes `obs = [−0.25524766, −0.92191434]`.
  Read the wrapper documentation for more info.
 
 &#10148; <strong>RGB</strong>  

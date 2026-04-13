@@ -169,7 +169,7 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
 
 
 class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
-    """Observations are agent's coordinate normalized in [0, 1].
+    """Observations are agent's coordinate normalized in [-1, 1].
     To ensure to visit all of the continuous state space, uniform noise in [-0.5, 0.5]
     is added to the initial position. The noise changes at every reset and is
     kept fixed for the whole episode.
@@ -184,16 +184,17 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
     >>> env = ContinuousObservationWrapper(env)
     >>> obs, _ = env.reset(seed=42)
     >>> print(obs)
-    [0.03102131 0.02481705]
+    [-0.52004325 -0.61603457]
     >>> obs, *_ = env.step(1)
-    [0.03102131 0.22481704]
+    >>> print(obs)
+    [-0.52004325 -0.21603459]
     """
 
     def __init__(self, env):
         super().__init__(env)
         self.grid_shape = np.array(env.unwrapped.grid.shape, dtype=np.float32)
         self.observation_space = gymnasium.spaces.Box(
-            low=0.0,
+            low=-1.0,
             high=1.0,
             shape=(2,),
             dtype=np.float32,
@@ -202,7 +203,8 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
 
     def observation(self, obs):
         pos = np.array(self.env.unwrapped.agent_pos, dtype=np.float32)
-        return (pos + self.agent_pos_offset + 0.5) / self.grid_shape
+        pos = (pos + self.agent_pos_offset + 0.5) / self.grid_shape  # in [0, 1]
+        return pos * 2.0 - 1.0  # in [-1, 1]
 
     def _reset(self, seed: int = None, **kwargs):
         self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5)
