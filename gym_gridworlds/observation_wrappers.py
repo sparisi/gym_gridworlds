@@ -169,11 +169,14 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
 
 
 class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
-    """Observations are agent's coordinate normalized in [-1, 1].
-    To ensure to visit all of the continuous state space, uniform noise in [-0.5, 0.5]
+    """Observations are agent's coordinates normalized to [-1, 1].
+    A continuous observation is "associated" with the closest tile within an
+    absolute distance of 0.5.
+    That is, given a discrete coordinate (x, y), any continuous observation within
+    (x, y) ± 0.5 is treated as (x, y) for rewards and dynamics.
+    To ensure coverage of the entire continuous state space, uniform noise in [-0.5, 0.5)
     is added to the initial position. The noise changes at every reset and is
     kept fixed for the whole episode.
-    The agent's discrete position is used for rewards and transitions.
 
     Example:
 
