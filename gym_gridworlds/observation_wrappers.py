@@ -184,10 +184,10 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
     >>> env = ContinuousObservationWrapper(env)
     >>> obs, _ = env.reset(seed=42)
     >>> print(obs)
-    [-0.52004325 -0.61603457]
+    [-0.80675932, -0.63102737]
     >>> obs, *_ = env.step(1)
     >>> print(obs)
-    [-0.52004325 -0.21603459]
+    [-0.80675932, -0.23102737]
     """
 
     def __init__(self, env):
@@ -199,13 +199,13 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
             shape=(2,),
             dtype=np.float32,
         )
-        self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5)
+        self.agent_pos_offset = np.zeros(2, dtype=np.float32)
 
     def observation(self, obs):
         pos = np.array(self.env.unwrapped.agent_pos, dtype=np.float32)
         pos = (pos + self.agent_pos_offset + 0.5) / self.grid_shape  # in [0, 1]
         return pos * 2.0 - 1.0  # in [-1, 1]
 
-    def _reset(self, seed: int = None, **kwargs):
-        self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5)
-        return super()._reset(seed, **kwargs)
+    def reset(self, seed: int = None, **kwargs):
+        self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5, size=(2,))
+        return super().reset(seed=seed, **kwargs)
