@@ -308,6 +308,19 @@ print(obs)  # 10 -> (1, 0)
 ...
 ```
 
+If you make the environment with `non_uniform_start=True`, then all starting positions
+will be repeated 10 times except the last one. This is a quick a simple way to study
+environments where the initial position of the agent is not uniformly sampled.
+For example,
+```python
+env = gymnasium.make("Gym-Gridworlds/Empty-10x10-v0", start_pos=[(3, 4), (1, 0), (2, 0)], loop_through_start_pos=True, non_uniform_start=True)
+obs, _ = env.reset()
+...  # first 10 resets: (3, 4)
+...  # second 10 resets: (1, 0)
+...  # then (2, 0) for ONE reset only
+...  # and back to (3, 4) for 10 times
+```
+
 ### <ins>Transition</ins>
 By default, the transition is deterministic except in quicksand tiles,
 where any action fails with 90% probability (the agent does not move).  

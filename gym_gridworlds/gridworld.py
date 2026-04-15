@@ -147,6 +147,7 @@ class Gridworld(gym.Env):
         grid: str,
         encoding: Optional[dict] = GRID_ENCODING,
         start_pos: Optional[tuple] = [(0, 0)],
+        non_uniform_start: Optional[bool] = False,
         loop_through_start_pos: Optional[bool] = False,
         infinite_horizon: Optional[bool] = False,
         random_goals: Optional[bool] = False,
@@ -198,6 +199,8 @@ class Gridworld(gym.Env):
 
         self.loop_through_start_pos = loop_through_start_pos
         self.start_pos_idx = 0
+        if non_uniform_start:
+            start_pos = [elem for x in start_pos[:-1] for elem in [x] * 10] + [start_pos[-1]]
         self.start_pos = start_pos
         if self.start_pos is not None:
             self.start_pos = [convert_position(pos) for pos in start_pos]
