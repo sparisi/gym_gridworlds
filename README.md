@@ -309,7 +309,7 @@ print(obs)  # 10 -> (1, 0)
 ```
 
 If you make the environment with `non_uniform_start=True`, then all starting positions
-will be repeated 10 times except the last one. This is a quick a simple way to study
+are repeated 10 times except the last one. This is a quick a simple way to study
 environments where the initial position of the agent is not uniformly sampled.
 For example,
 ```python
