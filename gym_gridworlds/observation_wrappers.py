@@ -191,6 +191,14 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
     >>> obs, *_ = env.step(1)
     >>> print(obs)
     [-0.80675932, -0.23102737]
+
+    Note:
+
+    Learning with such observations can be difficult, because tiles with similar
+    observations — e.g., (0.2, 0.495) and (0.2, 0.505) — are very close in the
+    observation space, but may be significantly different (e.g., one may be a pit
+    and the other the goal). We advise using sparse function approximation when
+    this wrapper is used, such as Fuzzy Tiling.
     """
 
     def __init__(self, env):

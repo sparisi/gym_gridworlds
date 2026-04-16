@@ -14,7 +14,7 @@ Basic gridworlds are defined in [gridworld.py](gym_gridworlds/gridworld.py) and
 are presented below. Harder gridworlds are defined in separate files in [gym_gridworlds](gym_gridworlds)
 and are not discussed here (but are fully documented).
 
-You can find a list of all environments [here](figures/all_envs/GRIDS.md).
+> You can find a list of all environments [here](figures/all_envs/GRIDS.md).
 
 
 ## Install and Examples
@@ -255,6 +255,12 @@ In the above example, `obs = 3` becomes
  agent's position with a random fixed offset (to cover all of the observation space),
  normalized in `[-1, 1]`. In the above example, `obs = 3` becomes `obs = [-0.70128391, -0.92455349]`.
  Read the wrapper documentation for more info.
+
+> Learning with such observations can be difficult, because tiles with similar
+observations — e.g., (0.2, 0.495) and (0.2, 0.505) — are very close in the
+observation space, but may be significantly different (e.g., one may be a pit
+and the other the goal). We advise using sparse function approximation when
+this wrapper is used, such as Fuzzy Tiling.
 
 &#10148; <strong>RGB</strong>  
 To use classic RGB pixel observations, make the environment with
