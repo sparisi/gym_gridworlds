@@ -98,6 +98,12 @@ class MatrixWrapper(gymnasium.ObservationWrapper):
         super().__init__(env)
         self._n_rows = env.unwrapped.n_rows
         self._n_cols = env.unwrapped.n_cols
+        assert (
+            self._n_rows * self._n_cols == env.observation_space.n
+        ), (
+            "Cannot use MatrixWrapper, the observation space encodes more "
+            "information than just the position. Try MatrixWithGoalWrapper."
+        )
         self.observation_space = gymnasium.spaces.Box(
             shape=(self._n_rows, self._n_cols),
             low=0,
@@ -153,15 +159,22 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
         self._n_cols = env.unwrapped.n_cols
         self.observation_space = gymnasium.spaces.Box(
             shape=(self._n_rows, self._n_cols, 2),
-            low=0,
-            high=1,  # Positive rewards are either 0.1 or 1
+            low=0.0,
+            high=1.0,  # Positive rewards are either 0.1 or 1.0
             dtype=np.float32,
         )
 
     def observation(self, obs):
-        position = np.unravel_index(obs, (self._n_rows, self._n_cols))
+        # If there is observation noise, apply it only to the agent's position
+        pos = self.unwrapped.agent_pos
+        if self.unwrapped.observation_noise > 0.0:
+            if self.np_random.random() < self.observation_noise:
+                pos = (
+                    self.np_random.integers(0, self._n_rows),
+                    self.np_random.integers(0, self._n_cols),
+                )
         map = np.zeros((self._n_rows, self._n_cols))
-        map[position] = 1
+        map[pos] = 1.0
         map_rewards = np.zeros((self._n_rows, self._n_cols))
         map_rewards[self.env.unwrapped.grid == GOOD] = REWARDS[GOOD]
         map_rewards[self.env.unwrapped.grid == GOOD_SMALL] = REWARDS[GOOD_SMALL]
