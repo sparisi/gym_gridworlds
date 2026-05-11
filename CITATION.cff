@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Gym-Gridworlds"
+abstract: "Minimalistic implementation of gridworlds for RL."
+type: software
+authors:
+  - family-names: Parisi
+    given-names: Simone
+repository-code: "https://github.com/sparisi/gym_gridworlds"
+url: "https://github.com/sparisi/gym_gridworlds"
+license: CC-BY-4.0
+version: "1.0"
+keywords:
+  - reinforcement-learning
+  - gridworld
+  - gymnasium
+  - rl-environment
