@@ -269,6 +269,7 @@ class Gridworld(gym.Env):
 
     def set_state(self, state):
         self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
+        self.last_action = None
 
     def get_state(self):
         pos = self.agent_pos

@@ -41,6 +41,15 @@ class AddGoalWrapper(gymnasium.ObservationWrapper):
         goal = np.argwhere(self.env.unwrapped.grid == GOOD)[0]
         return [obs, np.ravel_multi_index(goal, (self._n_rows, self._n_cols))]
 
+    def set_state(self, obs):
+        unwrapped = self.env.unwrapped
+        current_goal = tuple(np.argwhere(unwrapped.grid == GOOD)[0])
+        unwrapped.grid[current_goal] = unwrapped.original_grid[current_goal]
+        new_goal = np.unravel_index(obs[1], (self._n_rows, self._n_cols))
+        unwrapped.grid[new_goal] = GOOD
+        unwrapped.set_state(obs[0])
+        unwrapped.last_action = None
+
 
 class CoordinateWrapper(gymnasium.ObservationWrapper):
     """Unravels matrix indices into coordinates.
@@ -72,6 +81,10 @@ class CoordinateWrapper(gymnasium.ObservationWrapper):
 
     def observation(self, obs):
         return np.unravel_index(obs, (self._n_rows, self._n_cols))
+
+    def set_state(self, obs):
+        self.env.unwrapped.set_state(np.ravel_multi_index(obs, (self._n_rows, self._n_cols)))
+        self.env.unwrapped.last_action = None
 
 
 class MatrixWrapper(gymnasium.ObservationWrapper):
@@ -116,6 +129,11 @@ class MatrixWrapper(gymnasium.ObservationWrapper):
         map = np.zeros((self._n_rows, self._n_cols), dtype=np.uint8)
         map[position] = 1
         return map
+
+    def set_state(self, obs):
+        pos = np.unravel_index(np.argmax(obs), (self._n_rows, self._n_cols))
+        self.env.unwrapped.set_state(np.ravel_multi_index(pos, (self._n_rows, self._n_cols)))
+        self.env.unwrapped.last_action = None
 
 
 class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
@@ -180,6 +198,10 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
         map_rewards[self.env.unwrapped.grid == GOOD_SMALL] = REWARDS[GOOD_SMALL]
         return np.stack((map, map_rewards), axis=2)
 
+    def set_state(self, obs):
+        pos = np.unravel_index(np.argmax(obs[..., 0]), (self._n_rows, self._n_cols))
+        self.env.unwrapped.set_state(np.ravel_multi_index(pos, (self._n_rows, self._n_cols)))
+        self.env.unwrapped.last_action = None
 
 class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
     """Observations are agent's coordinates normalized to [-1, 1].
@@ -229,6 +251,12 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
         pos = np.array(self.env.unwrapped.agent_pos, dtype=np.float32)
         pos = (pos + self.agent_pos_offset + 0.5) / self.grid_shape  # in [0, 1]
         return pos * 2.0 - 1.0  # in [-1, 1]
+
+    def set_state(self, obs):
+        pos = (np.asarray(obs) + 1.0) / 2.0 * self.grid_shape - self.agent_pos_offset - 0.5
+        pos = np.clip(np.round(pos).astype(int), 0, self.grid_shape.astype(int) - 1)
+        self.env.unwrapped.set_state(np.ravel_multi_index(tuple(pos), tuple(self.grid_shape.astype(int))))
+        self.env.unwrapped.last_action = None
 
     def reset(self, seed: int = None, **kwargs):
         self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5, size=(2,))
