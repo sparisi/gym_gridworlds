@@ -142,8 +142,8 @@ rewards (positive only!) at every reset. To learn in this setting, you need to a
 the rewards position to the observation (`MatrixWithGoalWrapper`), or to learn from pixels.
 
 &#10148; <strong>Action To Terminate</strong>  
-Make the environment with `action_to_terminate=True` to give the agent an additional action
-that it can do to terminate the episode immediately with reward 0.
+If you make the environment with `action_to_terminate=True`, the agent will have
+an additional action to terminate the episode immediately with reward 0.
 
 
 ## Make Your Own Gridworld
@@ -228,7 +228,7 @@ The action is discrete in the range `{0, 4}` for `{LEFT, RIGHT, DOWN, UP, STAY}`
 It is possible to remove the `STAY` action by making the environment with `no_stay=True`.  
 Diagonal actions `{5, 8}` for `{UP_LEFT, DOWN_LEFT, DOWN_RIGHT, UP_RIGHT}`
 are also supported but not used in the default MDP.  
-An extra action is appended to the action space is `action_to_terminate=True`.
+An extra action is appended to the action space if `action_to_terminate=True`.
 With it, the agent can terminate the episode immediately with reward 0.
 
 ### <ins>Observation Space</ins>
