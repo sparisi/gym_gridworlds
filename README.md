@@ -141,6 +141,10 @@ Make the environment with `random_goals=True` to randomize the position of posit
 rewards (positive only!) at every reset. To learn in this setting, you need to add
 the rewards position to the observation (`MatrixWithGoalWrapper`), or to learn from pixels.
 
+&#10148; <strong>Action To Terminate</strong>  
+Make the environment with `action_to_terminate=True` to give the agent an additional action
+that it can do to terminate the episode immediately with reward 0.
+
 
 ## Make Your Own Gridworld
 
@@ -223,7 +227,9 @@ arrow keys, see the rewards received by the agent, and save gifs like the ones b
 The action is discrete in the range `{0, 4}` for `{LEFT, RIGHT, DOWN, UP, STAY}`.
 It is possible to remove the `STAY` action by making the environment with `no_stay=True`.  
 Diagonal actions `{5, 8}` for `{UP_LEFT, DOWN_LEFT, DOWN_RIGHT, UP_RIGHT}`
-are also supported but not used in the default MDP.
+are also supported but not used in the default MDP.  
+An extra action is appended to the action space is `action_to_terminate=True`.
+With it, the agent can terminate the episode immediately with reward 0.
 
 ### <ins>Observation Space</ins>
 &#10148; <strong>Default (True State)</strong>  

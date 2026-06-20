@@ -163,6 +163,7 @@ class Gridworld(gym.Env):
         observation_noise: Optional[float] = 0.0,
         view_radius: Optional[int] = 99999,
         max_resolution: Optional[tuple] = (256, 256),
+        action_to_terminate: Optional[bool] = False,
         **kwargs,
     ):
         self.random_goals = random_goals
@@ -218,7 +219,12 @@ class Gridworld(gym.Env):
         self.distance_difference_reward = distance_difference_reward
         self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
-        self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
+        self.action_to_terminate = action_to_terminate
+        n_actions = 4 if no_stay else 5
+        self.terminate_action_id = n_actions if action_to_terminate else None
+        if action_to_terminate:
+            n_actions += 1
+        self.action_space = gym.spaces.Discrete(n_actions)
         self.agent_pos = None
         self.last_action = None
 
@@ -340,6 +346,9 @@ class Gridworld(gym.Env):
         if self.np_random.random() < self.random_action_prob:
             action = self.action_space.sample()  # random action if transition is noisy
         self.last_action = action
+
+        if self.action_to_terminate and action == self.terminate_action_id:
+            return self.get_state(), 0.0, True, False, {}
 
         terminated = False
         reward = self.rewards[self.grid[self.agent_pos]] * 1.0  # float
