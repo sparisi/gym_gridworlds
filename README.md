@@ -351,6 +351,10 @@ will be the one returned by `env.reset()`).
 Useful to mimic episodic tasks in the infinite horizon setting (should not
 be used when there are terminal states).
 
+&#10148; <strong>Random Resets</strong>  
+If the environment is made with `action_to_terminate=True`, the agent can decide
+to terminate it at any time step. If so, the environment step returns `reward = 0` and `terminal = True`.
+
 ### <ins>Rewards</ins>
 - Doing `STAY` at the goal: +1
 - Doing `STAY` at a distracting goal: 0.1
