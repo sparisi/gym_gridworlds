@@ -70,7 +70,7 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `FourRooms-Stuck-13x13-v0` &nbsp; The agent cannot exit the bottom-left room. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
 <img src="FourRooms-Stuck-13x13-v0.png" width="220">
 
-`FourRooms-Stuck-13x13-Hard-v0` &nbsp; Harder version. First, there are "looping transitions" in a corner of the top-left room. Second, the three tiles above the entrance to the bottom-left room are noisy, i.e., there is a 50% chance that a random action will be performed. These tiles are riskier to visit, because the agent could accidentally move in the "stuck" room (bottom-right).  
+`FourRooms-Stuck-13x13-Hard-v0` &nbsp; Harder version. First, there are "looping transitions" in a corner of the top-left room. Second, the three tiles above the entrance to the bottom-left room are noisy, i.e., there is a 50% chance that a random action will be performed. These tiles are riskier to visit, because the agent could accidentally move in the "stuck" room (bottom-left).  
 <img src="FourRooms-Stuck-13x13-Hard-v0.png" width="220">
 
 `FourRooms-Loop-13x13-v0` &nbsp; One-directional arrows enforce a "loop-like" path to visit all rooms. Start position and goal are randomized at every reset. No need to `STAY` in green tiles.  
