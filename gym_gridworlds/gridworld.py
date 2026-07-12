@@ -16,6 +16,7 @@ BAD_SMALL = 12
 WALL = -3
 PIT = -4
 RND_MOVE = 13  # see rnd_move.py
+NOISY_TILE = 14
 
 # action IDs (also used for one-directional states)
 LEFT = 0
@@ -79,6 +80,7 @@ def _move(pos, action, shape):
 # tile colors
 COLORMAP = dict()
 COLORMAP[EMPTY] = Color.BLACK
+COLORMAP[NOISY_TILE] = Color.BLACK
 COLORMAP[QCKSND] = Color.PALE_YELLOW
 COLORMAP[GOOD_SMALL] = Color.DARK_GREEN
 COLORMAP[GOOD] = Color.GREEN
@@ -108,6 +110,7 @@ GRID_ENCODING = {
     "↙": DOWN_LEFT,
     "↘": DOWN_RIGHT,
     "*": RND_MOVE,
+    "?": NOISY_TILE,
 }
 
 def load_grid(file_path, encoding):
@@ -343,7 +346,11 @@ class Gridworld(gym.Env):
 
     def _step(self, action: int):
         self.last_pos = self.agent_pos
-        if self.np_random.random() < self.random_action_prob:
+        rnd_transition_p = self.np_random.random()
+        if (
+            rnd_transition_p < self.random_action_prob or
+            self.grid[self.agent_pos] == NOISY_TILE and rnd_transition_p < 0.5
+        ):
             action = self.action_space.sample()  # random action if transition is noisy
         self.last_action = action
 

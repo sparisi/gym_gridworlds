@@ -223,6 +223,18 @@ register(
 )
 
 register(
+    id="Gym-Gridworlds/FourRooms-Stuck-13x13-Hard-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=200,
+    kwargs={
+        "grid": "13x13_four_rooms_stuck_hard",
+        "no_stay": True,
+        "start_pos": None,  # random
+        "random_goals": True,
+    },
+)
+
+register(
     id="Gym-Gridworlds/FourRooms-Loop-13x13-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=200,

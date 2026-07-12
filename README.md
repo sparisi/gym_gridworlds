@@ -158,6 +158,7 @@ o          smaller positive reward
 X          negative reward
 x          smaller negative reward
 ←↖↑↗→↘↓↙  one-directional tiles
+?          empty tile with 50% chance of random action
 ```
 
 1. Encode your grid following the above mapping, and save it as `txt` file in `gym_gridworlds/grids`.
@@ -350,6 +351,11 @@ flags, but simply transitions the agent to an initial state (i.e., the next stat
 will be the one returned by `env.reset()`).  
 Useful to mimic episodic tasks in the infinite horizon setting (should not
 be used when there are terminal states).
+
+&#10148; <strong>Noisy Tiles</strong>  
+In tiles defined by `?` in their text map, there is a 50% chance that the action
+executed by the agent will be ignored, and a random one will be done instead.
+Visually, these tiles appear identical to empty tiles.
 
 &#10148; <strong>Action To Terminate</strong>  
 If the environment is made with `action_to_terminate=True`, the agent can decide
