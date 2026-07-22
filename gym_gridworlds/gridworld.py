@@ -146,6 +146,7 @@ class Gridworld(gym.Env):
         self,
         grid: str,
         encoding: Optional[dict] = GRID_ENCODING,
+        observation_type: str = "ohe",
         start_pos: Optional[tuple] = [(0, 0)],
         non_uniform_start: Optional[bool] = False,
         loop_through_start_pos: Optional[bool] = False,
@@ -216,7 +217,37 @@ class Gridworld(gym.Env):
         self.observation_noise = observation_noise
         self.distance_reward = distance_reward
         self.distance_difference_reward = distance_difference_reward
-        self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
+        self.observation_type = observation_type
+        self._n_states = self.n_cols * self.n_rows
+        self._bev_channels = 8
+        if observation_type in {"state", "index"}:
+            self.observation_space = gym.spaces.Discrete(self._n_states)
+        elif observation_type == "ohe":
+            self.observation_space = gym.spaces.Box(
+                low=0.0,
+                high=1.0,
+                shape=(self._n_states,),
+                dtype=np.float32,
+            )
+        elif observation_type == "coord":
+            self.observation_space = gym.spaces.Box(
+                low=-1.0,
+                high=1.0,
+                shape=(2,),
+                dtype=np.float32,
+            )
+        elif observation_type == "bev":
+            self.observation_space = gym.spaces.Box(
+                low=0.0,
+                high=1.0,
+                shape=(self.n_rows, self.n_cols, self._bev_channels),
+                dtype=np.float32,
+            )
+        else:
+            raise ValueError(
+                "observation_type must be one of {'state', 'index', 'ohe', 'coord', 'bev'}, "
+                f"got {observation_type!r}."
+            )
 
         self.action_space = gym.spaces.Discrete(4 if no_stay else 5)
         self.agent_pos = None
@@ -280,20 +311,71 @@ class Gridworld(gym.Env):
                 )  # note that the random position can be also a wall or a pit
         return np.ravel_multi_index(pos, (self.n_rows, self.n_cols))
 
+    def get_observation(self):
+        state = self.get_state()
+        if self.observation_type in {"state", "index"}:
+            return state
+        if self.observation_type == "ohe":
+            obs = np.zeros(self._n_states, dtype=np.float32)
+            obs[state] = 1.0
+            return obs
+        if self.observation_type == "coord":
+            return self._get_coord_observation()
+        if self.observation_type == "bev":
+            return self._get_bev_observation()
+        raise RuntimeError(f"Unsupported observation_type: {self.observation_type}")
+
+    def _get_coord_observation(self):
+        row, col = self.agent_pos
+        pos = np.array([row + 0.5, col + 0.5], dtype=np.float32)
+        shape = np.array([self.n_rows, self.n_cols], dtype=np.float32)
+        return pos / shape * 2.0 - 1.0
+
+    def _get_bev_observation(self):
+        # Channels: unseen, empty, wall, left-door, right-door, down-door, up-door, agent.
+        obs = np.zeros((self.n_rows, self.n_cols, self._bev_channels), dtype=np.float32)
+        obs[..., 0] = 1.0
+        row, col = self.agent_pos
+        row_min = max(row - 2, 0)
+        row_max = min(row + 2, self.n_rows - 1)
+        col_min = max(col - 2, 0)
+        col_max = min(col + 2, self.n_cols - 1)
+
+        for visible_row in range(row_min, row_max + 1):
+            for visible_col in range(col_min, col_max + 1):
+                tile = self.grid[visible_row, visible_col]
+                obs[visible_row, visible_col, 0] = 0.0
+                if tile == WALL:
+                    obs[visible_row, visible_col, 2] = 1.0
+                elif tile == LEFT:
+                    obs[visible_row, visible_col, 3] = 1.0
+                elif tile == RIGHT:
+                    obs[visible_row, visible_col, 4] = 1.0
+                elif tile == DOWN:
+                    obs[visible_row, visible_col, 5] = 1.0
+                elif tile == UP:
+                    obs[visible_row, visible_col, 6] = 1.0
+                else:
+                    obs[visible_row, visible_col, 1] = 1.0
+
+        obs[row, col, 7] = 1.0
+        return obs
+
     def reset(self, seed: int = None, **kwargs):
         super().reset(seed=seed, **kwargs)
         info = self._reset(seed, **kwargs)
         if self.render_mode is not None and self.render_mode == "human":
             self.render()
-        obs = self.get_state()
-        info["state"] = obs
-        return obs, info
+        state = self.get_state()
+        info["state"] = state
+        return self.get_observation(), info
 
     def step(self, action: int):
-        obs, reward, terminated, truncated, info = self._step(action)
+        state, reward, terminated, truncated, info = self._step(action)
         if self.render_mode is not None and self.render_mode == "human":
             self.render()
-        info["state"] = obs
+        info["state"] = state
+        obs = self.get_observation()
         if self.np_random.random() < self.random_reset_prob:
             obs, info = self.reset()
         return obs, reward, terminated, truncated, info

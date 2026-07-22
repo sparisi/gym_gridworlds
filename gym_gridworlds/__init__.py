@@ -235,6 +235,54 @@ register(
 )
 
 register(
+    id="Gym-Gridworlds/NineRooms-Loop-21x21-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=300,
+    kwargs={
+        "grid": "21x21_nine_rooms_loop",
+        "no_stay": True,
+        "start_pos": [(9, 9)],
+        "random_goals": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/Rooms-Labyrinth-3x3-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=300,
+    kwargs={
+        "grid": "3x3_rooms_labyrinth",
+        "no_stay": True,
+        "start_pos": [(9, 9)],
+        "random_goals": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/Rooms-Labyrinth-5x5-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=600,
+    kwargs={
+        "grid": "5x5_rooms_labyrinth",
+        "no_stay": True,
+        "start_pos": [(15, 15)],
+        "random_goals": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/Rooms-Labyrinth-7x7-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=1000,
+    kwargs={
+        "grid": "7x7_rooms_labyrinth",
+        "no_stay": True,
+        "start_pos": [(21, 21)],
+        "random_goals": True,
+    },
+)
+
+register(
     id="Gym-Gridworlds/FourRooms-8x7-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
     max_episode_steps=100,

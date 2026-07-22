@@ -4,6 +4,19 @@ import gymnasium
 from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL
 
 
+def _position_state_from_observation(obs):
+    """Decode either a scalar state id or a one-hot state vector."""
+    obs_array = np.asarray(obs)
+    if obs_array.ndim == 0:
+        return int(obs_array)
+    if obs_array.ndim == 1:
+        return int(obs_array.argmax())
+    raise ValueError(
+        "This wrapper expects a scalar state id or one-hot state observation, "
+        f"got shape {obs_array.shape}."
+    )
+
+
 class AddGoalWrapper(gymnasium.ObservationWrapper):
     """Also returns the position (ravel index) of the agent's goal.
     The grid must have only one goal.
@@ -39,7 +52,8 @@ class AddGoalWrapper(gymnasium.ObservationWrapper):
 
     def observation(self, obs):
         goal = np.argwhere(self.env.unwrapped.grid == GOOD)[0]
-        return [obs, np.ravel_multi_index(goal, (self._n_rows, self._n_cols))]
+        state = _position_state_from_observation(obs)
+        return [state, np.ravel_multi_index(goal, (self._n_rows, self._n_cols))]
 
 
 class CoordinateWrapper(gymnasium.ObservationWrapper):
@@ -71,7 +85,8 @@ class CoordinateWrapper(gymnasium.ObservationWrapper):
         )
 
     def observation(self, obs):
-        return np.unravel_index(obs, (self._n_rows, self._n_cols))
+        state = _position_state_from_observation(obs)
+        return np.unravel_index(state, (self._n_rows, self._n_cols))
 
 
 class MatrixWrapper(gymnasium.ObservationWrapper):
@@ -98,8 +113,14 @@ class MatrixWrapper(gymnasium.ObservationWrapper):
         super().__init__(env)
         self._n_rows = env.unwrapped.n_rows
         self._n_cols = env.unwrapped.n_cols
+        expected_size = self._n_rows * self._n_cols
+        observation_space = env.observation_space
+        has_position_observation = (
+            getattr(observation_space, "n", None) == expected_size
+            or getattr(observation_space, "shape", None) == (expected_size,)
+        )
         assert (
-            self._n_rows * self._n_cols == env.observation_space.n
+            has_position_observation
         ), (
             "Cannot use MatrixWrapper, the observation space encodes more "
             "information than just the position. Try MatrixWithGoalWrapper."
@@ -112,7 +133,8 @@ class MatrixWrapper(gymnasium.ObservationWrapper):
         )
 
     def observation(self, obs):
-        position = np.unravel_index(obs, (self._n_rows, self._n_cols))
+        state = _position_state_from_observation(obs)
+        position = np.unravel_index(state, (self._n_rows, self._n_cols))
         map = np.zeros((self._n_rows, self._n_cols), dtype=np.uint8)
         map[position] = 1
         return map
