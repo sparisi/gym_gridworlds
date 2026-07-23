@@ -1,7 +1,7 @@
 import numpy as np
 import gymnasium
 
-from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL
+from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL, WALL
 
 
 class AddGoalWrapper(gymnasium.ObservationWrapper):
@@ -134,6 +134,71 @@ class MatrixWrapper(gymnasium.ObservationWrapper):
         pos = np.unravel_index(np.argmax(obs), (self._n_rows, self._n_cols))
         self.env.unwrapped.set_state(np.ravel_multi_index(pos, (self._n_rows, self._n_cols)))
         self.env.unwrapped.last_action = None
+
+
+class BirdEyeWrapper(gymnasium.ObservationWrapper):
+    """Bird's-eye view of the grid: the observation is a (2r+1, 2r+1) window
+    centered on the agent. Each cell holds its tile ID (`EMPTY`, `WALL`,
+    `PIT`, `GOOD`, ...) and out-of-bounds cells are filled with `WALL`.
+
+    The view radius `r` is taken from the `view_radius` argument if given;
+    otherwise it falls back to the wrapped env's `view_radius`. Either way,
+    it must be strictly less than `max(n_rows, n_cols)`.
+
+    Example (radius supplied to the wrapper):
+
+    >>> import gymnasium
+    >>> import gym_gridworlds
+    >>> from gym_gridworlds.observation_wrappers import BirdEyeWrapper
+    >>> env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human", start_pos=[("max", "max")])
+    >>> env = BirdEyeWrapper(env, view_radius=1)
+    >>> obs, _ = env.reset()
+    >>> print(obs)  # -1 = EMPTY, -3 = WALL, 10 = GOOD
+    [[-1 -1 -3]
+     [-1 10 -3]
+     [-3 -3 -3]]
+    """
+
+    def __init__(self, env, view_radius=None):
+        super().__init__(env)
+        self._n_rows = env.unwrapped.n_rows
+        self._n_cols = env.unwrapped.n_cols
+        if view_radius is None:
+            view_radius = env.unwrapped.view_radius
+        self._view_radius = view_radius
+        assert self._view_radius < max(self._n_rows, self._n_cols), (
+            "BirdEyeWrapper requires a `view_radius` < "
+            f"max(n_rows, n_cols)={max(self._n_rows, self._n_cols)}, "
+            f"but got view_radius={self._view_radius}. Pass one to the "
+            "wrapper or set it on the env."
+        )
+        env.unwrapped.view_radius = self._view_radius  # keep rendering in sync
+        size = 2 * self._view_radius + 1
+        self.observation_space = gymnasium.spaces.Box(
+            shape=(size, size),
+            low=-10,
+            high=15,
+            dtype=np.int32,
+        )
+
+    def observation(self, obs):
+        grid = self.env.unwrapped.grid
+        r = self._view_radius
+        size = 2 * r + 1
+        row, col = self.env.unwrapped.agent_pos
+        window = np.full((size, size), WALL, dtype=np.int32)
+        row_start = max(row - r, 0)
+        row_end = min(row + r + 1, self._n_rows)
+        col_start = max(col - r, 0)
+        col_end = min(col + r + 1, self._n_cols)
+        w_row_start = row_start - (row - r)
+        w_col_start = col_start - (col - r)
+        w_row_end = w_row_start + (row_end - row_start)
+        w_col_end = w_col_start + (col_end - col_start)
+        window[w_row_start:w_row_end, w_col_start:w_col_end] = grid[
+            row_start:row_end, col_start:col_end
+        ]
+        return window
 
 
 class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):

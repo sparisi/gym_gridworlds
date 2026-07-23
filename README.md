@@ -257,11 +257,21 @@ In the above example, `obs = 3` becomes
  0 0 0
  1 0 0
  0 0 0
- ```
- - `ContinuousObservationWrapper` returns continuous observations based on the
- agent's position with a random fixed offset (to cover all of the observation space),
- normalized in `[-1, 1]`. In the above example, `obs = 3` becomes `obs = [-0.70128391, -0.92455349]`.
- Read the wrapper documentation for more info.
+```
+- `BirdEyeWrapper` returns a partial map of the environment with IDs corresponding
+to the tile contents. The map is centered on the agent's position and shows tiles
+within the specified radius. For example, with `view_radius=1`
+```
+.XO           -1 11 10                            11 -1 -3
+.X.  → IDs →  -1 11 -1  → agent at bottom-left →  -1 -1 -3
+...           -1 -1 -1                            -3 -3 -3
+```
+This makes our Gridworlds similar to [Minigrid](https://github.com/Farama-Foundation/Minigrid),
+except that we do not use multiple map layers to represent tile contents.
+- `ContinuousObservationWrapper` returns continuous observations based on the
+agent's position with a random fixed offset (to cover all of the observation space),
+normalized in `[-1, 1]`. In the above example, `obs = 3` becomes `obs = [-0.70128391, -0.92455349]`.
+Read the wrapper documentation for more info.
 
 > Learning with such observations can be difficult, because tiles with similar
 observations — e.g., (0.2, 0.495) and (0.2, 0.505) — are very close in the
