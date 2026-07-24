@@ -270,6 +270,11 @@ For example, with `view_radius=1`
 . X .  →  agent at bottom-right  →  . . □
 . . .                               □ □ □
 ```
+
+> A similar observation can be returned with `render_mode=ansi` and then retrieving
+`obs = print(env.render())`. The ANSI rendering returns a string (not an array of chars)
+representing the whole map, with `A` where the agent is. In the example above: `.XO\n.X.\n..A`
+
 - `ContinuousObservationWrapper` returns continuous observations based on the
 agent's position with a random fixed offset (to cover all of the observation space),
 normalized in `[-1, 1]`. In the above example, `obs = 3` becomes `obs = [-0.70128391, -0.92455349]`.

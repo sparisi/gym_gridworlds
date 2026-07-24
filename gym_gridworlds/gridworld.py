@@ -141,9 +141,14 @@ class Gridworld(gym.Env):
     """
 
     metadata = {
-        "render_modes": ["human", "rgb_array"],
+        "render_modes": ["human", "rgb_array", "ansi"],
         "render_fps": 30,
     }
+
+    # Agent overlay char for ansi rendering; hidden tiles (outside view_radius)
+    # use HIDDEN_CHAR. Neither is part of GRID_ENCODING to avoid clashes.
+    AGENT_CHAR = "A"
+    HIDDEN_CHAR = "#"
 
     def __init__(
         self,
@@ -171,6 +176,7 @@ class Gridworld(gym.Env):
     ):
         self.random_goals = random_goals
         self.original_grid = load_grid(grid, encoding)
+        self._tile_to_char = {v: k for k, v in encoding.items()}
         self.grid = self.original_grid.copy()
         self.n_rows, self.n_cols = self.grid.shape
         self.rewards = REWARDS.copy()
@@ -440,8 +446,25 @@ class Gridworld(gym.Env):
                 f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
             )
             return
-        else:  # self.render_mode in {"human", "rgb_array"}:
-            return self._render_gui(self.render_mode)
+        if self.render_mode == "ansi":
+            return self._render_ansi()
+        return self._render_gui(self.render_mode)
+
+    def _render_ansi(self):
+        r = self.view_radius
+        ar, ac = self.agent_pos
+        lines = []
+        for y in range(self.n_rows):
+            row = []
+            for x in range(self.n_cols):
+                if abs(y - ar) > r or abs(x - ac) > r:
+                    row.append(self.HIDDEN_CHAR)
+                elif (y, x) == self.agent_pos:
+                    row.append(self.AGENT_CHAR)
+                else:
+                    row.append(self._tile_to_char.get(int(self.grid[y, x]), "?"))
+            lines.append("".join(row))
+        return "\n".join(lines)
 
     def _render_gui(self, mode):
         try:
