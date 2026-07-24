@@ -37,3 +37,15 @@ class RandomizedTiles(Gridworld):
         obs, reward, terminated, truncated, info = Gridworld._step(self, action)
         self.randomize_tiles()
         return self.get_state(), reward, terminated, truncated, info
+
+    def set_state(self, state):
+        # get_state is inherited: it returns the agent position, which is what
+        # the env exposes as observation. But that alone can't restore the env,
+        # because the arrow directions on RND_MOVE tiles are re-randomized
+        # every step. A proper snapshot (position + self.grid) is not
+        # implemented yet.
+        raise NotImplementedError(
+            "set_state is not implemented for RandomizedTiles: restoring "
+            "requires the current arrow-direction assignment on RND_MOVE "
+            "tiles, not just the agent position."
+        )

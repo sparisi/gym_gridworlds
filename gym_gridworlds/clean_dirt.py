@@ -26,6 +26,16 @@ class CleanDirt(Gridworld):
         Gridworld.__init__(self, **kwargs)
         self.dirt_prob = dirt_prob
 
+    def set_state(self, state):
+        # get_state is inherited: it returns the agent position, which is what
+        # the env exposes as observation. But that alone can't restore the env,
+        # because the dirt layout is mutated every step. A proper snapshot
+        # (position + self.grid) is not implemented yet.
+        raise NotImplementedError(
+            "set_state is not implemented for CleanDirt: restoring requires "
+            "the dirt layout, not just the agent position."
+        )
+
     def step(self, action):
         obs, rwd, terminated, truncated, info = Gridworld.step(self, action)
 
