@@ -35,11 +35,11 @@ class Taxi(Gridworld):
         N = self.n_rows * self.n_cols
         P = len(self.passengers)
         self.passengers_picked = [False] * P
-        self.original_grid = self.grid.copy()
         self.observation_space = gym.spaces.Discrete(N * (2**P))
 
     def reset(self, seed: int = None, **kwargs):
-        self.grid = self.original_grid.copy()
+        # Gridworld.reset restores self.grid from self.original_grid, and it
+        # calls get_state() before returning — which needs passengers_picked.
         self.passengers_picked = [False] * len(self.passengers)
         return Gridworld.reset(self, seed=seed, **kwargs)
 

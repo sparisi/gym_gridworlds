@@ -13,6 +13,5 @@ setup(
     install_requires=["gymnasium", "pygame", "numpy"],
     extras_require={
         "playground": ["pynput", "imageio"],
-        "editor": ["torch"],
     },
 )

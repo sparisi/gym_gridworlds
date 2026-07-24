@@ -10,6 +10,7 @@ GOAL = GOOD
 GRASS = 99
 ROAD = 98
 SWAMP = 97
+ROCK = WALL  # alias for editor/UI use
 
 GRID_ENCODING = {
     ".": GRASS,
@@ -17,6 +18,14 @@ GRID_ENCODING = {
     "+": ROAD,
     "-": SWAMP,
     "O": GOAL,
+}
+
+TERRAIN_COLORS = {
+    GRASS: Color.GREEN,
+    ROAD: Color.PALE_YELLOW,
+    SWAMP: Color.BROWN,
+    ROCK: Color.GRAY,
+    GOAL: Color.RED,
 }
 
 
@@ -36,10 +45,7 @@ class TravelField(Gridworld):
         self.action_space = gym.spaces.Discrete(9)  # cardinal + diagonal + stay
         self.wall_is_terminal = wall_is_terminal
 
-        self.colormap[GRASS] = Color.GREEN
-        self.colormap[ROAD] = Color.PALE_YELLOW
-        self.colormap[SWAMP] = Color.BROWN
-        self.colormap[GOAL] = Color.RED
+        self.colormap.update(TERRAIN_COLORS)
         self.rewards[GRASS] = -0.5
         self.rewards[ROAD] = -0.1
         self.rewards[SWAMP] = -1.0

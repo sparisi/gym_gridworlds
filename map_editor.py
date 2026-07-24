@@ -2,24 +2,27 @@
 
 import tkinter as tk
 from tkinter import ttk, filedialog
-import torch
+import numpy as np
 
-# Terrain constants
-GRASS = 1
-SWAMP = 2
-ROCK = 3
-ROAD = 4
-GOAL = 5
+from gym_gridworlds.travel_field import (
+    GRID_ENCODING,
+    TERRAIN_COLORS,
+    GRASS, SWAMP, ROCK, ROAD, GOAL,
+)
 
-char_dict = {
-    ".": GRASS,
-    "□": ROCK,
-    "+": ROAD,
-    "-": SWAMP,
-    "O": GOAL,
+CHAR_TO_TILE = GRID_ENCODING
+TILE_TO_CHAR = {v: k for k, v in CHAR_TO_TILE.items()}
+
+TERRAIN_NAMES = {
+    GRASS: "Grass",
+    SWAMP: "Swamp",
+    ROCK: "Rock",
+    ROAD: "Road",
+    GOAL: "Goal",
 }
 
-inv_char_dict = {v: k for k, v in char_dict.items()}
+# Order shown in the terrain dropdown.
+TERRAIN_ORDER = [GRASS, SWAMP, ROCK, ROAD, GOAL]
 
 
 class MapEditor:
@@ -30,15 +33,7 @@ class MapEditor:
         self.grid_size = 32
         self.cell_size = 15
 
-        self.terrain_types = {
-            GRASS: {"name": "Grass", "color": (0, 255, 0)},
-            SWAMP: {"name": "Swamp", "color": (139, 69, 19)},
-            ROCK: {"name": "Rock", "color": (100, 100, 100)},
-            ROAD: {"name": "Road", "color": (255, 255, 155)},
-            GOAL: {"name": "Goal", "color": (255, 0, 0)},
-        }
-
-        self.grid = torch.zeros((8, self.grid_size, self.grid_size))
+        self.grid = np.full((self.grid_size, self.grid_size), GRASS, dtype=np.int64)
         self.undo_stack = []
 
         self.is_painting = False
@@ -63,11 +58,11 @@ class MapEditor:
         self.terrain_dropdown = ttk.Combobox(
             control_frame1,
             textvariable=self.terrain_var,
-            values=[f"{k}: {v['name']}" for k, v in self.terrain_types.items()],
+            values=[f"{t}: {TERRAIN_NAMES[t]}" for t in TERRAIN_ORDER],
             state="readonly",
             width=14
         )
-        self.terrain_dropdown.set("1: Grass")
+        self.terrain_dropdown.set(f"{GRASS}: {TERRAIN_NAMES[GRASS]}")
         self.terrain_dropdown.pack(side=tk.LEFT, padx=(5, 10))
 
         ttk.Label(control_frame1, text="Map Size:").pack(side=tk.LEFT)
@@ -121,13 +116,12 @@ class MapEditor:
 
     # ------------------- Map Logic -------------------
     def initialize_borders(self):
-        self.grid.zero_()
-        self.grid[GRASS, :, :] = 1.0
+        self.grid[:] = GRASS
 
     def apply_size(self):
         n = int(self.size_var.get())
         self.grid_size = n
-        self.grid = torch.zeros((8, n, n))
+        self.grid = np.full((n, n), GRASS, dtype=np.int64)
         self.initialize_borders()
         self.update_window_size()
         self.draw_grid()
@@ -175,9 +169,9 @@ class MapEditor:
         self.canvas.delete("all")
         for i in range(self.grid_size):
             for j in range(self.grid_size):
-                t = torch.argmax(self.grid[:, i, j]).item()
-                rgb = self.terrain_types[t]["color"]
-                color = "#%02x%02x%02x" % rgb
+                t = int(self.grid[i, j])
+                rgb = TERRAIN_COLORS[t]
+                color = "#%02x%02x%02x" % tuple(rgb)
                 x1, y1 = j * self.cell_size, i * self.cell_size
                 x2, y2 = x1 + self.cell_size, y1 + self.cell_size
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="black")
@@ -185,14 +179,13 @@ class MapEditor:
 
     # ------------------- Undo / Paint -------------------
     def push_undo(self):
-        self.undo_stack.append(self.grid.clone())
+        self.undo_stack.append(self.grid.copy())
 
     def paint_cell(self, event, terrain_type):
         x = int(self.canvas.canvasx(event.x) // self.cell_size)
         y = int(self.canvas.canvasy(event.y) // self.cell_size)
         if 0 <= x < self.grid_size and 0 <= y < self.grid_size:
-            self.grid[:, y, x] = 0
-            self.grid[terrain_type, y, x] = 1
+            self.grid[y, x] = terrain_type
             self.draw_grid()
 
     # ------------------- Mouse events -------------------
@@ -248,10 +241,7 @@ class MapEditor:
             return
         with open(filename, "w", encoding="utf-8") as f:
             for i in range(self.grid_size):
-                line = ""
-                for j in range(self.grid_size):
-                    t = torch.argmax(self.grid[:, i, j]).item()
-                    line += inv_char_dict.get(t, ".")
+                line = "".join(TILE_TO_CHAR.get(int(self.grid[i, j]), ".") for j in range(self.grid_size))
                 f.write(line + "\n")
 
     def load_map(self):
@@ -263,10 +253,10 @@ class MapEditor:
         n = len(lines)
         self.grid_size = n
         self.size_var.set(n)
-        self.grid = torch.zeros((8, n, n))
+        self.grid = np.full((n, n), GRASS, dtype=np.int64)
         for i, line in enumerate(lines):
             for j, ch in enumerate(line):
-                self.grid[char_dict.get(ch, GRASS), i, j] = 1
+                self.grid[i, j] = CHAR_TO_TILE.get(ch, GRASS)
         self.update_window_size()
         self.draw_grid()
 

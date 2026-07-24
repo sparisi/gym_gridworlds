@@ -2,7 +2,7 @@ import os
 import numpy as np
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from typing import Optional
+from typing import Optional, Sequence
 from collections import defaultdict
 from enum import Enum
 
@@ -148,25 +148,25 @@ class Gridworld(gym.Env):
     def __init__(
         self,
         grid: str,
-        encoding: Optional[dict] = GRID_ENCODING,
-        start_pos: Optional[tuple] = [(0, 0)],
-        non_uniform_start: Optional[bool] = False,
-        loop_through_start_pos: Optional[bool] = False,
-        infinite_horizon: Optional[bool] = False,
-        random_goals: Optional[bool] = False,
-        no_stay: Optional[bool] = False,
-        distance_reward: Optional[bool] = False,
-        distance_difference_reward: Optional[bool] = False,
+        encoding: dict = GRID_ENCODING,
+        start_pos: Optional[Sequence] = ((0, 0),),
+        non_uniform_start: bool = False,
+        loop_through_start_pos: bool = False,
+        infinite_horizon: bool = False,
+        random_goals: bool = False,
+        no_stay: bool = False,
+        distance_reward: bool = False,
+        distance_difference_reward: bool = False,
         render_mode: Optional[str] = None,
-        random_action_prob: Optional[float] = 0.0,
-        slippery_prob: Optional[float] = 0.0,
-        random_reset_prob: Optional[float] = 0.0,
-        reward_noise_std: Optional[float] = 0.0,
-        nonzero_reward_noise_std: Optional[float] = 0.0,
-        observation_noise: Optional[float] = 0.0,
-        view_radius: Optional[int] = 99999,
-        max_resolution: Optional[tuple] = (256, 256),
-        action_to_terminate: Optional[bool] = False,
+        random_action_prob: float = 0.0,
+        slippery_prob: float = 0.0,
+        random_reset_prob: float = 0.0,
+        reward_noise_std: float = 0.0,
+        nonzero_reward_noise_std: float = 0.0,
+        observation_noise: float = 0.0,
+        view_radius: int = 99999,
+        max_resolution: tuple = (256, 256),
+        action_to_terminate: bool = False,
         **kwargs,
     ):
         self.random_goals = random_goals
@@ -177,9 +177,11 @@ class Gridworld(gym.Env):
         self.colormap = COLORMAP.copy()
 
         def is_list_of_tuples(x):
-            return True
-            # from omegaconf import ListConfig
-            # return isinstance(x, (list, ListConfig)) and all(isinstance(i, (tuple, list, ListConfig)) for i in x)
+            # duck-typed so list/tuple of pairs and omegaconf ListConfig all pass
+            try:
+                return all(len(item) == 2 for item in x)
+            except TypeError:
+                return False
 
         assert (
             start_pos is None or is_list_of_tuples(start_pos)
