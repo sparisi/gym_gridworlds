@@ -309,9 +309,8 @@ class Gridworld(gym.Env):
         return obs, reward, terminated, truncated, info
 
     def _randomize_agent_pos(self):
-        allowed_tiles = np.argwhere(
-            np.logical_and(self.grid != WALL, self.grid != PIT),
-        )
+        disallowed = (self.grid == WALL) | (self.grid == PIT) | (self.grid == GOOD) | (self.grid == GOOD_SMALL)
+        allowed_tiles = np.argwhere(~disallowed)
         n_allowed = allowed_tiles.shape[0]
         assert n_allowed != 0, "there is no tile where the agent can spawn"
         self.agent_pos = tuple(allowed_tiles[self.np_random.integers(n_allowed)])
@@ -336,7 +335,7 @@ class Gridworld(gym.Env):
             self._randomize_agent_pos()
         else:
             if not self.loop_through_start_pos:  # Uniformly random
-                self.agent_pos = tuple(self.np_random.choice(self.start_pos))
+                self.agent_pos = self.start_pos[self.np_random.integers(len(self.start_pos))]
             else:  # Loop through starting positions
                 self.agent_pos = self.start_pos[self.start_pos_idx]
                 self.start_pos_idx = (self.start_pos_idx + 1) % len(self.start_pos)
@@ -346,10 +345,9 @@ class Gridworld(gym.Env):
 
     def _step(self, action: int):
         self.last_pos = self.agent_pos
-        rnd_transition_p = self.np_random.random()
         if (
-            rnd_transition_p < self.random_action_prob or
-            self.grid[self.agent_pos] == NOISY_TILE and rnd_transition_p < 0.5
+            self.np_random.random() < self.random_action_prob or
+            self.grid[self.agent_pos] == NOISY_TILE and self.np_random.random() < 0.5
         ):
             action = self.action_space.sample()  # random action if transition is noisy
         self.last_action = action
@@ -392,6 +390,7 @@ class Gridworld(gym.Env):
 
             # Move again if slipped
             if self.slippery_prob > 0.0 and self.np_random.random() < self.slippery_prob:
+                    pre_slip_pos = self.agent_pos
                     self.agent_pos = _move(
                         self.agent_pos,
                         action,
@@ -401,7 +400,7 @@ class Gridworld(gym.Env):
                         terminated = True
                         reward = self.rewards[PIT]
                     elif self.grid[self.agent_pos] == WALL:
-                        self.agent_pos = self.last_pos
+                        self.agent_pos = pre_slip_pos
 
         # Auxiliary reward based on distance to the closest goal
         def distance_from_closest_tile_type(tile_type, pos):

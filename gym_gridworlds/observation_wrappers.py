@@ -30,9 +30,10 @@ class AddGoalWrapper(gymnasium.ObservationWrapper):
 
     def __init__(self, env):
         super().__init__(env)
+        original_grid = env.unwrapped.original_grid
         assert (
-            (env.unwrapped.grid == GOOD).sum() == 1 and
-            (env.unwrapped.grid == GOOD_SMALL).sum() == 0
+            (original_grid == GOOD).sum() == 1 and
+            (original_grid == GOOD_SMALL).sum() == 0
         ), "AddGoalWrapper supports only grids with one goal"  # fmt: skip
         self._n_rows = env.unwrapped.n_rows
         self._n_cols = env.unwrapped.n_cols

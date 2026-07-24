@@ -304,7 +304,7 @@ You can use the key "max" to automatically select the end of the grid, e.g.,
 `start_pos=[("max", 0)]` will place the agent at the bottom-right corner.
 If you make the environment with `start_pos=None`, the starting position will be random.
 In both cases (fixed and random), the starting position cannot be a tile with
-a wall or a pit.  
+a wall, a pit, or a positive reward.  
 Note that the starting position must be passed as a list of tuples. If more
 than one tuple is passed, the starting position will be randomly sampled from
 the list at every reset.
