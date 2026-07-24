@@ -7,5 +7,9 @@ setup(
     license="CC-BY-4.0",
     author="Simone Parisi",
     packages=["gym_gridworlds"],
-    install_requires=["gymnasium", "pygame"],
+    install_requires=["gymnasium", "pygame", "numpy"],
+    extras_require={
+        "playground": ["pynput", "imageio"],
+        "editor": ["torch"],
+    },
 )

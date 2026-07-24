@@ -125,13 +125,13 @@ def on_press(key):
             step(RIGHT)
         elif key == keyboard.Key.enter or vk == 101 or ch == "s":
             step(STAY)
-        elif key == keyboard.Key.enter or vk == 105 or ch == "e":
+        elif vk == 105 or ch == "e":
             step(UP_RIGHT)
-        elif key == keyboard.Key.enter or vk == 99 or ch == "c":
+        elif vk == 99 or ch == "c":
             step(DOWN_RIGHT)
-        elif key == keyboard.Key.enter or vk == 103 or ch == "q":
+        elif vk == 103 or ch == "q":
             step(UP_LEFT)
-        elif key == keyboard.Key.enter or vk == 97 or ch == "z":
+        elif vk == 97 or ch == "z":
             step(DOWN_LEFT)
         elif key == keyboard.Key.esc:
             # Can't call env.close() or pygame will freeze everything

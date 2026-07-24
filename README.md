@@ -201,7 +201,8 @@ env.reset(seed=42)
 
 
 ## Playground
-You can use `playground.py` to test an environment. For example, run
+If you install with `pip install -e .[playground]`, you can use `playground.py`
+to test an environment. For example, run
 ```
 python playground.py Gym-Gridworlds/Taxi-6x7-v0 --record
 python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 max_resolution=[512,512] --record
