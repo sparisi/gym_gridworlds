@@ -258,16 +258,16 @@ In the above example, `obs = 3` becomes
  1 0 0
  0 0 0
 ```
-- `BirdEyeWrapper` returns a partial map of the environment with IDs corresponding
-to the tile contents. The map is centered on the agent's position and shows tiles
-within the specified radius. This makes our Gridworlds similar to
+- `BirdEyeWrapper` returns a partial map of the environment with characters
+corresponding to the tile contents. The map is centered on the agent's position
+and shows tiles within the specified radius. This makes our Gridworlds similar to
 [Minigrid](https://github.com/Farama-Foundation/Minigrid),
-except that we do not use multiple map layers to represent tile contents.
+except that we use a single text map instead of multiple layered integer maps.
 For example, with `view_radius=1`
 ```
-.XO           -1 11 10                            11 -1 -3
-.X.  → IDs →  -1 11 -1  → agent at bottom-left →  -1 -1 -3
-...           -1 -1 -1                            -3 -3 -3
+. X O                               X . □
+. X .  →  agent at bottom-right  →  . . □
+. . .                               □ □ □
 ```
 - `ContinuousObservationWrapper` returns continuous observations based on the
 agent's position with a random fixed offset (to cover all of the observation space),

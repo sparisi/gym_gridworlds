@@ -1,7 +1,9 @@
 import numpy as np
 import gymnasium
 
-from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL, WALL
+from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL, WALL, GRID_ENCODING
+
+GRID_DECODING = {v: k for k, v in GRID_ENCODING.items()}
 
 
 class AddGoalWrapper(gymnasium.ObservationWrapper):
@@ -138,8 +140,9 @@ class MatrixWrapper(gymnasium.ObservationWrapper):
 
 class BirdEyeWrapper(gymnasium.ObservationWrapper):
     """Bird's-eye view of the grid: the observation is a (2r+1, 2r+1) window
-    centered on the agent. Each cell holds its tile ID (`EMPTY`, `WALL`,
-    `PIT`, `GOOD`, ...) and out-of-bounds cells are filled with `WALL`.
+    centered on the agent. Each cell holds the character that encodes its
+    tile (see `GRID_ENCODING` in `gridworld.py`) and out-of-bounds cells are
+    filled with the `WALL` character.
 
     The view radius `r` is taken from the `view_radius` argument if given;
     otherwise it falls back to the wrapped env's `view_radius`. Either way,
@@ -153,10 +156,10 @@ class BirdEyeWrapper(gymnasium.ObservationWrapper):
     >>> env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0", render_mode="human", start_pos=[("max", "max")])
     >>> env = BirdEyeWrapper(env, view_radius=1)
     >>> obs, _ = env.reset()
-    >>> print(obs)  # -1 = EMPTY, -3 = WALL, 10 = GOOD
-    [[-1 -1 -3]
-     [-1 10 -3]
-     [-3 -3 -3]]
+    >>> print(obs)  # . = EMPTY, □ = WALL, X = BAD
+    [['X' '.' '□']
+     ['.' '.' '□']
+     ['□' '□' '□']]
     """
 
     def __init__(self, env, view_radius=None):
@@ -174,11 +177,9 @@ class BirdEyeWrapper(gymnasium.ObservationWrapper):
         )
         env.unwrapped.view_radius = self._view_radius  # keep rendering in sync
         size = 2 * self._view_radius + 1
-        self.observation_space = gymnasium.spaces.Box(
-            shape=(size, size),
-            low=-10,
-            high=15,
-            dtype=np.int32,
+        self.observation_space = gymnasium.spaces.Text(
+            max_length=size * size,
+            charset=frozenset(GRID_ENCODING.keys()),
         )
 
     def observation(self, obs):
@@ -198,7 +199,7 @@ class BirdEyeWrapper(gymnasium.ObservationWrapper):
         window[w_row_start:w_row_end, w_col_start:w_col_end] = grid[
             row_start:row_end, col_start:col_end
         ]
-        return window
+        return np.vectorize(GRID_DECODING.get)(window).astype("<U1")
 
 
 class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
