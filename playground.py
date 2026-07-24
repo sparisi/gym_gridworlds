@@ -111,36 +111,42 @@ def reset():
             frames.append(frame)
 
 
+KEY_TO_ACTION = {
+    keyboard.Key.up: UP,
+    keyboard.Key.down: DOWN,
+    keyboard.Key.left: LEFT,
+    keyboard.Key.right: RIGHT,
+    keyboard.Key.enter: STAY,
+}
+CHAR_TO_ACTION = {
+    "w": UP, "x": DOWN, "a": LEFT, "d": RIGHT, "s": STAY,
+    "q": UP_LEFT, "e": UP_RIGHT, "z": DOWN_LEFT, "c": DOWN_RIGHT,
+}
+VK_TO_ACTION = {  # numpad
+    104: UP, 98: DOWN, 100: LEFT, 102: RIGHT, 101: STAY,
+    103: UP_LEFT, 105: UP_RIGHT, 97: DOWN_LEFT, 99: DOWN_RIGHT,
+}
+
+
 def on_press(key):
-    vk = getattr(key, "vk", None)
-    ch = getattr(key, "char", None)
     try:
-        if key == keyboard.Key.up or vk == 104 or ch == "w":
-            step(UP)
-        elif key == keyboard.Key.down or vk == 98 or ch == "x":
-            step(DOWN)
-        elif key == keyboard.Key.left or vk == 100 or ch == "a":
-            step(LEFT)
-        elif key == keyboard.Key.right or vk == 102 or ch == "d":
-            step(RIGHT)
-        elif key == keyboard.Key.enter or vk == 101 or ch == "s":
-            step(STAY)
-        elif vk == 105 or ch == "e":
-            step(UP_RIGHT)
-        elif vk == 99 or ch == "c":
-            step(DOWN_RIGHT)
-        elif vk == 103 or ch == "q":
-            step(UP_LEFT)
-        elif vk == 97 or ch == "z":
-            step(DOWN_LEFT)
-        elif key == keyboard.Key.esc:
+        if key == keyboard.Key.esc:
             # Can't call env.close() or pygame will freeze everything
             program_running[0] = False
             return False
-        elif key == keyboard.Key.backspace:
+        if key == keyboard.Key.backspace:
             reset()
-        else:
-            pass
+            return
+        # Careful: LEFT == 0 is falsy, so use explicit None checks not `or`.
+        for mapping, lookup in (
+            (KEY_TO_ACTION, key),
+            (CHAR_TO_ACTION, getattr(key, "char", None)),
+            (VK_TO_ACTION, getattr(key, "vk", None)),
+        ):
+            action = mapping.get(lookup)
+            if action is not None:
+                step(action)
+                return
     except AttributeError:
         pass
 
