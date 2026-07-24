@@ -103,6 +103,15 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `ThreeRooms-Quicksand-11x8-v0` &nbsp; Smaller version of the above environment.  
 <img src="ThreeRooms-Quicksand-11x8-v0.png" width="220">
 
+`Labyrinth-3x3-v0` &nbsp; A labyrinth with 5x5 rooms arranged in a 3x3 layout.  
+<img src="Labyrinth-3x3-v0.png" width="220">
+
+`Labyrinth-5x5-v0` &nbsp; Same, but with a 5x5 layout.  
+<img src="Labyrinth-5x5-v0.png" width="220">
+
+`Labyrinth-7x7-v0` &nbsp; Same, but with a 7x7 layout.  
+<img src="Labyrinth-7x7-v0.png" width="220">
+
 `Maze-12x12-v0` &nbsp; [The agent starts in the middle. No need to `STAY` in green tiles.](https://arxiv.org/pdf/2505.01336).  
 <img src="Maze-12x12-v0.png" width="220">
 

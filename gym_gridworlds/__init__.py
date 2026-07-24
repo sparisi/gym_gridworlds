@@ -383,6 +383,46 @@ register(
 )
 
 # ------------------------------------------------------------------------------
+# Labyrinths
+# ------------------------------------------------------------------------------
+
+register(
+    id="Gym-Gridworlds/Labyrinth-3x3-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=300,
+    kwargs={
+        "grid": "labyrinth_small",
+        "no_stay": True,
+        "start_pos": [(9, 9)],
+        "random_goals": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/Labyrinth-5x5-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=600,
+    kwargs={
+        "grid": "labyrinth_medium",
+        "no_stay": True,
+        "start_pos": [(15, 15)],
+        "random_goals": True,
+    },
+)
+
+register(
+    id="Gym-Gridworlds/Labyrinth-7x7-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=1000,
+    kwargs={
+        "grid": "labyrinth_hard",
+        "no_stay": True,
+        "start_pos": [(21, 21)],
+        "random_goals": True,
+    },
+)
+
+# ------------------------------------------------------------------------------
 # Harder environments
 # ------------------------------------------------------------------------------
 
