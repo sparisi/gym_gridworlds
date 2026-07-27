@@ -67,7 +67,10 @@ ACTION_TO_VEC = {
     DOWN_RIGHT: (+1, +1),
 }
 
-def _move(pos, action, shape):
+def _move(pos, action, grid):
+    if grid[pos] in [WALL, PIT]:
+        return pos
+    shape = grid.shape
     movement = ACTION_TO_VEC.get(action, None)
     if movement is None:
         raise ValueError("illegal action")
@@ -388,7 +391,7 @@ class Gridworld(gym.Env):
                 self.agent_pos = _move(
                     self.agent_pos,
                     action,
-                    (self.n_rows, self.n_cols),
+                    self.grid,
                 )
             if self.grid[self.agent_pos] == PIT:
                 terminated = True  # agent dies
@@ -402,7 +405,7 @@ class Gridworld(gym.Env):
                     self.agent_pos = _move(
                         self.agent_pos,
                         action,
-                        (self.n_rows, self.n_cols),
+                        self.grid,
                     )
                     if self.grid[self.agent_pos] == PIT:
                         terminated = True

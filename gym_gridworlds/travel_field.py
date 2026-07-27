@@ -57,7 +57,7 @@ class TravelField(Gridworld):
             tried_to_move_to = _move(
                 self.last_pos,
                 self.last_action,
-                (self.n_rows, self.n_cols),
+                self.grid,
             )
             if self.grid[tried_to_move_to] == WALL:
                 terminated = True
