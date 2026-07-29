@@ -12,7 +12,7 @@ python playground.py ENVIRONMENT --record --env-arg= ...
 --env-arg to pass optional environment arguments
 
 Example:
-python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg distance_reward=True --env-arg no_stay=True --record --discount=0.99
+python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg --env-arg no_stay=True --record --discount=0.99
 """
 
 import imageio
