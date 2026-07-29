@@ -176,17 +176,6 @@ class Gridworld(gym.Env):
         action_to_terminate: bool = False,
         **kwargs,
     ):
-        if "distance_difference_reward" in kwargs:
-            raise TypeError(
-                "distance_difference_reward has been removed. Use "
-                "distance_reward={'difference': True} instead (see README)."
-            )
-        if isinstance(distance_reward, bool):
-            raise TypeError(
-                "distance_reward=True/False is no longer accepted. Pass a "
-                "config dict, e.g. distance_reward={'ord': 2, "
-                "'difference': True, 'coeff': 1} (see README)."
-            )
         self.random_goals = random_goals
         self.original_grid = load_grid(grid, encoding)
         self._tile_to_char = {v: k for k, v in encoding.items()}
