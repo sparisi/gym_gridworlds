@@ -206,7 +206,7 @@ to test an environment. For example, run
 ```
 python playground.py Gym-Gridworlds/Taxi-6x7-v0 --record
 python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 max_resolution=[512,512] --record
-python playground.py Gym-Gridworlds/TravelField-28x28-v1 --env-arg distance_reward=True no_stay=True observation_noise=0.2 --record
+python playground.py Gym-Gridworlds/TravelField-28x28-v1 --env-arg 'distance_reward={"ord":1,"difference":true,"coeff":1}' no_stay=True observation_noise=0.2 --record
 ```
 You will be able to move the agent around the environment with the directional
 arrow keys, see the rewards received by the agent, and save gifs like the ones below.
@@ -398,13 +398,19 @@ White noise can be added to all rewards by passing `reward_noise_std`,
 or only to nonzero rewards with `nonzero_reward_noise_std`.
 
 &#10148; <strong>Auxiliary Rewards</strong>  
-Auxiliary rewards based on the Manhattan distance to the closest goal can be
-added by passing `distance_reward=True` or `distance_difference_reward=True`.
-The former is `distance_at_current_state / max_distance`, i.e., the distance
-from the current state scaled according to the size of the grid to be in the range [-1, 0].
-The latter is `distance_at_current_state - distance_at_next_state`, thus it
-can be +1 (if the agent moves closer to the goal), 0 (if it does STAY),
-or -1 (if it moves further from the goal).
+Auxiliary rewards based on the distance to the closest goal can be added by
+passing `distance_reward` as a dict with the following keys:
+- `ord`: `1` for Manhattan, `2` for Euclidean.
+- `difference`: if `True`, the reward is
+  `coeff * (distance_at_current_state - distance_at_next_state)`, so it is
+  positive when the agent moves closer to the goal, zero on `STAY`, and
+  negative when it moves further away.
+  If `False`, the reward is `coeff * distance_at_current_state / max_distance`,
+  i.e., the distance scaled to `[-coeff, 0]` by the size of the grid.
+- `coeff`: scaling coefficient.
+
+Any missing key falls back to the default: `{"ord": 2, "difference": True, "coeff": 1}`.
+For example, `distance_reward={"ord": 1}` uses Manhattan distance with the other defaults.
 
 ### <ins>Episode End</ins>
 By default, an episode ends if any of the following happens:

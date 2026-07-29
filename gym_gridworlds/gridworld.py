@@ -163,8 +163,7 @@ class Gridworld(gym.Env):
         infinite_horizon: bool = False,
         random_goals: bool = False,
         no_stay: bool = False,
-        distance_reward: bool = False,
-        distance_difference_reward: bool = False,
+        distance_reward: Optional[dict] = None,
         render_mode: Optional[str] = None,
         random_action_prob: float = 0.0,
         slippery_prob: float = 0.0,
@@ -177,6 +176,17 @@ class Gridworld(gym.Env):
         action_to_terminate: bool = False,
         **kwargs,
     ):
+        if "distance_difference_reward" in kwargs:
+            raise TypeError(
+                "distance_difference_reward has been removed. Use "
+                "distance_reward={'difference': True} instead (see README)."
+            )
+        if isinstance(distance_reward, bool):
+            raise TypeError(
+                "distance_reward=True/False is no longer accepted. Pass a "
+                "config dict, e.g. distance_reward={'ord': 2, "
+                "'difference': True, 'coeff': 1} (see README)."
+            )
         self.random_goals = random_goals
         self.original_grid = load_grid(grid, encoding)
         self._tile_to_char = {v: k for k, v in encoding.items()}
@@ -229,8 +239,14 @@ class Gridworld(gym.Env):
         self.nonzero_reward_noise_std = nonzero_reward_noise_std
         assert 0.0 <= observation_noise < 1.0, "observation_noise must be in [0.0, 1.0)"
         self.observation_noise = observation_noise
+        if distance_reward is not None:
+            distance_reward = {
+                "ord": distance_reward.get("ord", 2),
+                "difference": distance_reward.get("difference", True),
+                "coeff": distance_reward.get("coeff", 1),
+            }
+            assert distance_reward["ord"] in (1, 2), "distance_reward['ord'] must be 1 or 2"
         self.distance_reward = distance_reward
-        self.distance_difference_reward = distance_difference_reward
         self.observation_space = gym.spaces.Discrete(self.n_cols * self.n_rows)
 
         self.action_to_terminate = action_to_terminate
@@ -414,27 +430,30 @@ class Gridworld(gym.Env):
                         self.agent_pos = pre_slip_pos
 
         # Auxiliary reward based on distance to the closest goal
-        def distance_from_closest_tile_type(tile_type, pos):
-            dist = np.linalg.norm(
-                np.argwhere(self.grid == tile_type) - pos,
-                ord=1,
-                axis=1,
-            )
-            if len(dist) == 0:
-                return 0.0
-            return dist.min()
+        if self.distance_reward is not None:
+            ord_ = self.distance_reward["ord"]
+            coeff = self.distance_reward["coeff"]
 
-        if self.distance_reward or self.distance_difference_reward:
+            def distance_from_closest_tile_type(tile_type, pos):
+                dist = np.linalg.norm(
+                    np.argwhere(self.grid == tile_type) - pos,
+                    ord=ord_,
+                    axis=1,
+                )
+                if len(dist) == 0:
+                    return 0.0
+                return dist.min()
+
             goal_dist = distance_from_closest_tile_type(GOOD, self.agent_pos)
-            if self.distance_difference_reward:
+            if self.distance_reward["difference"]:
                 old_goal_dist = distance_from_closest_tile_type(GOOD, self.last_pos)
-                reward -= goal_dist - old_goal_dist
+                reward -= coeff * (goal_dist - old_goal_dist)
             else:
                 max_dist = np.linalg.norm(
                     [self.n_rows - 1, self.n_cols - 1],
-                    ord=1,
+                    ord=ord_,
                 )
-                reward -= goal_dist / max_dist
+                reward -= coeff * goal_dist / max_dist
 
         if self.infinite_horizon:
             terminated = False
