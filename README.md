@@ -216,16 +216,6 @@ python playground.py Gym-Gridworlds/TravelField-28x28-v1 --env-arg no_stay=True 
 You will be able to move the agent around the environment, see the rewards it
 receives, and save gifs like the ones below.
 
-```
-Move:   ↖ ↑ ↗      Q W E      (or the arrow keys, or the numpad)
-        ←   →  or  A   D
-        ↙ ↓ ↘      Z X C
-Stay:   ENTER or S
-Reset:  Backspace
-Quit:   Esc
-```
-
-Note that the arrow keys alone cannot do `STAY` or move diagonally.
 Besides `--record`, you can pass `--discount` to also print the discounted sum
 of rewards (0.99 by default), and `--env-arg` to pass environment arguments.
 
