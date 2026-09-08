@@ -43,8 +43,8 @@ class Taxi(Gridworld):
         self.passengers_picked = [False] * len(self.passengers)
         return Gridworld.reset(self, seed=seed, **kwargs)
 
-    def get_state(self):
-        obs = Gridworld.get_state(self)
+    def get_state(self, noisy: bool = True):
+        obs = Gridworld.get_state(self, noisy=noisy)
         picked = np.array(self.passengers_picked, dtype=int)
         picked_id = 0
         for bit in picked:
@@ -81,4 +81,5 @@ class Taxi(Gridworld):
                 if np.all(passenger == self.agent_pos):
                     self.passengers_picked[i] = True
                     break
+        info["state"] = self.get_true_state()  # passengers changed after Gridworld.step
         return self.get_state(), rwd, terminated, truncated, info

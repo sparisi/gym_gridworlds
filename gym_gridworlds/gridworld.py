@@ -202,8 +202,8 @@ class Gridworld(gym.Env):
                 0 <= pos[1] < self.n_cols
             ), f"received {pos} starting position, but bounds are {(self.n_rows, self.n_cols)})"  # fmt: skip
             assert (
-                self.grid[pos] not in [WALL, PIT]
-            ), "the agent cannot start in a pit or a wall tile"  # fmt: skip
+                self.grid[pos] not in [WALL, PIT, GOOD, GOOD_SMALL]
+            ), "the agent cannot start in a pit, a wall, or a positive reward tile"  # fmt: skip
 
         def convert_position(pos):
             pos = tuple(
@@ -291,9 +291,9 @@ class Gridworld(gym.Env):
         self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
         self.last_action = None
 
-    def get_state(self):
+    def get_state(self, noisy: bool = True):
         pos = self.agent_pos
-        if self.observation_noise > 0.0:
+        if noisy and self.observation_noise > 0.0:
             if self.np_random.random() < self.observation_noise:
                 pos = (
                     self.np_random.integers(0, self.n_rows),
@@ -301,20 +301,27 @@ class Gridworld(gym.Env):
                 )  # note that the random position can be also a wall or a pit
         return np.ravel_multi_index(pos, (self.n_rows, self.n_cols))
 
+    def get_true_state(self):
+        # Same as get_state(), but never corrupted by observation_noise, so that
+        # info["state"] always reports where the agent really is (e.g., to count
+        # state visits while learning from noisy or pixel observations).
+        # Subclasses only need to forward `noisy` in their get_state override.
+        return self.get_state(noisy=False)
+
     def reset(self, seed: int = None, **kwargs):
         super().reset(seed=seed, **kwargs)
         info = self._reset(seed, **kwargs)
         if self.render_mode is not None and self.render_mode == "human":
             self.render()
         obs = self.get_state()
-        info["state"] = obs
+        info["state"] = self.get_true_state()
         return obs, info
 
     def step(self, action: int):
         obs, reward, terminated, truncated, info = self._step(action)
         if self.render_mode is not None and self.render_mode == "human":
             self.render()
-        info["state"] = obs
+        info["state"] = self.get_true_state()
         if self.np_random.random() < self.random_reset_prob:
             obs, info = self.reset()
         return obs, reward, terminated, truncated, info
@@ -332,9 +339,13 @@ class Gridworld(gym.Env):
         goals = np.argwhere(goals_bool)
         self.grid[goals_bool] = EMPTY
         for goal in goals:
-            allowed_tiles = np.argwhere(self.grid == EMPTY)
+            allowed = self.grid == EMPTY
+            if self.start_pos is not None:
+                for pos in self.start_pos:
+                    allowed[pos] = False  # the agent must never start on a goal
+            allowed_tiles = np.argwhere(allowed)
             n_allowed = allowed_tiles.shape[0]
-            assert n_allowed != 0, "there is no tile where the agent can spawn"
+            assert n_allowed != 0, "there is no tile where a goal can be placed"
             new_goal = allowed_tiles[self.np_random.integers(n_allowed)]
             self.grid[tuple(new_goal)] = original_grid[tuple(goal)]
 
@@ -674,6 +685,10 @@ class RiverSwim(Gridworld):
     """
 
     def __init__(self, **kwargs):
+        # _reset always places the agent on the 2nd or 3rd tile, but the leftmost
+        # tile is a small goal, so the inherited default start_pos=(0, 0) would
+        # not pass validation. The value is overwritten at every reset anyway.
+        kwargs.setdefault("start_pos", [(0, 1)])
         Gridworld.__init__(self, **kwargs)
         self.grid[0] = 0.01  # we use self.grid for rendering
         self.grid[-1] = 1.0

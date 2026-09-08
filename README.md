@@ -119,7 +119,7 @@ env.step(2) # DOWN
 </p>
 
 &#10148; <strong>Noisy Observations</strong>  
-Make the environment with `observation_noise=0.2` (or any float between 0 and 1).
+Make the environment with `observation_noise=0.2` (or any float in `[0, 1)`).
 With default observations, the float represents the probability that the position
 observed by the agent is random. With RGB observations, it represents the
 probability that a pixel is white noise, as shown below.
@@ -159,7 +159,12 @@ X          negative reward
 x          smaller negative reward
 ←↖↑↗→↘↓↙  one-directional tiles
 ?          empty tile with 50% chance of random action
+*          tile where the only allowed direction changes randomly at every step
 ```
+
+> Grids using `*` must be registered with
+`entry_point="gym_gridworlds.rnd_move:RandomizedTiles"`, because the default
+`Gridworld` class does not randomize those tiles.
 
 1. Encode your grid following the above mapping, and save it as `txt` file in `gym_gridworlds/grids`.
 For example save the grid below as `5x5_wall.txt`.
@@ -201,22 +206,35 @@ env.reset(seed=42)
 
 
 ## Playground
-If you install with `pip install -e .[playground]`, you can use `playground.py`
+If you install with `pip install -e ".[playground]"`, you can use `playground.py`
 to test an environment. For example, run
 ```
 python playground.py Gym-Gridworlds/Taxi-6x7-v0 --record
-python playground.py Gym-Gridworlds/FourRooms-Original-13x13-v0 --env-arg slippery_prob=0.5 max_resolution=[512,512] --record
+python playground.py Gym-Gridworlds/FourRooms-13x13-v0 --env-arg slippery_prob=0.5 max_resolution=[512,512] --record
 python playground.py Gym-Gridworlds/TravelField-28x28-v1 --env-arg no_stay=True observation_noise=0.2 --record
 ```
-You will be able to move the agent around the environment with the directional
-arrow keys, see the rewards received by the agent, and save gifs like the ones below.
+You will be able to move the agent around the environment, see the rewards it
+receives, and save gifs like the ones below.
+
+```
+Move:   ↖ ↑ ↗      Q W E      (or the arrow keys, or the numpad)
+        ←   →  or  A   D
+        ↙ ↓ ↘      Z X C
+Stay:   ENTER or S
+Reset:  Backspace
+Quit:   Esc
+```
+
+Note that the arrow keys alone cannot do `STAY` or move diagonally.
+Besides `--record`, you can pass `--discount` to also print the discounted sum
+of rewards (0.99 by default), and `--env-arg` to pass environment arguments.
 
 <div align="center">
     <figure>
         <img src="figures/Taxi-6x7-v0.gif" height=200 width=200 />
     </figure>
     <figure>
-        <img src="figures/FourRooms-Original-13x13-v0.gif" height=200 width=200 />
+        <img src="figures/FourRooms-13x13-v0.gif" height=200 width=200 />
     </figure>
     <figure>
         <img src="figures/TravelField-28x28-v1.gif" height=200 width=200 />
@@ -245,8 +263,10 @@ For example, in a 3x3 grid the observations are
 ```
 
 > The true state is always passed with the `info` dictionary as `info["state"]`,
-to retrieve it even when wrappers are used. This makes debugging easier (e.g., it
-is possible to count state visits even when RGB wrappers are used).
+to retrieve it even when wrappers are used. It is never corrupted by
+`observation_noise`, so it is the true position of the agent even when the
+observation is not. This makes debugging easier (e.g., it is possible to count
+state visits even when RGB wrappers are used).
 
 The observation can be transformed to better fit function approximation (e.g., if you use DQN)
 using wrappers from [observation_wrappers.py](gym_gridworlds/observation_wrappers.py). For example
@@ -271,10 +291,17 @@ For example, with `view_radius=1`
 . . .                               □ □ □
 ```
 
-> A similar observation can be returned with `render_mode=ansi` and then retrieving
-`obs = print(env.render())`. The ANSI rendering returns a string (not an array of chars)
-representing the whole map, with `A` where the agent is. In the example above: `.XO\n.X.\n..A`
+> A similar observation can be returned by making the environment with
+`render_mode="ansi"` and then retrieving `obs = env.render()`. The ANSI rendering
+returns a string (not an array of chars) representing the map, with `A` where the
+agent is and `#` for tiles outside `view_radius`. In the example above: `.XO\n.X.\n..A`
 
+- `AddGoalWrapper` appends the goal position (ravel index) to the observation.
+In the above example, if the goal is in the top-right tile, `obs = 3` becomes
+`obs = [3, 2]`. The grid must have exactly one goal.
+- `MatrixWithGoalWrapper` returns the map of `MatrixWrapper` in a first channel,
+and the positions of all positive rewards (with their values) in a second one.
+Use it, or pixel observations, when the environment is made with `random_goals=True`.
 - `ContinuousObservationWrapper` returns continuous observations based on the
 agent's position with a random fixed offset (to cover all of the observation space),
 normalized in `[-1, 1]`. In the above example, `obs = 3` becomes `obs = [-0.70128391, -0.92455349]`.
@@ -296,7 +323,7 @@ For example, if `view_radius=1` the rendering will show the content of only the 
 around the agent, while all other tiles will be filled with white noise.
 
 &#10148; <strong>Noisy Observations</strong>  
-Make the environment with `observation_noise=0.2` (or any float between 0 and 1).
+Make the environment with `observation_noise=0.2` (or any float in `[0, 1)`).
 With default observations, the float represents the probability that the position
 observed by the agent is random. With RGB observations, it represents the
 probability that a pixel is white noise.
@@ -309,7 +336,10 @@ You can use the key "max" to automatically select the end of the grid, e.g.,
 `start_pos=[("max", 0)]` will place the agent at the bottom-right corner.
 If you make the environment with `start_pos=None`, the starting position will be random.
 In both cases (fixed and random), the starting position cannot be a tile with
-a wall, a pit, or a positive reward.  
+a wall, a pit, or a positive reward (making the environment with such a
+`start_pos` raises an `AssertionError`).
+This holds with `random_goals=True` as well: goals are never randomized onto a
+starting tile.  
 Note that the starting position must be passed as a list of tuples. If more
 than one tuple is passed, the starting position will be randomly sampled from
 the list at every reset.
@@ -400,8 +430,9 @@ or only to nonzero rewards with `nonzero_reward_noise_std`.
 &#10148; <strong>Auxiliary Rewards</strong>  
 Auxiliary rewards based on the Manhattan distance to the closest goal can be
 added by passing `distance_reward=True` or `distance_difference_reward=True`.
-The former is `distance_at_current_state / max_distance`, i.e., the distance
-from the current state scaled according to the size of the grid to be in the range [-1, 0].
+The former is `-distance_at_next_state / max_distance`, i.e., minus the distance
+from the state the agent moved to, scaled according to the size of the grid to be
+in the range [-1, 0].
 The latter is `distance_at_current_state - distance_at_next_state`, thus it
 can be +1 (if the agent moves closer to the goal), 0 (if it does STAY),
 or -1 (if it moves further from the goal).
@@ -414,3 +445,24 @@ By default, an episode ends if any of the following happens:
 
 It is possible to remove termination altogether by making the environment
 with `infinite_horizon=True`.
+
+
+## License
+
+This project is licensed under [CC-BY-4.0](LICENSE).
+
+
+## Citation
+
+If you use this software, please cite it as below (see [CITATION.cff](CITATION.cff)).
+
+```bibtex
+@software{parisi_gym_gridworlds,
+  author  = {Parisi, Simone},
+  title   = {Gym-Gridworlds},
+  year    = {2024},
+  url     = {https://github.com/sparisi/gym_gridworlds},
+  version = {1.0},
+  license = {CC-BY-4.0},
+}
+```

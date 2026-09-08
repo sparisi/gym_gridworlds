@@ -6,6 +6,41 @@ from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL, WALL, GRID_ENCOD
 GRID_DECODING = {v: k for k, v in GRID_ENCODING.items()}
 
 
+class CharGrid(gymnasium.Space):
+    """Space of 2D numpy arrays whose cells are single characters from `charset`.
+
+    Gymnasium has no built-in space for a grid of characters (`Text` describes a
+    single string), so `BirdEyeWrapper` uses this one to actually contain the
+    observations it returns.
+    """
+
+    def __init__(self, shape, charset, seed=None):
+        self.charset = frozenset(charset)
+        super().__init__(tuple(shape), np.dtype("<U1"), seed)
+
+    def sample(self, mask=None):
+        chars = np.asarray(sorted(self.charset), dtype="<U1")
+        return chars[self.np_random.integers(len(chars), size=self.shape)]
+
+    def contains(self, x):
+        return (
+            isinstance(x, np.ndarray)
+            and x.shape == self.shape
+            and x.dtype.kind == "U"
+            and all(c in self.charset for c in x.ravel().tolist())
+        )
+
+    def __repr__(self):
+        return f"CharGrid({self.shape}, {len(self.charset)} chars)"
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, CharGrid)
+            and self.shape == other.shape
+            and self.charset == other.charset
+        )
+
+
 class AddGoalWrapper(gymnasium.ObservationWrapper):
     """Also returns the position (ravel index) of the agent's goal.
     The grid must have only one goal.
@@ -22,10 +57,10 @@ class AddGoalWrapper(gymnasium.ObservationWrapper):
     >>> env = AddGoalWrapper(env)
     >>> obs, _ = env.reset(seed=42)
     >>> print(obs)
-    [0, 0]
+    [0, 2]
     >>> obs, _ = env.reset(seed=24)
     >>> print(obs)
-    [0, 3]
+    [0, 5]
     """
 
     def __init__(self, env):
@@ -178,9 +213,9 @@ class BirdEyeWrapper(gymnasium.ObservationWrapper):
         )
         env.unwrapped.view_radius = self._view_radius  # keep rendering in sync
         size = 2 * self._view_radius + 1
-        self.observation_space = gymnasium.spaces.Text(
-            max_length=size * size,
-            charset=frozenset(GRID_ENCODING.keys()),
+        self.observation_space = CharGrid(
+            shape=(size, size),
+            charset=GRID_ENCODING.keys(),
         )
 
     def observation(self, obs):
@@ -221,10 +256,10 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
      [0. 0. 0. 0. 0.]
      [0. 0. 0. 0. 0.]]
     >>> print(obs[..., 1])
-    [[0.  0.1 0.  0.  0. ]
+    [[0.  0.  0.1 0.  0. ]
      [0.  0.  0.  0.  0. ]
      [0.  0.  0.  0.1 0. ]
-     [0.  1.  0.  0.  0. ]]
+     [0.  0.  1.  0.  0. ]]
     >>> obs, _ = env.reset(seed=24)
     >>> print(obs[..., 0])
     [[1. 0. 0. 0. 0.]
@@ -233,9 +268,9 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
      [0. 0. 0. 0. 0.]]
     >>> print(obs[..., 1])
     [[0.  0.  0.  0.  0. ]
-     [1.  0.1 0.  0.  0. ]
+     [0.  1.  0.  0.1 0. ]
      [0.  0.  0.  0.  0. ]
-     [0.  0.1 0.  0.  0. ]]
+     [0.  0.  0.1 0.  0. ]]
     """
 
     def __init__(self, env):
@@ -289,10 +324,10 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
     >>> env = ContinuousObservationWrapper(env)
     >>> obs, _ = env.reset(seed=42)
     >>> print(obs)
-    [-0.80675932, -0.63102737]
+    [-0.57070104 -0.72105279]
     >>> obs, *_ = env.step(1)
     >>> print(obs)
-    [-0.80675932, -0.23102737]
+    [-0.57070104 -0.32105279]
 
     Note:
 
@@ -326,5 +361,9 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
         self.env.unwrapped.last_action = None
 
     def reset(self, seed: int = None, **kwargs):
+        # The offset must be drawn AFTER the env is seeded (otherwise `seed` does
+        # not control it and the first episode is not reproducible), but BEFORE
+        # the observation is computed, because observation() uses it.
+        obs, info = self.env.reset(seed=seed, **kwargs)
         self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5, size=(2,))
-        return super().reset(seed=seed, **kwargs)
+        return self.observation(obs), info

@@ -12,7 +12,7 @@ python playground.py ENVIRONMENT --record --env-arg= ...
 --env-arg to pass optional environment arguments
 
 Example:
-python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg --env-arg no_stay=True --record --discount=0.99
+python playground.py Gym-Gridworlds/TravelField-28x28-v0 --env-arg no_stay=True --record --discount=0.99
 """
 
 import imageio
@@ -27,6 +27,7 @@ from pynput import keyboard
 import time
 from pathlib import Path
 import json
+import ast
 
 # Mutable so we can update it in on_press`
 program_running = [True]
@@ -39,10 +40,15 @@ def parse_env_args(arg_list):
         if "=" not in item:
             raise ValueError(f"Invalid format for --env-arg '{item}', expected key=value")
         key, value = item.split("=", 1)
-        try:
-            value = json.loads(value)  # Works for lists, dicts, numbers, booleans, null
-        except json.JSONDecodeError:
-            pass  # Fallback: keep as string
+        for parse in (json.loads, ast.literal_eval):
+            # json.loads handles JSON syntax (lists, dicts, numbers, true/false/null),
+            # ast.literal_eval handles Python syntax (True/False/None, tuples).
+            # json.JSONDecodeError is a ValueError, so one except covers both.
+            try:
+                value = parse(value)
+                break
+            except (ValueError, SyntaxError):
+                pass  # Fallback: keep as string
         env_kwargs[key] = value
     return env_kwargs
 
@@ -55,7 +61,7 @@ parser.add_argument(
     help="Environment arguments, for example: --env-arg no_stay=True infinite_horizon=True",
 )
 parser.add_argument("--record", action="store_true")
-parser.add_argument("--discount", default=0.99)
+parser.add_argument("--discount", type=float, default=0.99)
 args = parser.parse_args()
 
 env_kwargs = parse_env_args(args.env_arg)
