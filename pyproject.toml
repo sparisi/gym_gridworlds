@@ -1,3 +1,26 @@
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "Gym-Gridworlds"
+version = "1.0.0"
+description = "Minimalistic implementation of gridworlds for RL."
+authors = [{name = "Simone Parisi"}]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["gymnasium>=1.0", "pygame", "numpy"]
+
+[project.optional-dependencies]
+playground = ["pynput", "imageio"]
+
+[project.urls]
+Homepage = "https://github.com/sparisi/gym_gridworlds"
+Repository = "https://github.com/sparisi/gym_gridworlds"
+
+[tool.setuptools]
+packages = ["gym_gridworlds"]
+
+[tool.setuptools.package-data]
+gym_gridworlds = ["grids/*.txt"]

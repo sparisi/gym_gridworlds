@@ -8,7 +8,7 @@ authors:
     given-names: Simone
 repository-code: "https://github.com/sparisi/gym_gridworlds"
 url: "https://github.com/sparisi/gym_gridworlds"
-license: CC-BY-4.0
+license: MIT
 version: "1.0"
 keywords:
   - reinforcement-learning

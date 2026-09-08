@@ -439,7 +439,7 @@ with `infinite_horizon=True`.
 
 ## License
 
-This project is licensed under [CC-BY-4.0](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 
 ## Citation
@@ -447,12 +447,12 @@ This project is licensed under [CC-BY-4.0](LICENSE).
 If you use this software, please cite it as below (see [CITATION.cff](CITATION.cff)).
 
 ```bibtex
-@software{parisi2026gymgridworlds,
+@software{parisi2024gymgridworlds,
   author  = {Parisi, Simone},
   title   = {Gym-Gridworlds},
   year    = {2024},
   url     = {https://github.com/sparisi/gym_gridworlds},
   version = {1.0},
-  license = {CC-BY-4.0},
+  license = {MIT},
 }
 ```
