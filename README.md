@@ -447,7 +447,7 @@ This project is licensed under [CC-BY-4.0](LICENSE).
 If you use this software, please cite it as below (see [CITATION.cff](CITATION.cff)).
 
 ```bibtex
-@software{parisi_gym_gridworlds,
+@software{parisi2026gymgridworlds,
   author  = {Parisi, Simone},
   title   = {Gym-Gridworlds},
   year    = {2024},
