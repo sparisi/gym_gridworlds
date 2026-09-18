@@ -104,7 +104,7 @@ class CoordinateWrapper(gymnasium.ObservationWrapper):
     >>> env = CoordinateWrapper(env)
     >>> obs, _ = env.reset()
     >>> print(obs)
-    (0, 0)
+    [0 0]
     """
 
     def __init__(self, env):
@@ -118,7 +118,10 @@ class CoordinateWrapper(gymnasium.ObservationWrapper):
         )
 
     def observation(self, obs):
-        return np.unravel_index(obs, (self._n_rows, self._n_cols))
+        return np.asarray(
+            np.unravel_index(obs, (self._n_rows, self._n_cols)),
+            dtype=self.observation_space.dtype,
+        )
 
     def set_state(self, obs):
         self.env.unwrapped.set_state(np.ravel_multi_index(obs, (self._n_rows, self._n_cols)))
@@ -324,10 +327,10 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
     >>> env = ContinuousObservationWrapper(env)
     >>> obs, _ = env.reset(seed=42)
     >>> print(obs)
-    [-0.57070104 -0.72105279]
+    [-0.570701   -0.72105277]
     >>> obs, *_ = env.step(1)
     >>> print(obs)
-    [-0.57070104 -0.32105279]
+    [-0.570701  -0.3210528]
 
     Note:
 
@@ -365,5 +368,7 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
         # not control it and the first episode is not reproducible), but BEFORE
         # the observation is computed, because observation() uses it.
         obs, info = self.env.reset(seed=seed, **kwargs)
-        self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5, size=(2,))
+        self.agent_pos_offset = self.np_random.uniform(-0.5, 0.5, size=(2,)).astype(
+            self.observation_space.dtype
+        )
         return self.observation(obs), info
