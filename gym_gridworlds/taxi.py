@@ -67,6 +67,25 @@ class Taxi(Gridworld):
         self.agent_pos = (row, col)
         self.passengers_picked = picked
 
+    def state_to_pos(self, state):
+        return Gridworld.state_to_pos(self, state // (2 ** len(self.passengers)))
+
+    def sample_states(
+        self,
+        n: int,
+        np_random: np.random.Generator = None,
+        reachable_only: bool = False,
+    ):
+        # A state is a position and one bit per passenger, encoded as in
+        # get_state(). Both halves are drawn uniformly, so a draw can return an
+        # "impossible" combination (e.g., taxi and passenger in the same time:
+        # this is not possible because a passenger is automatically picked up).
+        if np_random is None:
+            np_random = self.np_random
+        base = 2 ** len(self.passengers)
+        pos = Gridworld.sample_states(self, n, np_random, reachable_only)
+        return pos * base + np_random.integers(0, base, size=n)
+
     def step(self, action):
         rwd = 0.0
         terminated = False

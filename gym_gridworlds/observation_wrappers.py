@@ -6,6 +6,52 @@ from gym_gridworlds.gridworld import REWARDS, GOOD, GOOD_SMALL, WALL, GRID_ENCOD
 GRID_DECODING = {v: k for k, v in GRID_ENCODING.items()}
 
 
+def sample_observations(env, n: int, np_random: np.random.Generator = None, **kwargs):
+    """Sampling from `observation_space.sample()` can be wrong if wrappers are used.
+    For example, if the observation is a one-hot encoding with MatrixWrapper,
+    `observation_space` not constrain one-hot vectors.
+
+    With this function, each draw is a state from `sample_states` called by the
+    unwrapped environment, i.e., on the discrete observation space.
+    The state is then encoded through all the wrappers of the environment.
+
+    Example:
+
+    >>> import gymnasium
+    >>> import gym_gridworlds
+    >>> env = gymnasium.make("Gym-Gridworlds/Penalty-3x3-v0")
+    >>> from gym_gridworlds.observation_wrappers import MatrixWrapper
+    >>> env = MatrixWrapper(env)
+    >>> from gymnasium.wrappers import FlattenObservation
+    >>> env = FlattenObservation(env)
+    >>> env.observation_space.sample()
+    array([0, 1, 0, 0, 1, 0, 0, 0, 0], dtype=uint8)      # THIS IS NOT A VALID STATE, THERE ARE TWO 1s
+    >>> gym_gridworlds.observation_wrappers.sample_observations(env, 1)
+    array([[0, 0, 0, 1, 0, 0, 0, 0, 0]], dtype=uint8)    # THIS IS A VALID STATE
+    """
+
+    unwrapped = env.unwrapped
+    if np_random is None:
+        np_random = unwrapped.np_random
+
+    # Inner to outer, so each wrapper encodes what the one below it returned.
+    chain = []
+    current = env
+    while isinstance(current, gymnasium.Wrapper):
+        if isinstance(current, gymnasium.ObservationWrapper):
+            chain.append(current)
+        current = current.env
+    chain.reverse()
+
+    out = []
+    for state in unwrapped.sample_states(n, np_random, **kwargs):
+        obs = state
+        for wrapper in chain:
+            obs = wrapper.observation(obs)
+        out.append(np.asarray(obs))
+    return np.stack(out)
+
+
 class CharGrid(gymnasium.Space):
     """Space of 2D numpy arrays whose cells are single characters from `charset`.
 
@@ -225,7 +271,7 @@ class BirdEyeWrapper(gymnasium.ObservationWrapper):
         grid = self.env.unwrapped.grid
         r = self._view_radius
         size = 2 * r + 1
-        row, col = self.env.unwrapped.agent_pos
+        row, col = self.env.unwrapped.state_to_pos(obs)
         window = np.full((size, size), WALL, dtype=np.int32)
         row_start = max(row - r, 0)
         row_end = min(row + r + 1, self._n_rows)
@@ -288,14 +334,7 @@ class MatrixWithGoalWrapper(gymnasium.ObservationWrapper):
         )
 
     def observation(self, obs):
-        # If there is observation noise, apply it only to the agent's position
-        pos = self.unwrapped.agent_pos
-        if self.unwrapped.observation_noise > 0.0:
-            if self.np_random.random() < self.observation_noise:
-                pos = (
-                    self.np_random.integers(0, self._n_rows),
-                    self.np_random.integers(0, self._n_cols),
-                )
+        pos = self.env.unwrapped.state_to_pos(obs)
         map = np.zeros((self._n_rows, self._n_cols))
         map[pos] = 1.0
         map_rewards = np.zeros((self._n_rows, self._n_cols))
@@ -353,7 +392,7 @@ class ContinuousObservationWrapper(gymnasium.ObservationWrapper):
         self.agent_pos_offset = np.zeros(2, dtype=np.float32)
 
     def observation(self, obs):
-        pos = np.array(self.env.unwrapped.agent_pos, dtype=np.float32)
+        pos = np.array(self.env.unwrapped.state_to_pos(obs), dtype=np.float32)
         pos = (pos + self.agent_pos_offset + 0.5) / self.grid_shape  # in [0, 1]
         return pos * 2.0 - 1.0  # in [-1, 1]
 

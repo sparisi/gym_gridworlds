@@ -287,6 +287,37 @@ class Gridworld(gym.Env):
             self.original_grid != PIT,
         )
 
+    def sample_states(
+        self,
+        n: int,
+        np_random: np.random.Generator = None,
+        reachable_only: bool = False,
+    ):
+        """
+        Draws `n` states uniformly at random, as an (n,) array of ravel indices
+        that `set_state` accepts. Here a state is the agent's position;
+        subclasses whose state holds more than that override this.
+
+        This is not `observation_space.sample()`, which draws from the space a
+        wrapper advertises rather than from the states the env can be in.
+        """
+
+        if np_random is None:
+            np_random = self.np_random
+        if reachable_only:
+            cells = np.flatnonzero(self.grid_reachable)
+            return cells[np_random.integers(0, cells.size, size=n)]
+        return np_random.integers(0, self.n_rows * self.n_cols, size=n)
+
+    def state_to_pos(self, state):
+        """
+        The agent's (row, col) in `state`, where `set_state` would place it.
+        Here a state is the position itself; subclasses whose state holds more
+        than that override this.
+        """
+
+        return np.unravel_index(state, (self.n_rows, self.n_cols))
+
     def set_state(self, state):
         self.agent_pos = np.unravel_index(state, (self.n_rows, self.n_cols))
         self.last_action = None
