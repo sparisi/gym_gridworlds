@@ -91,6 +91,9 @@ Check [__init__.py](https://github.com/sparisi/gym_gridworlds/blob/main/gym_grid
 `FourRooms-Cross-14x16-v0` &nbsp; Rooms are spread across the grid in a "cross-like" shape. Start position and goal are randomized at every reset.  
 <img src="FourRooms-Cross-14x16-v0.png" width="220">
 
+`Multiroom-Corridor-6x24-v0` &nbsp; [Corridor with rooms. Start position and goal are fixed.](https://arxiv.org/pdf/2606.21271)  
+<img src="Multiroom-Corridor-6x24-v0.png" width="220">
+
 `ThreeRooms-Wall-14x16-v0` &nbsp; The three rooms are not connected, and there are three random starting positions (one for each room, all in the leftmost column). Goals are not randomized. No need to `STAY` in green tiles.  
 <img src="ThreeRooms-Wall-14x16-v0.png" width="220">
 

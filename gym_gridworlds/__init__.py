@@ -310,6 +310,18 @@ register(
     },
 )
 
+
+register(
+    id="Gym-Gridworlds/Multiroom-Corridor-6x24-v0",
+    entry_point="gym_gridworlds.gridworld:Gridworld",
+    max_episode_steps=300,
+    kwargs={
+        "grid": "6x24_multiroom_corridor_small",
+        "no_stay": True,
+        "start_pos": [(0, 0)],
+    },
+)
+
 register(
     id="Gym-Gridworlds/ThreeRooms-Wall-14x16-v0",
     entry_point="gym_gridworlds.gridworld:Gridworld",
